@@ -3,6 +3,8 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { Tag } from "@/components/ui/tag";
+import type { DocTag } from "@/lib/records/tag-records";
 
 export type ReferenceRecord = {
   id: string;
@@ -12,7 +14,7 @@ export type ReferenceRecord = {
   source?: string;
   note?: string;
   href?: string;
-  tag?: string;
+  tags?: readonly DocTag[];
   correspondingAuthor?: string;
   correspondingAuthorEmail?: string;
   affiliations?: readonly string[];
@@ -56,7 +58,7 @@ export function ReferenceChip<TMap extends ReferenceMap>({
           type="button"
           className={
             className ??
-            "inline-flex items-center rounded-full border border-border/40 bg-background/20 px-2 py-0.5 text-[11px] leading-none text-foreground/80 backdrop-blur hover:bg-background/30 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            "inline-flex items-center rounded-full border border-border/40 bg-background/20 px-2 py-0.5 text-[11px] leading-none text-foreground/80 backdrop-blur transition-all duration-150 hover:-translate-y-px hover:scale-[1.02] hover:bg-background/30 hover:text-foreground active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
           }
           aria-label={`Reference: ${r.authors}${r.year ? ` (${r.year})` : ""}`}
         >
@@ -70,7 +72,7 @@ export function ReferenceChip<TMap extends ReferenceMap>({
       <HoverCardContent
         align={align}
         side={side}
-        className="w-[360px] rounded-2xl border border-border/40 bg-background/95 p-4 shadow-xl backdrop-blur"
+        className="max-w-[800px] rounded-2xl border border-border/40 bg-background/95 p-4 shadow-xl backdrop-blur"
       >
         <div className="space-y-2">
           <div className="flex items-start justify-between gap-3">
@@ -93,9 +95,11 @@ export function ReferenceChip<TMap extends ReferenceMap>({
               )}
             </div>
 
-            {r.tag && (
-              <div className="shrink-0 rounded-full border border-border/40 bg-background/60 px-2 py-0.5 text-[11px] text-muted-foreground">
-                {r.tag}
+            {r.tags && r.tags.length > 0 && (
+              <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5">
+                {r.tags.map((tag) => (
+                  <Tag key={tag.id} tag={tag} compact />
+                ))}
               </div>
             )}
           </div>

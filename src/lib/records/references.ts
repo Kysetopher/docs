@@ -1,3 +1,5 @@
+import { DOC_TAGS } from "@/lib/records/tag-records";
+
 export const REFERENCES = {
   ai_psychosis_jmir_2025: {
     id: "ai_psychosis_jmir_2025",
@@ -6,7 +8,7 @@ export const REFERENCES = {
     title: "Delusional Experiences Emerging From AI Chatbot Interactions or \"AI Psychosis\"",
     source: "JMIR Mental Health (Viewpoint)",
     note: "Frames AI psychosis via stress-vulnerability, theory of mind, and digital therapeutic alliance; advances translational safeguards and research domains.",
-    tag: "AI psychosis framework",
+    tags: [DOC_TAGS.aiPsychosisFramework, DOC_TAGS.literatureCase],
     href: "https://mental.jmir.org/2025/1/e85799/",
     correspondingAuthor: "Alexandre Hudon",
     correspondingAuthorEmail: "alexandre.hudon.1@umontreal.ca",
@@ -28,7 +30,7 @@ export const REFERENCES = {
     title: "Artificial intelligence-associated delusions and large language models: risks, mechanisms of delusion co-creation, and safeguarding strategies",
     source: "The Lancet Psychiatry (Personal View, online ahead of print)",
     note: "Examines risks of delusion co-creation in vulnerable users and proposes AI-informed care protocols for epistemic security.",
-    tag: "AI delusion safeguards",
+    tags: [DOC_TAGS.aiDelusionSafeguards, DOC_TAGS.literatureCase],
     href: "https://www.thelancet.com/journals/lanpsy/article/PIIS2215-0366(25)00396-7/abstract",
     correspondingAuthor: "Hamilton Morrin",
     correspondingAuthorEmail: "hamilton.morrin@kcl.ac.uk",
@@ -44,4 +46,3 @@ export const REFERENCES = {
     ],
   },
 } as const;
-
