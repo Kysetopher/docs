@@ -1,14 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
 import SimpleBar from "simplebar-react";
 import { useNavigate } from "react-router-dom";
-import CollapsibleSidebarLayout from "@/components/layout/CollapsibleSidebarLayout";
+import CollapsibleSidebarLayout from "@/components/core/CollapsibleSidebarLayout";
 import { Hierarchy, type TreeNode } from "@/components/ui/hierarchy";
-import { type DocSection } from "@/documenation/product-info";
 import { cn } from "@/lib/utils";
 import { Collapsible } from "@/components/ui/collapsible";
 import { Button } from "../ui/button";
 import { Icon } from "@iconify/react";
-import FateTrineLogo from "../brand/FateTrineLogo";
+import { type ReactNode } from "react";
+
+export type DocSection = {
+  id: string;
+  title: string;
+  summary?: string;
+  tags?: string[];
+  content?: ReactNode;
+  children?: DocSection[];
+};
 
 function buildHierarchy(sections: DocSection[]): TreeNode[] {
   return sections.map((section) => ({
@@ -246,7 +254,6 @@ export function DocumentationPage({
             <div className="mx-auto  space-y-10 px-6 py-10 lg:py-12">
               <header className="space-y-3">
                 <div className="flex items-center  gap-2 text-sm font-semibold uppercase tracking-wide ">
-                     <FateTrineLogo className="h-6 text-primary"/>
                     <p className="text-primary" >Fate.Energy</p>   {header.title}
                   </div>
                 <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
