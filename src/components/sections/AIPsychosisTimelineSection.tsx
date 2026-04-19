@@ -1,4 +1,4 @@
-import { TimelineGraph, type TimelineYearColumn } from "@/components/ui/graph/timeline-graph";
+import { TimelineGraph, type TimelineYearColumn } from "@/components/graph/timeline-graph";
 import { ReferenceChip } from "@/components/ui/reference-chip";
 import { REFERENCES } from "@/lib/records/references";
 
@@ -124,37 +124,28 @@ export function AIPsychosisTimelineSection() {
   const timelineColumns: TimelineYearColumn[] = AI_PSYCHOSIS_TIMELINE_DATA.map((column) => ({
     year: column.year,
     color: column.color,
-    events: column.events.map((event) => event.label),
+    events: column.events.map((event) => ({
+      label: event.label,
+      refIds: event.refIds.map((id) => String(id)),
+    })),
   }));
 
   return (
-    <div className="space-y-3">
-      <TimelineGraph
-        title='Key publications shaping the "AI psychosis" research area'
-        columns={timelineColumns}
-      />
-      <div className="space-y-2 rounded-xl border border-border/50 bg-background/20 p-3">
-        <p className="text-xs font-medium text-foreground/80">Node references</p>
-        <ul className="space-y-2 text-xs text-muted-foreground">
-          {AI_PSYCHOSIS_TIMELINE_DATA.flatMap((column) =>
-            column.events.map((event) => (
-              <li key={`${column.year}-${event.label}`} className="flex flex-wrap items-start gap-2">
-                <span className="font-medium text-foreground/75">{column.year}</span>
-                <span className="mr-1">-</span>
-                <span>{event.label}</span>
-                {event.refIds.map((refId) => (
-                  <ReferenceChip key={`${event.label}-${String(refId)}`} refs={REFERENCES} id={refId} />
-                ))}
-              </li>
-            ))
-          )}
-        </ul>
-      </div>
-      <p className="text-xs text-muted-foreground">
-        This D3 timeline is an interpretive map of landmark publications and should be updated as new evidence is
-        added to the reference library.
-      </p>
-    </div>
+    <TimelineGraph
+      title='Key publications shaping the "AI psychosis" research area'
+      columns={timelineColumns}
+      renderEventFooter={({ event }) => (
+        <div className="flex flex-wrap gap-1.5">
+          {(event.refIds ?? []).map((refId) => (
+            <ReferenceChip
+              key={`${event.label}-${String(refId)}`}
+              refs={REFERENCES}
+              id={refId as keyof typeof REFERENCES}
+            />
+          ))}
+        </div>
+      )}
+    />
   );
 }
 

@@ -1,15 +1,25 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import * as d3 from "d3";
+
+export type TimelineEvent = {
+  label: string;
+  refIds?: string[];
+};
 
 export type TimelineYearColumn = {
   year: string;
   color: string;
-  events: string[];
+  events: TimelineEvent[];
 };
 
 type TimelineGraphProps = {
   title: string;
   columns: TimelineYearColumn[];
+  renderEventFooter?: (args: {
+    column: TimelineYearColumn;
+    event: TimelineEvent;
+    eventIndex: number;
+  }) => ReactNode;
 };
 
 function wrapSvgText(
@@ -53,7 +63,7 @@ function wrapSvgText(
   });
 }
 
-export function TimelineGraph({ title, columns }: TimelineGraphProps) {
+export function TimelineGraph({ title, columns, renderEventFooter }: TimelineGraphProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [width, setWidth] = useState(0);
@@ -75,6 +85,33 @@ export function TimelineGraph({ title, columns }: TimelineGraphProps) {
     const maxEvents = Math.max(...columns.map((column) => column.events.length), 1);
     return 220 + maxEvents * 92;
   }, [columns]);
+
+  const overlayLayout = useMemo(() => {
+    const margin = { top: 24, right: 28, bottom: 28, left: 28 };
+    const eventStartY = 168;
+    const cardH = 82;
+    const cardGap = 10;
+    const byYear = new Map<string, number>();
+
+    if (width < 600) {
+      return { eventStartY, cardH, cardGap, eventBoxW: 0, byYear };
+    }
+
+    const columnBand = d3
+      .scaleBand<string>()
+      .domain(columns.map((column) => column.year))
+      .range([margin.left, width - margin.right])
+      .paddingInner(0.06);
+
+    const eventBoxW = Math.max(Math.min(columnBand.bandwidth() * 0.92, 220), 130);
+    columns.forEach((column) => {
+      const bandStart = columnBand(column.year);
+      if (bandStart === undefined) return;
+      byYear.set(column.year, bandStart + columnBand.bandwidth() / 2);
+    });
+
+    return { eventStartY, cardH, cardGap, eventBoxW, byYear };
+  }, [columns, width]);
 
   useEffect(() => {
     if (!svgRef.current || width < 600) return;
@@ -190,7 +227,8 @@ export function TimelineGraph({ title, columns }: TimelineGraphProps) {
         .style("font-weight", 700)
         .text(column.year);
 
-      column.events.forEach((eventLabel, eventIndex) => {
+      column.events.forEach((event, eventIndex) => {
+        const eventLabel = event.label;
         const y = eventStartY + eventIndex * (cardH + cardGap);
         const rectX = centerX - eventBoxW / 2;
 
@@ -222,8 +260,32 @@ export function TimelineGraph({ title, columns }: TimelineGraphProps) {
   }, [columns, height, title, width]);
 
   return (
-    <div ref={hostRef} className="w-full overflow-x-auto rounded-2xl border border-border/50 bg-background/30 p-2">
-      <svg ref={svgRef} className="block w-full min-w-[760px]" role="img" aria-label={title} />
+    <div ref={hostRef} className="w-full overflow-x-auto">
+      <div className="relative min-w-[760px]">
+        <svg ref={svgRef} className="block w-full min-w-[760px]" role="img" aria-label={title} />
+        {width >= 600 && renderEventFooter ? (
+          <div className="pointer-events-none absolute inset-0">
+            {columns.flatMap((column) => {
+              const centerX = overlayLayout.byYear.get(column.year);
+              if (centerX === undefined) return [];
+              return column.events.map((event, eventIndex) => {
+                const y = overlayLayout.eventStartY + eventIndex * (overlayLayout.cardH + overlayLayout.cardGap);
+                const left = centerX - overlayLayout.eventBoxW / 2 + 8;
+                const top = y + overlayLayout.cardH - 24;
+                return (
+                  <div
+                    key={`${column.year}-${event.label}-footer`}
+                    className="pointer-events-auto absolute"
+                    style={{ left, top }}
+                  >
+                    {renderEventFooter({ column, event, eventIndex })}
+                  </div>
+                );
+              });
+            })}
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
