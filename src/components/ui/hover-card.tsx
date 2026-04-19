@@ -29,7 +29,7 @@ export const HoverCardContent = React.forwardRef<
       ref={ref}
       align={align}
       sideOffset={sideOffset}
-      className={cn("fe-hc-content", className)}
+      className={cn("fe-hc-content z-[60]", className)}
       {...props}
     />
   </HoverCardPrimitive.Portal>

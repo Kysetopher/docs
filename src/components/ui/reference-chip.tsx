@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/hover-card";
 import { Tag } from "@/components/ui/tag";
 import type { DocTag } from "@/lib/records/tag-records";
+import { Icon } from "@iconify/react";
 
 export type ReferenceRecord = {
   id: string;
@@ -38,7 +39,7 @@ export function ReferenceChip<TMap extends ReferenceMap>({
   id,
   openDelay = 120,
   closeDelay = 80,
-  align = "start",
+  align = "end",
   side = "top",
   className,
 }: {
@@ -76,28 +77,34 @@ export function ReferenceChip<TMap extends ReferenceMap>({
       <HoverCardContent
         align={align}
         side={side}
-        className="max-w-[800px] bg-background/60 rounded-2xl border border-border/40 shadow-xl backdrop-blur"
+        className="max-w-[800px] bg-background/60 pb-4 rounded-2xl border border-border/40 shadow-xl backdrop-blur"
       >
-
-          <div className="flex p-4 border-b justify-between">
-            <div className="space-y-1">
-
-
-              <div className="text-sm leading-relaxed text-foreground/85">
-                {r.title}
-              </div>
-
-             
-            </div>
-
-            {r.tags && r.tags.length > 0 && (
-              <div className="flex shrink-0 flex-wrap items-start justify-end gap-1.5">
-                {r.tags.map((tag) => (
-                  <Tag key={tag.id} tag={tag} compact iconOnly borderless />
-                ))}
-              </div>
-            )}
+      <div className="flex items-start justify-between gap-3 p-4 border-b">
+        {/* LEFT: TITLE */}
+        <div className="min-w-0 flex-1">
+          <div className="text-sm leading-relaxed text-foreground/85 break-words">
+            {r.title}
           </div>
+        </div>
+
+        {/* RIGHT: TAGS + LINK ICON */}
+        <div className="flex shrink-0 items-center gap-1.5">
+          {r.tags?.map((tag) => (
+            <Tag key={tag.id} tag={tag} compact iconOnly borderless />
+          ))}
+
+          {r.href && (
+            <a
+              href={r.href}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center hover:text-accent justify-center rounded-md p-1 transition"
+            >
+              <Icon icon="mdi:open-in-new" className="w-6 h-6 " />
+            </a>
+          )}
+        </div>
+      </div>
 
           {/* MAIN: LEFT TEXT + RIGHT IMAGE */}
           <div className="flex gap-4 items-start">
@@ -178,7 +185,7 @@ export function ReferenceChip<TMap extends ReferenceMap>({
 
           {/* BOTTOM: AFFILIATIONS + LINK */}
           {(r.affiliations?.length || r.href) && (
-            <div className="space-y-2 text-xs text-muted-foreground">
+            <div className="space-y-2 px-4 text-xs text-muted-foreground">
 
               {r.affiliations && r.affiliations.length > 0 && (
                 <div>
@@ -193,18 +200,7 @@ export function ReferenceChip<TMap extends ReferenceMap>({
                 </div>
               )}
 
-              {r.href && (
-                <div>
-                  <a
-                    href={r.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-accent underline underline-offset-4"
-                  >
-                    Open source
-                  </a>
-                </div>
-              )}
+             
             </div>
           )}
       </HoverCardContent>

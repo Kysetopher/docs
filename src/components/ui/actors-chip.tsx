@@ -22,7 +22,7 @@ export function ActorsChip<TMap extends ActorMap>({
   id,
   openDelay = 120,
   closeDelay = 80,
-  align = "start",
+  align = "end",
   side = "top",
   className,
 }: {
