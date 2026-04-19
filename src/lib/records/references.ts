@@ -9,6 +9,10 @@ export const REFERENCES = {
     source: "JMIR Mental Health (Viewpoint)",
     note: "Frames AI psychosis via stress-vulnerability, theory of mind, and digital therapeutic alliance; advances translational safeguards and research domains.",
     tags: [DOC_TAGS.aiPsychosisFramework, DOC_TAGS.literatureCase],
+    photo: {
+      src: "/references/jmir-delusions.jpg",
+      alt: "Delusional Experiences Emerging From AI Chatbot Interactions or AI Psychosis",
+    },
     href: "https://mental.jmir.org/2025/1/e85799/",
     correspondingAuthor: "Alexandre Hudon",
     correspondingAuthorEmail: "alexandre.hudon.1@umontreal.ca",
@@ -31,6 +35,10 @@ export const REFERENCES = {
     source: "The Lancet Psychiatry (Personal View, online ahead of print)",
     note: "Examines risks of delusion co-creation in vulnerable users and proposes AI-informed care protocols for epistemic security.",
     tags: [DOC_TAGS.aiDelusionSafeguards, DOC_TAGS.literatureCase],
+    photo: {
+      src: "/references/lancet-delusions.jpg",
+      alt: "Artificial intelligence-associated delusions and large language models",
+    },
     href: "https://www.thelancet.com/journals/lanpsy/article/PIIS2215-0366(25)00396-7/abstract",
     correspondingAuthor: "Hamilton Morrin",
     correspondingAuthorEmail: "hamilton.morrin@kcl.ac.uk",

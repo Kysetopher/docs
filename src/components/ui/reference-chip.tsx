@@ -15,6 +15,10 @@ export type ReferenceRecord = {
   note?: string;
   href?: string;
   tags?: readonly DocTag[];
+  photo?: {
+    src: string;
+    alt?: string;
+  };
   correspondingAuthor?: string;
   correspondingAuthorEmail?: string;
   affiliations?: readonly string[];
@@ -75,6 +79,17 @@ export function ReferenceChip<TMap extends ReferenceMap>({
         className="max-w-[800px] rounded-2xl border border-border/40 bg-background/95 p-4 shadow-xl backdrop-blur"
       >
         <div className="space-y-2">
+          {r.photo?.src ? (
+            <div className="overflow-hidden rounded-xl border border-border/40 bg-background/50">
+              <img
+                src={r.photo.src}
+                alt={r.photo.alt ?? `${r.title} image`}
+                className="h-40 w-full object-cover sm:h-48"
+                loading="lazy"
+              />
+            </div>
+          ) : null}
+
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="text-sm font-semibold text-foreground/90">
