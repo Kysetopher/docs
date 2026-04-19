@@ -15,7 +15,7 @@ export type ReferenceRecord = {
   tag?: string;
   correspondingAuthor?: string;
   correspondingAuthorEmail?: string;
-  affiliations?: string[];
+  affiliations?: readonly string[];
   doi?: string;
   pmid?: string;
 };
