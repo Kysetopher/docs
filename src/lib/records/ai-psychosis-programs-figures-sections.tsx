@@ -1,72 +1,104 @@
 import type { DocSection } from "@/components/docs/DocumentationPage";
+import { DOC_TAGS } from "@/lib/records/tag-records";
 
 export const aiPsychosisProgramsFiguresSections: DocSection[] = [
   {
     id: "overview",
     title: "Overview",
-    summary: "A living map of active programs and key stakeholders in AI psychosis work.",
-    tags: ["Landscape"],
+    summary: "A field map of who has leverage, what they hold, and what is missing.",
+    tags: [DOC_TAGS.landscape],
     content: (
       <p className="text-sm text-muted-foreground leading-relaxed">
-        AI psychosis response is distributed across clinical systems, trust and safety teams, research groups, and
-        policy organizations. This page is designed as a practical landscape view for coordination and gap
-        analysis.
+        The AI psychosis space is still pre-paradigm: no dominant player, no shared terminology, and no clear
+        operational owner of the clinical and technical intersection. This page tracks the current actor landscape
+        and the cross-silo gaps that create the opportunity.
       </p>
     ),
   },
   {
-    id: "program-types",
-    title: "Current Program Types",
-    summary: "Program models currently shaping detection, triage, and intervention.",
-    tags: ["Programs"],
+    id: "clinical-psychiatry-leaders",
+    title: "Clinical and Psychiatry Leaders",
+    summary: "Where AI psychosis can become clinically legible and fundable.",
+    tags: [DOC_TAGS.clinical],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>Platform trust and safety escalation pathways for delusional and crisis-adjacent conversations.</li>
-        <li>Early psychosis clinics integrating digital-behavior context into clinical intake.</li>
-        <li>Hospital and emergency psychiatry pilots documenting AI-related symptom trajectories.</li>
-        <li>Public-interest monitoring initiatives tracking severe harm reports and response quality.</li>
+        <li>John Torous (Harvard / Beth Israel): mainstream bridge from digital psychiatry to AI-linked harm signals.</li>
+        <li>Nina Vasan (Stanford Brainstorm): systems-level psychiatry and implementation framing.</li>
+        <li>Thomas Insel: measurable, infrastructure-oriented mental health models and early detection emphasis.</li>
+        <li>OnTrackNY: mature early-psychosis care network and potential intake path for AI-related symptom cases.</li>
+        <li>Reality check: no major clinical leader explicitly owns an "AI psychosis" program yet.</li>
       </ul>
     ),
   },
   {
-    id: "operational-needs",
-    title: "Operational Needs",
-    summary: "Capabilities programs need to become reliable and scalable.",
-    tags: ["Implementation"],
+    id: "ai-safety-and-alignment",
+    title: "AI Safety and Alignment Researchers",
+    summary: "Strong on reinforcement mechanisms, weaker on psychiatric framing.",
+    tags: [DOC_TAGS.aiLabs, DOC_TAGS.mechanisms],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>Clear case definitions and triage thresholds shared across product and clinical settings.</li>
-        <li>Rapid cross-sector referral protocols between AI platforms, families, and care providers.</li>
-        <li>Outcome tracking that includes both user safety and false-positive burden.</li>
-        <li>Training for moderators, clinicians, and frontline responders on AI-specific delusional framing.</li>
+        <li>Anthropic: alignment and model behavior research relevant to harmful reinforcement dynamics.</li>
+        <li>OpenAI: trust and safety and evaluation work with conversation-level failure trajectories.</li>
+        <li>Jan Leike and adjacent alignment researchers: control and reinforcement behavior under optimization pressure.</li>
+        <li>Alignment Research Center: dangerous model behavior focus, with limited psychosis-specific clinical depth.</li>
+        <li>Gap: mechanism expertise exists, but clinical operationalization is not yet integrated.</li>
       </ul>
     ),
   },
   {
-    id: "figures",
-    title: "Key Figure Categories",
-    summary: "The stakeholder roles most influential in this field today.",
-    tags: ["Figures", "Stakeholders"],
+    id: "trust-safety-platform-risk",
+    title: "Trust and Safety and Platform Risk Teams",
+    summary: "Highest-velocity incident exposure, but largely private datasets.",
+    tags: [DOC_TAGS.trustAndSafety],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>Psychiatrists and clinical psychologists focused on psychosis, digital psychiatry, and crisis care.</li>
-        <li>Trust and safety leads responsible for model behavior policies and escalation workflows.</li>
-        <li>Responsible AI researchers measuring reinforcement dynamics and mitigation effectiveness.</li>
-        <li>Public health and policy leaders shaping standards, reporting norms, and accountability rules.</li>
+        <li>Google DeepMind safety and red-teaming functions.</li>
+        <li>Meta integrity and safety organizations.</li>
+        <li>TikTok content and behavioral risk teams.</li>
+        <li>These groups see live delusional loops, design escalation policy, and deploy suppression or redirection.</li>
+        <li>Critical limitation: the highest-signal case data is operationally sensitive and not public.</li>
       </ul>
     ),
   },
   {
-    id: "maintenance",
-    title: "Maintenance Guidance",
-    summary: "How to keep this landscape current and decision-useful.",
-    tags: ["Process"],
+    id: "public-health-policy",
+    title: "Public Health and Policy Actors",
+    summary: "Institutions that determine whether this becomes a recognized category.",
+    tags: [DOC_TAGS.policy],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>Review and refresh this page on a fixed cadence (for example monthly or quarterly).</li>
-        <li>Track each entry with status, scope, evidence level, and point-of-contact metadata.</li>
-        <li>Separate validated programs from exploratory pilots to avoid overclaiming maturity.</li>
-        <li>Log major timeline changes with dates to preserve institutional memory.</li>
+        <li>World Health Organization: digital mental health framing and global norm influence.</li>
+        <li>National Institute of Mental Health: funding priorities and research direction-setting.</li>
+        <li>American Psychiatric Association: DSM pathways and diagnostic gatekeeping.</li>
+        <li>Working assumption: without DSM or ICD pathway traction, the field remains informal and underfunded.</li>
+      </ul>
+    ),
+  },
+  {
+    id: "independent-early-signal-researchers",
+    title: "Independent and Early-Signal Researchers",
+    summary: "Closest to the thesis, but fragmented and not yet operationalized.",
+    tags: [DOC_TAGS.earlySignals],
+    content: (
+      <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
+        <li>Research threads include LLM sycophancy, hallucination reinforcement, and parasocial chatbot dependency.</li>
+        <li>Frequent institutional homes include Stanford, MIT Media Lab, and the Oxford Internet Institute.</li>
+        <li>Current state: fragmented outputs, limited clinical integration, and weak implementation pathways.</li>
+      </ul>
+    ),
+  },
+  {
+    id: "system-gap-map",
+    title: "System Gap Map",
+    summary: "The field is split across four silos with no integration owner.",
+    tags: [DOC_TAGS.gapAnalysis],
+    content: (
+      <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
+        <li>AI labs have behavioral data, but lack clinical interpretation infrastructure.</li>
+        <li>Clinicians have diagnostic frameworks, but lack AI-specific mechanism models.</li>
+        <li>Trust and safety teams have incident visibility, but not long-term outcomes.</li>
+        <li>Policy institutions have authority, but insufficient harmonized evidence.</li>
+        <li>No persistent cross-silo integration layer currently owns this interface.</li>
       </ul>
     ),
   },

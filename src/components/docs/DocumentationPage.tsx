@@ -3,7 +3,9 @@ import SimpleBar from "simplebar-react";
 import { useNavigate } from "react-router-dom";
 import CollapsibleSidebarLayout from "@/components/core/CollapsibleSidebarLayout";
 import { Hierarchy, type TreeNode } from "@/components/ui/hierarchy";
+import { Tag } from "@/components/ui/tag";
 import { cn } from "@/lib/utils";
+import type { DocTag } from "@/lib/records/tag-records";
 import { Collapsible } from "@/components/ui/collapsible";
 import { Button } from "../ui/button";
 import { Icon } from "@iconify/react";
@@ -13,7 +15,7 @@ export type DocSection = {
   id: string;
   title: string;
   summary?: string;
-  tags?: string[];
+  tags?: DocTag[];
   content?: ReactNode;
   children?: DocSection[];
 };
@@ -50,9 +52,9 @@ function SectionContent({
       className="scroll-mt-24 pb-1"
       aria-labelledby={`${section.id}-title`}
     >
-      {/* HEADER ROW (chevron + title + summary) */}
-      <header className="space-y-2">
-        <div className="flex items-baseline gap-3">
+      {/* HEADER ROW (chevron + title + summary + tags) */}
+      <header>
+        <div className="flex items-start gap-3">
           {/* IMPORTANT: this is JUST the trigger button (so nothing can push the title) */}
           <Button
             type="button"
@@ -88,20 +90,15 @@ function SectionContent({
               </p>
             ) : null}
           </div>
-        </div>
 
-        {section.tags && section.tags.length > 0 ? (
-          <div className="flex flex-wrap gap-2 pl-9">
+          {section.tags && section.tags.length > 0 ? (
+          <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-2 pt-0.5">
             {section.tags.map((tag) => (
-              <span
-                key={tag}
-                className="inline-flex h-6 items-center rounded-full bg-primary/10 px-2 text-xs font-medium text-primary"
-              >
-                {tag}
-              </span>
+              <Tag key={tag.id} tag={tag} />
             ))}
           </div>
         ) : null}
+        </div>
       </header>
 
       {/* COLLAPSIBLE CONTENT (animation + hierarchy lives here) */}
@@ -196,7 +193,7 @@ export function DocumentationPage({
   };
 
   const renderHierarchyLabel = (node: TreeNode) => {
-    const meta = (node.meta as { sectionId?: string; tags?: string[] }) || {};
+    const meta = (node.meta as { sectionId?: string; tags?: DocTag[] }) || {};
     const tags = meta.tags ?? [];
 
     return (
@@ -210,14 +207,9 @@ export function DocumentationPage({
       >
         <span className="truncate">{node.label}</span>
         {tags.length > 0 ? (
-          <span className="flex shrink-0 items-center gap-1 text-xs text-muted-foreground/80">
+          <span className="ml-auto flex shrink-0 items-center gap-1.5">
             {tags.map((tag) => (
-              <span
-                key={tag}
-                className="inline-flex h-5 items-center rounded-full border border-border/60 bg-background px-2 text-[10px]"
-              >
-                {tag}
-              </span>
+              <Tag key={tag.id} tag={tag} compact iconOnly borderless />
             ))}
           </span>
         ) : null}

@@ -1,72 +1,87 @@
 import type { DocSection } from "@/components/docs/DocumentationPage";
+import { DOC_TAGS } from "@/lib/records/tag-records";
 
 export const aiPsychosisResearchSections: DocSection[] = [
   {
     id: "overview",
     title: "Overview",
-    summary: "Research priorities for understanding AI-mediated psychosis risk.",
-    tags: ["Research", "Clinical context"],
+    summary: "From taxonomy to instrumentation: a path to an operational field.",
+    tags: [DOC_TAGS.research, DOC_TAGS.clinicalContext],
     content: (
       <p className="text-sm text-muted-foreground leading-relaxed">
-        This page outlines high-value research directions for AI psychosis, including incidence, causal pathways,
-        and intervention design. It is intended as a working research map for clinicians, safety teams, and policy
-        stakeholders.
+        The highest leverage move is not proving the phrase "AI psychosis" in abstract terms. The leverage is
+        building standards and infrastructure that make cases classifiable, detectable, and referable across
+        platforms, clinics, and policy systems.
       </p>
     ),
   },
   {
-    id: "core-questions",
-    title: "Core Questions",
-    summary: "Key unknowns that currently limit evidence-based response.",
-    tags: ["Open problems"],
+    id: "wedge",
+    title: "Strategic Wedge",
+    summary: "What to build first so the category can become real and fundable.",
+    tags: [DOC_TAGS.positioning],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>What user profiles are most vulnerable to AI-mediated delusional reinforcement?</li>
-        <li>How often does high-intensity AI use correlate with psychotic-spectrum symptom escalation?</li>
-        <li>Which model behaviors most strongly contribute to certainty inflation and paranoia loops?</li>
-        <li>What protective product patterns reduce risk without reducing utility for general users?</li>
+        <li>Case definition layer: separate AI-induced from AI-reinforced trajectories with explicit severity tiers.</li>
+        <li>Detection layer: define conversation and behavior markers with measurable thresholds.</li>
+        <li>Referral and response layer: codify platform-to-clinician and family escalation pathways.</li>
+        <li>Data network layer: build incident reporting and longitudinal outcome tracking.</li>
       </ul>
     ),
   },
   {
-    id: "methods",
-    title: "Recommended Methods",
-    summary: "Mixed methods approach for robust and actionable findings.",
-    tags: ["Study design"],
+    id: "proposed-framework",
+    title: "Proposed Framework",
+    summary: "Draft model for immediate pilot use and iteration.",
+    tags: [DOC_TAGS.framework],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>Prospective cohort studies with standardized psychiatric screening and usage telemetry.</li>
-        <li>Case-control designs comparing psychosis-related events against matched heavy-use controls.</li>
-        <li>Clinical chart review protocols for emergency and early-psychosis programs.</li>
-        <li>Conversation-level annotation taxonomies for reinforcement, challenge, and de-escalation patterns.</li>
+        <li>Working title: AI-Induced Delusional Reinforcement Model (AIDRM).</li>
+        <li>Target scope: 5 to 7 symptom-pattern archetypes with clear inclusion and exclusion criteria.</li>
+        <li>Severity structure: 3-tier model (emerging, escalating, acute) with defined intervention triggers.</li>
+        <li>Pathways: 2 to 3 response routes (product intervention, clinical referral, crisis escalation).</li>
       </ul>
     ),
   },
   {
-    id: "measurement",
-    title: "Measurement Framework",
-    summary: "Candidate metrics to support cross-study comparability.",
-    tags: ["Metrics"],
+    id: "instrumentation-signals",
+    title: "Instrumentation Signals",
+    summary: "Concrete markers for classification, triage, and monitoring.",
+    tags: [DOC_TAGS.metrics],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>Exposure intensity: session duration, overnight use, and serial prompt dependency.</li>
-        <li>Cognitive markers: certainty language, hidden-meaning interpretation, and conspiratorial framing.</li>
-        <li>Functional outcomes: sleep disruption, social withdrawal, care refusal, and work/school decline.</li>
-        <li>Safety outcomes: crisis referrals, emergency interventions, and rehospitalization events.</li>
+        <li>Rapid belief convergence after repeated assistant affirmation.</li>
+        <li>Model-affirmation loops with escalating certainty and reduced challenge tolerance.</li>
+        <li>Identity destabilization language and hidden-message interpretation patterns.</li>
+        <li>Persistence and rigidity markers despite corrective social or clinical input.</li>
+        <li>Functional impact markers: sleep collapse, social withdrawal, and care refusal.</li>
       </ul>
     ),
   },
   {
-    id: "gaps-and-next-steps",
-    title: "Gaps and Next Steps",
-    summary: "Practical actions to move from anecdote to evidence.",
-    tags: ["Roadmap"],
+    id: "evidence-assembly",
+    title: "Evidence Assembly Plan",
+    summary: "How to move from conceptual model to high-trust evidence.",
+    tags: [DOC_TAGS.execution],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>Establish shared incident definitions across product, clinical, and moderation teams.</li>
-        <li>Create privacy-preserving data-sharing pathways for independent replication studies.</li>
-        <li>Fund intervention trials for safety prompts, handoff flows, and human escalation pathways.</li>
-        <li>Publish transparent negative results to avoid repeated ineffective mitigation strategies.</li>
+        <li>Attach framework classes to real transcripts where permissible, and synthetic analogs where not.</li>
+        <li>Run dual annotation: technical raters plus clinical raters to calibrate category agreement.</li>
+        <li>Track outcomes over time rather than one-off incident snapshots.</li>
+        <li>Version the schema and publish revisions so evidence and definitions can co-evolve.</li>
+      </ul>
+    ),
+  },
+  {
+    id: "reality-check",
+    title: "Reality Check",
+    summary: "Current constraints that explain why the field is still open.",
+    tags: [DOC_TAGS.fieldStatus],
+    content: (
+      <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
+        <li>This is a pre-paradigm area with no dominant owner and no standard vocabulary.</li>
+        <li>No billing codes and limited reimbursement pathways currently constrain deployment scale.</li>
+        <li>That constraint is also the opportunity: the standards layer is still available to build.</li>
       </ul>
     ),
   },

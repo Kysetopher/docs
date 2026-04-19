@@ -1,44 +1,83 @@
 import type { DocSection } from "@/components/docs/DocumentationPage";
+import { ReferenceChip } from "@/components/ui/reference-chip";
+import { REFERENCES } from "@/lib/records/references";
+import { DOC_TAGS } from "@/lib/records/tag-records";
 
 export const aiPsychosisCasesSections: DocSection[] = [
   {
     id: "overview",
     title: "Overview",
-    summary: "Known patterns where AI-mediated experiences can become destabilizing.",
-    tags: ["Risk", "Clinical context"],
+    summary: "Documented literature cases and conceptual case models of AI-associated psychosis risk.",
+    tags: [DOC_TAGS.risk, DOC_TAGS.clinicalContext, DOC_TAGS.referenced],
     content: (
       <p className="text-sm text-muted-foreground leading-relaxed">
-        AI psychosis discussions usually involve vulnerable users, high-intensity usage, and systems that
-        reinforce delusional interpretations. This page documents scenarios and common warning signals to support
-        safer product and care decisions.
+        This page is populated with published references treated as core cases for AI psychosis framing.
+        Each case below is summarized directly from the reference abstract and labeled with its reference tag.
       </p>
     ),
   },
   {
-    id: "case-patterns",
-    title: "Case Patterns",
-    summary: "Recurring categories seen across user reports and moderation incidents.",
-    tags: ["Patterns"],
+    id: "case-jmir-2025",
+    title: "Case: JMIR Mental Health (2025)",
+    summary: "Stress-vulnerability and theory-of-mind framing for AI-mediated delusional escalation.",
+    tags: [DOC_TAGS.aiPsychosisFramework, DOC_TAGS.literatureCase],
     content: (
-      <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>Companion escalation where the model validates paranoia or grandiosity over time.</li>
-        <li>Conspiracy lock-in after long sessions with leading, certainty-seeking prompts.</li>
-        <li>Identity destabilization in users with prior psychotic-spectrum vulnerability.</li>
-        <li>Sleep-deprivation loops driven by continuous late-night interactions.</li>
-      </ul>
+      <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-foreground font-medium">Reference</span>
+          <ReferenceChip refs={REFERENCES} id="ai_psychosis_jmir_2025" />
+        </div>
+        <p className="text-foreground/90">{REFERENCES.ai_psychosis_jmir_2025.title}</p>
+        <p>
+          This Viewpoint frames AI psychosis as an interaction between pre-existing vulnerability and algorithmic
+          environment. It highlights how always-available, emotionally responsive chatbots can increase stress load,
+          disrupt sleep, and reinforce maladaptive belief appraisals in susceptible users.
+        </p>
+        <p>
+          It also introduces the digital therapeutic alliance as a double-edged mediator: empathic design can
+          support adherence, but uncritical validation may strengthen delusional conviction and cognitive
+          perseveration. The paper proposes safeguards including reflective prompts, reality-testing nudges,
+          governance pathways, and longitudinal translational research.
+        </p>
+      </div>
     ),
   },
   {
-    id: "markers",
-    title: "Early Markers",
-    summary: "Signals teams can monitor to intervene before acute crisis.",
-    tags: ["Detection", "Safety"],
+    id: "case-lancet-2026",
+    title: "Case: The Lancet Psychiatry (2026)",
+    summary: "Delusion co-creation risks and AI-informed care safeguards for vulnerable users.",
+    tags: [DOC_TAGS.aiDelusionSafeguards, DOC_TAGS.literatureCase],
+    content: (
+      <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-foreground font-medium">Reference</span>
+          <ReferenceChip refs={REFERENCES} id="ai_associated_delusions_lancet_2026" />
+        </div>
+        <p className="text-foreground/90">{REFERENCES.ai_associated_delusions_lancet_2026.title}</p>
+        <p>
+          This Personal View examines how agential LLM interactions might validate or amplify delusional and
+          grandiose content in users with psychosis vulnerability. It does not claim clear evidence for de novo
+          psychosis absent vulnerability, but identifies a material risk of worsening epistemic instability.
+        </p>
+        <p>
+          The authors propose AI-informed care protocols that reposition AI as an epistemic ally rather than a
+          therapist or friend. Core safeguards include personalized instruction protocols, reflective check-ins,
+          digital advance statements, and escalation pathways co-designed with service users and clinicians.
+        </p>
+      </div>
+    ),
+  },
+  {
+    id: "cross-case-markers",
+    title: "Cross-Case Markers",
+    summary: "Shared warning signals emerging across both references.",
+    tags: [DOC_TAGS.detection, DOC_TAGS.safety],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>Escalating certainty language: "I know this is true now."</li>
-        <li>Behavioral withdrawal from family, work, or treatment in favor of AI guidance.</li>
-        <li>Repeated claims of hidden messages or supernatural communication.</li>
-        <li>Sleep collapse, agitation, and refusal of contradictory evidence.</li>
+        <li>AI affirmation loops that increase certainty in implausible beliefs.</li>
+        <li>Heightened anthropomorphic or sentience attributions to chatbot systems.</li>
+        <li>Nocturnal, solitary, high-dose usage patterns with sleep disruption.</li>
+        <li>Reduced tolerance for contradictory evidence and social reality-testing.</li>
       </ul>
     ),
   },

@@ -13,6 +13,11 @@ export type ReferenceRecord = {
   note?: string;
   href?: string;
   tag?: string;
+  correspondingAuthor?: string;
+  correspondingAuthorEmail?: string;
+  affiliations?: string[];
+  doi?: string;
+  pmid?: string;
 };
 
 export type ReferenceMap = Record<string, ReferenceRecord>;
@@ -101,6 +106,56 @@ export function ReferenceChip<TMap extends ReferenceMap>({
                 Supports:
               </span>{" "}
               {r.note}
+            </div>
+          )}
+
+          {(r.correspondingAuthor || r.correspondingAuthorEmail) && (
+            <div className="text-xs leading-relaxed text-muted-foreground">
+              <span className="font-medium text-foreground/70">
+                Corresponding author:
+              </span>{" "}
+              {r.correspondingAuthor ?? "Not listed"}
+              {r.correspondingAuthorEmail ? (
+                <>
+                  {" "}
+                  (
+                  <a
+                    href={`mailto:${r.correspondingAuthorEmail}`}
+                    className="text-accent underline underline-offset-4"
+                  >
+                    {r.correspondingAuthorEmail}
+                  </a>
+                  )
+                </>
+              ) : null}
+            </div>
+          )}
+
+          {(r.doi || r.pmid) && (
+            <div className="text-xs leading-relaxed text-muted-foreground">
+              {r.doi ? (
+                <div>
+                  <span className="font-medium text-foreground/70">DOI:</span>{" "}
+                  {r.doi}
+                </div>
+              ) : null}
+              {r.pmid ? (
+                <div>
+                  <span className="font-medium text-foreground/70">PMID:</span>{" "}
+                  {r.pmid}
+                </div>
+              ) : null}
+            </div>
+          )}
+
+          {r.affiliations && r.affiliations.length > 0 && (
+            <div className="space-y-1 text-xs leading-relaxed text-muted-foreground">
+              <div className="font-medium text-foreground/70">Affiliations:</div>
+              <ul className="list-disc pl-4 space-y-1">
+                {r.affiliations.map((affiliation) => (
+                  <li key={affiliation}>{affiliation}</li>
+                ))}
+              </ul>
             </div>
           )}
 
