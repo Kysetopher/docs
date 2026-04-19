@@ -73,9 +73,9 @@ export const aiPsychosisResearchSections: DocSection[] = [
     ),
   },
   {
-    id: "timeline-placeholder",
-    title: "Research Timeline (Placeholder)",
-    summary: "Reserved slot for publication timeline visualization.",
+    id: "history",
+    title: "Research History Timeline ",
+    summary: "Publication history timeline visualization.",
     tags: [DOC_TAGS.landscape, DOC_TAGS.benchmark],
     content: <AIPsychosisTimelineSection />,
   },

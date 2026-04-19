@@ -158,15 +158,6 @@ export function TimelineGraph({ title, columns, renderEventFooter }: TimelineGra
       .attr("d", "M 0 0 L 10 0 L 5 10 z")
       .attr("fill", "rgba(255,255,255,0.7)");
 
-    svg
-      .append("text")
-      .attr("x", width / 2)
-      .attr("y", 20)
-      .attr("text-anchor", "middle")
-      .attr("fill", "rgba(255,255,255,0.92)")
-      .style("font-size", "14px")
-      .style("font-weight", 600)
-      .text(title);
 
     svg
       .append("line")
@@ -257,7 +248,7 @@ export function TimelineGraph({ title, columns, renderEventFooter }: TimelineGra
         wrapSvgText(text, eventBoxW - 18, 1.15);
       });
     });
-  }, [columns, height, title, width]);
+  }, [columns, height, width]);
 
   return (
     <div ref={hostRef} className="w-full overflow-x-auto">
