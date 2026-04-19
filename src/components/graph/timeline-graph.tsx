@@ -184,8 +184,8 @@ export function TimelineGraph({ title, columns, renderEventFooter }: TimelineGra
       .range([margin.left, width - margin.right])
       .paddingInner(0.06);
 
-    const yearBoxW = Math.max(Math.min(columnBand.bandwidth() * 0.92, 220), 130);
-    const eventBoxW = Math.max(Math.min(columnBand.bandwidth() * 0.92, 220), 130);
+    const yearBoxW = columnBand.bandwidth() * 0.92;
+    const eventBoxW = columnBand.bandwidth() * 0.92;
 
     const graph = svg.append("g");
 
@@ -223,7 +223,7 @@ export function TimelineGraph({ title, columns, renderEventFooter }: TimelineGra
         .attr("y", yearBoxY + yearBoxH / 2 + 4)
         .attr("text-anchor", "middle")
         .attr("fill", "rgba(255,255,255,0.92)")
-        .style("font-size", "12px")
+        .style("font-size", "22px")
         .style("font-weight", 700)
         .text(column.year);
 
@@ -250,7 +250,7 @@ export function TimelineGraph({ title, columns, renderEventFooter }: TimelineGra
           .attr("y", y + 20)
           .attr("text-anchor", "middle")
           .attr("fill", "rgba(255,255,255,0.95)")
-          .style("font-size", "11px")
+          .style("font-size", "16px")
           .style("font-weight", 600)
           .text(eventLabel);
 
