@@ -76,12 +76,10 @@ export function ReferenceChip<TMap extends ReferenceMap>({
       <HoverCardContent
         align={align}
         side={side}
-        className="max-w-[800px] rounded-2xl border border-border/40 bg-background/95 p-4 shadow-xl backdrop-blur"
+        className="max-w-[800px] rounded-2xl border border-border/40 bg-background/95 shadow-xl backdrop-blur"
       >
-        <div className="space-y-3">
 
-          {/* TOP: TITLE + TAGS */}
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex p-4 border-b justify-between">
             <div className="space-y-1">
 
 
@@ -95,7 +93,7 @@ export function ReferenceChip<TMap extends ReferenceMap>({
             {r.tags && r.tags.length > 0 && (
               <div className="flex shrink-0 flex-wrap items-start justify-end gap-1.5">
                 {r.tags.map((tag) => (
-                  <Tag key={tag.id} tag={tag} compact />
+                  <Tag key={tag.id} tag={tag} compact iconOnly borderless />
                 ))}
               </div>
             )}
@@ -104,7 +102,7 @@ export function ReferenceChip<TMap extends ReferenceMap>({
           {/* MAIN: LEFT TEXT + RIGHT IMAGE */}
           <div className="flex gap-4 items-start">
             {/* LEFT */}
-            <div className="flex-1 space-y-2 text-xs text-muted-foreground leading-relaxed">
+            <div className="flex-1 px-4  space-y-2 text-xs text-muted-foreground leading-relaxed">
               <div className="text-sm font-semibold text-foreground/90">
                 {r.authors}
                 {r.year && (
@@ -167,7 +165,7 @@ export function ReferenceChip<TMap extends ReferenceMap>({
 
             {/* RIGHT IMAGE */}
             {r.photo?.src && (
-              <div className="w-40 shrink-0 overflow-hidden rounded-xl border border-border/40 bg-background/50">
+              <div className="w-60 shrink-0 overflow-hidden">
                 <img
                   src={r.photo.src}
                   alt={r.photo.alt ?? `${r.title} image`}
@@ -209,7 +207,6 @@ export function ReferenceChip<TMap extends ReferenceMap>({
               )}
             </div>
           )}
-        </div>
       </HoverCardContent>
     </HoverCard>
   );
