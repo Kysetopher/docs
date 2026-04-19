@@ -1,1 +1,1 @@
-Quick update: rg is blocked in this shell, so I�m switching to PowerShell-native search to locate the router/base-path config and fix it directly.
+﻿Quick update: rg is blocked in this shell, so I’m switching to PowerShell-native search to locate the router/base-path config and fix it directly.
