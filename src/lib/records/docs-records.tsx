@@ -1,5 +1,7 @@
 import type { DocSection, DocumentationHeader } from "@/components/docs/DocumentationPage";
 import { aiPsychosisCasesSections } from "@/lib/records/ai-psychosis-cases-sections";
+import { aiPsychosisProgramsFiguresSections } from "@/lib/records/ai-psychosis-programs-figures-sections";
+import { aiPsychosisResearchSections } from "@/lib/records/ai-psychosis-research-sections";
 import { aiPsychosisStagesSections } from "@/lib/records/ai-psychosis-stages-sections";
 import { medicalRecognitionSections } from "@/lib/records/medical-recognition-sections";
 
@@ -14,6 +16,32 @@ export type DocRecord = {
 };
 
 export const DOC_RECORDS: Record<string, DocRecord> = {
+  "research-on-ai-psychosis": {
+    id: "research-on-ai-psychosis",
+    href: "/docs/research-on-ai-psychosis",
+    cardTitle: "Research on AI Psychosis",
+    cardDescription: "Core research questions, methods, and evidence gaps.",
+    cardIcon: "mdi:flask-outline",
+    header: {
+      title: "Research on AI Psychosis",
+      description: "A focused research agenda to move AI psychosis work from anecdote to reproducible evidence.",
+      icon: "mdi:flask-outline",
+    },
+    sections: aiPsychosisResearchSections,
+  },
+  "current-programs-and-figures-in-ai-psychosis": {
+    id: "current-programs-and-figures-in-ai-psychosis",
+    href: "/docs/current-programs-and-figures-in-ai-psychosis",
+    cardTitle: "Current Programs and Figures in AI Psychosis",
+    cardDescription: "Active program models and the stakeholder landscape.",
+    cardIcon: "mdi:account-group-outline",
+    header: {
+      title: "Current Programs and Figures in AI Psychosis",
+      description: "A living landscape of active program types and the key figures driving this field.",
+      icon: "mdi:account-group-outline",
+    },
+    sections: aiPsychosisProgramsFiguresSections,
+  },
   "cases-of-ai-psychosis": {
     id: "cases-of-ai-psychosis",
     href: "/docs/cases-of-ai-psychosis",

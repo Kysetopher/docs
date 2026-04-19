@@ -15,12 +15,6 @@ export function DocsPage() {
   return (
     <div className="min-h-screen bg-muted/40 px-6 py-10 text-foreground lg:py-14">
       <div className="mx-auto space-y-8">
-        <header className="space-y-3 text-center">
-          <div className="flex items-center justify-center gap-2 text-sm font-semibold uppercase tracking-wide">
-            <p className="text-primary">fate.energy</p>
-            <p>docs</p>
-          </div>
-        </header>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {DOC_RECORD_LIST.map((doc, index) => (
