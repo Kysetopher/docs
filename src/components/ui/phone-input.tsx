@@ -15,7 +15,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 
-import { PHONE_COUNTRIES, getDefaultPhoneCountry, type PhoneCountry } from "@/lib/records/services/phone-countries";
+import { PHONE_COUNTRIES, getDefaultPhoneCountry, type PhoneCountry } from "@/lib/services/phone-countries";
 import * as Flags from "country-flag-icons/react/3x2";
 
 type PhoneInputProps = Omit<InputProps, "value" | "onChange" | "type"> & {
