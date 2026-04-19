@@ -78,40 +78,22 @@ export function ReferenceChip<TMap extends ReferenceMap>({
         side={side}
         className="max-w-[800px] rounded-2xl border border-border/40 bg-background/95 p-4 shadow-xl backdrop-blur"
       >
-        <div className="space-y-2">
-          {r.photo?.src ? (
-            <div className="overflow-hidden rounded-xl border border-border/40 bg-background/50">
-              <img
-                src={r.photo.src}
-                alt={r.photo.alt ?? `${r.title} image`}
-                className="h-40 w-full object-cover sm:h-48"
-                loading="lazy"
-              />
-            </div>
-          ) : null}
+        <div className="space-y-3">
 
+          {/* TOP: TITLE + TAGS */}
           <div className="flex items-start justify-between gap-3">
-            <div>
-              <div className="text-sm font-semibold text-foreground/90">
-                {r.authors}
-                {r.year ? (
-                  <span className="text-muted-foreground"> ({r.year})</span>
-                ) : null}
-              </div>
+            <div className="space-y-1">
 
-              <div className="mt-1 text-sm leading-relaxed text-foreground/85">
+
+              <div className="text-sm leading-relaxed text-foreground/85">
                 {r.title}
               </div>
 
-              {r.source && (
-                <div className="mt-1 text-xs text-muted-foreground">
-                  {r.source}
-                </div>
-              )}
+             
             </div>
 
             {r.tags && r.tags.length > 0 && (
-              <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5">
+              <div className="flex shrink-0 flex-wrap items-start justify-end gap-1.5">
                 {r.tags.map((tag) => (
                   <Tag key={tag.id} tag={tag} compact />
                 ))}
@@ -119,75 +101,112 @@ export function ReferenceChip<TMap extends ReferenceMap>({
             )}
           </div>
 
-          {r.note && (
-            <div className="text-xs leading-relaxed text-muted-foreground">
-              <span className="font-medium text-foreground/70">
-                Supports:
-              </span>{" "}
-              {r.note}
-            </div>
-          )}
+          {/* MAIN: LEFT TEXT + RIGHT IMAGE */}
+          <div className="flex gap-4 items-start">
+            {/* LEFT */}
+            <div className="flex-1 space-y-2 text-xs text-muted-foreground leading-relaxed">
+              <div className="text-sm font-semibold text-foreground/90">
+                {r.authors}
+                {r.year && (
+                  <span className="text-muted-foreground"> ({r.year})</span>
+                )}
+              </div>
+               {r.source && (
+                <div className="text-xs text-muted-foreground">
+                  {r.source}
+                </div>
+              )}
+              {r.note && (
+                <div>
+                  <span className="font-medium text-foreground/70">
+                    Supports:
+                  </span>{" "}
+                  {r.note}
+                </div>
+              )}
 
-          {(r.correspondingAuthor || r.correspondingAuthorEmail) && (
-            <div className="text-xs leading-relaxed text-muted-foreground">
-              <span className="font-medium text-foreground/70">
-                Corresponding author:
-              </span>{" "}
-              {r.correspondingAuthor ?? "Not listed"}
-              {r.correspondingAuthorEmail ? (
-                <>
-                  {" "}
-                  (
+              {(r.correspondingAuthor || r.correspondingAuthorEmail) && (
+                <div>
+                  <span className="font-medium text-foreground/70">
+                    Corresponding author:
+                  </span>{" "}
+                  {r.correspondingAuthor ?? "Not listed"}
+                  {r.correspondingAuthorEmail && (
+                    <>
+                      {" "}
+                      (
+                      <a
+                        href={`mailto:${r.correspondingAuthorEmail}`}
+                        className="text-accent underline underline-offset-4"
+                      >
+                        {r.correspondingAuthorEmail}
+                      </a>
+                      )
+                    </>
+                  )}
+                </div>
+              )}
+
+              {(r.doi || r.pmid) && (
+                <div>
+                  {r.doi && (
+                    <div>
+                      <span className="font-medium text-foreground/70">DOI:</span>{" "}
+                      {r.doi}
+                    </div>
+                  )}
+                  {r.pmid && (
+                    <div>
+                      <span className="font-medium text-foreground/70">PMID:</span>{" "}
+                      {r.pmid}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* RIGHT IMAGE */}
+            {r.photo?.src && (
+              <div className="w-40 shrink-0 overflow-hidden rounded-xl border border-border/40 bg-background/50">
+                <img
+                  src={r.photo.src}
+                  alt={r.photo.alt ?? `${r.title} image`}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* BOTTOM: AFFILIATIONS + LINK */}
+          {(r.affiliations?.length || r.href) && (
+            <div className="space-y-2 text-xs text-muted-foreground">
+
+              {r.affiliations && r.affiliations.length > 0 && (
+                <div>
+                  <div className="font-medium text-foreground/70">
+                    Affiliations:
+                  </div>
+                  <ul className="list-disc pl-4 space-y-1">
+                    {r.affiliations.map((affiliation) => (
+                      <li key={affiliation}>{affiliation}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {r.href && (
+                <div>
                   <a
-                    href={`mailto:${r.correspondingAuthorEmail}`}
+                    href={r.href}
+                    target="_blank"
+                    rel="noreferrer"
                     className="text-accent underline underline-offset-4"
                   >
-                    {r.correspondingAuthorEmail}
+                    Open source
                   </a>
-                  )
-                </>
-              ) : null}
-            </div>
-          )}
-
-          {(r.doi || r.pmid) && (
-            <div className="text-xs leading-relaxed text-muted-foreground">
-              {r.doi ? (
-                <div>
-                  <span className="font-medium text-foreground/70">DOI:</span>{" "}
-                  {r.doi}
                 </div>
-              ) : null}
-              {r.pmid ? (
-                <div>
-                  <span className="font-medium text-foreground/70">PMID:</span>{" "}
-                  {r.pmid}
-                </div>
-              ) : null}
-            </div>
-          )}
-
-          {r.affiliations && r.affiliations.length > 0 && (
-            <div className="space-y-1 text-xs leading-relaxed text-muted-foreground">
-              <div className="font-medium text-foreground/70">Affiliations:</div>
-              <ul className="list-disc pl-4 space-y-1">
-                {r.affiliations.map((affiliation) => (
-                  <li key={affiliation}>{affiliation}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {r.href && (
-            <div className="pt-1">
-              <a
-                href={r.href}
-                target="_blank"
-                rel="noreferrer"
-                className="text-xs text-accent underline underline-offset-4"
-              >
-                Open source
-              </a>
+              )}
             </div>
           )}
         </div>
