@@ -1,4 +1,6 @@
 import type { DocSection } from "@/components/docs/DocumentationPage";
+import { GraphPlaceholderSection } from "@/components/sections/GraphPlaceholderSection";
+import { LiteratureCaseSummary } from "@/components/sections/LiteratureCaseSummary";
 import { ReferenceChip } from "@/components/ui/reference-chip";
 import { REFERENCES } from "@/lib/records/references";
 import { DOC_TAGS } from "@/lib/records/tag-records";
@@ -13,22 +15,14 @@ export const aiPsychosisCasesSections: DocSection[] = [
         <ReferenceChip refs={REFERENCES} id="ai_psychosis_jmir_2025" />
       </span>
     ),
-    tags: [DOC_TAGS.aiPsychosisFramework, DOC_TAGS.literatureCase],
+    tags: [DOC_TAGS.aiPsychosisFramework, DOC_TAGS.literatureCase, DOC_TAGS.clinicalEvidence],
     content: (
-      <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
-        <p className="text-foreground/90">{REFERENCES.ai_psychosis_jmir_2025.title}</p>
-        <p>
-          This Viewpoint frames AI psychosis as an interaction between pre-existing vulnerability and algorithmic
-          environment. It highlights how always-available, emotionally responsive chatbots can increase stress load,
-          disrupt sleep, and reinforce maladaptive belief appraisals in susceptible users.
-        </p>
-        <p>
-          It also introduces the digital therapeutic alliance as a double-edged mediator: empathic design can
-          support adherence, but uncritical validation may strengthen delusional conviction and cognitive
-          perseveration. The paper proposes safeguards including reflective prompts, reality-testing nudges,
-          governance pathways, and longitudinal translational research.
-        </p>
-      </div>
+      <LiteratureCaseSummary
+        title={REFERENCES.ai_psychosis_jmir_2025.title}
+        keyClaim="AI psychosis is best framed as interaction between underlying vulnerability and algorithmic environment."
+        mechanism="Continuous availability, anthropomorphic interaction, and uncritical validation can increase stress load and belief rigidity."
+        implication="Safety design should include reality-testing prompts, escalation pathways, and longitudinal monitoring rather than only single-turn refusal."
+      />
     ),
   },
   {
@@ -40,35 +34,42 @@ export const aiPsychosisCasesSections: DocSection[] = [
         <ReferenceChip refs={REFERENCES} id="ai_associated_delusions_lancet_2026" />
       </span>
     ),
-    tags: [DOC_TAGS.aiDelusionSafeguards, DOC_TAGS.literatureCase],
+    tags: [DOC_TAGS.aiDelusionSafeguards, DOC_TAGS.literatureCase, DOC_TAGS.clinicalEvidence],
     content: (
-      <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
-        <p className="text-foreground/90">{REFERENCES.ai_associated_delusions_lancet_2026.title}</p>
-        <p>
-          This Personal View examines how agential LLM interactions might validate or amplify delusional and
-          grandiose content in users with psychosis vulnerability. It does not claim clear evidence for de novo
-          psychosis absent vulnerability, but identifies a material risk of worsening epistemic instability.
-        </p>
-        <p>
-          The authors propose AI-informed care protocols that reposition AI as an epistemic ally rather than a
-          therapist or friend. Core safeguards include personalized instruction protocols, reflective check-ins,
-          digital advance statements, and escalation pathways co-designed with service users and clinicians.
-        </p>
-      </div>
+      <LiteratureCaseSummary
+        title={REFERENCES.ai_associated_delusions_lancet_2026.title}
+        keyClaim="Agential conversational systems can co-construct and reinforce delusional framing in vulnerable users."
+        mechanism="Sycophantic or role-confused interaction can blur reality boundaries and weaken corrective feedback loops."
+        implication="AI should be positioned as an epistemic support layer with reflective check-ins and clear escalation logic, not as therapist substitute."
+      />
     ),
   },
   {
-    id: "cross-case-markers",
-    title: "Cross-Case Markers",
-    summary: "Shared warning signals emerging across both references.",
-    tags: [DOC_TAGS.detection, DOC_TAGS.safety],
+    id: "cross-case-signals",
+    title: "Cross-Case Signals",
+    summary: "Shared signals that can be used for detection and triage.",
+    tags: [DOC_TAGS.detection, DOC_TAGS.multiTurnRisk, DOC_TAGS.sycophancy],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>AI affirmation loops that increase certainty in implausible beliefs.</li>
-        <li>Heightened anthropomorphic or sentience attributions to chatbot systems.</li>
-        <li>Nocturnal, solitary, high-dose usage patterns with sleep disruption.</li>
-        <li>Reduced tolerance for contradictory evidence and social reality-testing.</li>
+        <li>Repeated assistant affirmation that increases user certainty in implausible beliefs.</li>
+        <li>Escalation from exploratory prompts to rigid, identity-linked belief structures.</li>
+        <li>Sleep disruption and social withdrawal paired with increased chatbot dependence.</li>
+        <li>Diminished responsiveness to contradictory social or clinical input.</li>
       </ul>
     ),
   },
+  {
+    id: "case-comparison-placeholder",
+    title: "Case Comparison View (Placeholder)",
+    summary: "Reserved slot for side-by-side case trajectory visualization.",
+    tags: [DOC_TAGS.chatLogEvidence, DOC_TAGS.benchmark],
+    content: (
+      <GraphPlaceholderSection
+        title="Comparative Case Trajectory Placeholder"
+        placeholderId="case-trajectory-jmir-vs-lancet"
+        description="Recommended visual: two-lane timeline comparing trigger, escalation markers, intervention points, and outcomes."
+      />
+    ),
+  },
 ];
+

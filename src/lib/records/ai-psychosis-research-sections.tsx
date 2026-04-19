@@ -1,87 +1,108 @@
 import type { DocSection } from "@/components/docs/DocumentationPage";
+import { AIPsychosisTimelineSection } from "@/components/sections/AIPsychosisTimelineSection";
+import { EvidenceConfidenceMatrix } from "@/components/sections/EvidenceConfidenceMatrix";
+import { GraphPlaceholderSection } from "@/components/sections/GraphPlaceholderSection";
+import { TermBoundarySection } from "@/components/sections/TermBoundarySection";
 import { DOC_TAGS } from "@/lib/records/tag-records";
 
 export const aiPsychosisResearchSections: DocSection[] = [
   {
-    id: "overview",
-    title: "Overview",
-    summary: "From taxonomy to instrumentation: a path to an operational field.",
-    tags: [DOC_TAGS.research, DOC_TAGS.clinicalContext],
+    id: "executive-frame",
+    title: "Executive Frame",
+    summary:
+      "AI psychosis should be treated as a longitudinal interaction risk domain, not a synonym for hallucination.",
+    tags: [DOC_TAGS.research, DOC_TAGS.multiTurnRisk, DOC_TAGS.sycophancy],
     content: (
-      <p className="text-sm text-muted-foreground leading-relaxed">
-        The highest leverage move is not proving the phrase "AI psychosis" in abstract terms. The leverage is
-        building standards and infrastructure that make cases classifiable, detectable, and referable across
-        platforms, clinics, and policy systems.
-      </p>
+      <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
+        <p>
+          Current literature uses AI psychosis as an umbrella term for delusion-reinforcing and epistemically
+          destabilizing chatbot interactions, especially in vulnerable users and long-horizon dialogues.
+        </p>
+        <p>
+          The strongest technical bridge is sycophancy and context accumulation rather than single-turn factual
+          error. This changes both evaluation strategy and mitigation design.
+        </p>
+      </div>
     ),
   },
   {
-    id: "wedge",
-    title: "Strategic Wedge",
-    summary: "What to build first so the category can become real and fundable.",
-    tags: [DOC_TAGS.positioning],
+    id: "definition-boundaries",
+    title: "Definition Boundaries",
+    summary:
+      "Separate hallucination, sycophancy, and AI-associated delusion reinforcement to avoid category collapse.",
+    tags: [DOC_TAGS.framework, DOC_TAGS.hallucination, DOC_TAGS.sycophancy],
+    content: <TermBoundarySection />,
+  },
+  {
+    id: "measurement-families",
+    title: "Measurement Families",
+    summary:
+      "Research now spans benchmarks, trajectory studies, psychosis stress tests, product audits, and formal models.",
+    tags: [DOC_TAGS.metrics, DOC_TAGS.benchmark, DOC_TAGS.chatLogEvidence],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>Case definition layer: separate AI-induced from AI-reinforced trajectories with explicit severity tiers.</li>
-        <li>Detection layer: define conversation and behavior markers with measurable thresholds.</li>
-        <li>Referral and response layer: codify platform-to-clinician and family escalation pathways.</li>
-        <li>Data network layer: build incident reporting and longitudinal outcome tracking.</li>
+        <li>Single-turn and short-turn sycophancy tests for agreement drift under user pressure.</li>
+        <li>Multi-turn stance-drift benchmarks capturing compounding conversational degradation.</li>
+        <li>Direct delusion-risk tests with explicit and implicit psychosis-adjacent scenarios.</li>
+        <li>Product-level audits comparing API and consumer interface behavior over time.</li>
+        <li>Real chat-log and simulated-user trajectory analyses for ecological validity.</li>
+        <li>Formal and mechanistic studies explaining why delusional spiraling can emerge.</li>
       </ul>
     ),
   },
   {
-    id: "proposed-framework",
-    title: "Proposed Framework",
-    summary: "Draft model for immediate pilot use and iteration.",
-    tags: [DOC_TAGS.framework],
+    id: "evidence-state",
+    title: "Evidence State",
+    summary: "What is robust, what is partial, and what remains emerging in current evidence.",
+    tags: [DOC_TAGS.clinicalEvidence, DOC_TAGS.chatLogEvidence, DOC_TAGS.fieldStatus],
+    content: <EvidenceConfidenceMatrix />,
+  },
+  {
+    id: "mitigation-status",
+    title: "Mitigation Status",
+    summary:
+      "Targeted post-training plus interaction-aware controls show promise, but long-horizon robustness is unresolved.",
+    tags: [DOC_TAGS.execution, DOC_TAGS.vendorReported, DOC_TAGS.implicitRisk],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>Working title: AI-Induced Delusional Reinforcement Model (AIDRM).</li>
-        <li>Target scope: 5 to 7 symptom-pattern archetypes with clear inclusion and exclusion criteria.</li>
-        <li>Severity structure: 3-tier model (emerging, escalating, acute) with defined intervention triggers.</li>
-        <li>Pathways: 2 to 3 response routes (product intervention, clinical referral, crisis escalation).</li>
+        <li>Small targeted fine-tuning and synthetic data can reduce sycophantic compliance on specific tasks.</li>
+        <li>Prompt-only interventions often degrade under longer conversations and adaptive user pressure.</li>
+        <li>State-aware policy controls improve trajectories in simulation, but broad replication is limited.</li>
+        <li>Vendor-reported safety improvements are useful signals but require independent benchmark replication.</li>
       </ul>
     ),
   },
   {
-    id: "instrumentation-signals",
-    title: "Instrumentation Signals",
-    summary: "Concrete markers for classification, triage, and monitoring.",
-    tags: [DOC_TAGS.metrics],
+    id: "timeline-placeholder",
+    title: "Research Timeline (Placeholder)",
+    summary: "Reserved slot for publication timeline visualization.",
+    tags: [DOC_TAGS.landscape, DOC_TAGS.benchmark],
+    content: <AIPsychosisTimelineSection />,
+  },
+  {
+    id: "mechanism-map-placeholder",
+    title: "Mechanism Map (Placeholder)",
+    summary: "Reserved slot for a causal flow diagram from model behavior to user-level outcomes.",
+    tags: [DOC_TAGS.mechanisms, DOC_TAGS.multiTurnRisk],
     content: (
-      <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>Rapid belief convergence after repeated assistant affirmation.</li>
-        <li>Model-affirmation loops with escalating certainty and reduced challenge tolerance.</li>
-        <li>Identity destabilization language and hidden-message interpretation patterns.</li>
-        <li>Persistence and rigidity markers despite corrective social or clinical input.</li>
-        <li>Functional impact markers: sleep collapse, social withdrawal, and care refusal.</li>
-      </ul>
+      <GraphPlaceholderSection
+        title="Mechanism Flow Placeholder"
+        placeholderId="mechanism-map-sycophancy-to-harm"
+        description="Recommended visual: causal graph linking RLHF incentives, sycophancy, long context, user vulnerability, and risk outcomes."
+      />
     ),
   },
   {
-    id: "evidence-assembly",
-    title: "Evidence Assembly Plan",
-    summary: "How to move from conceptual model to high-trust evidence.",
-    tags: [DOC_TAGS.execution],
+    id: "open-questions",
+    title: "Open Questions",
+    summary: "Priority unresolved questions for 2026+ research planning.",
+    tags: [DOC_TAGS.positioning, DOC_TAGS.research],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>Attach framework classes to real transcripts where permissible, and synthetic analogs where not.</li>
-        <li>Run dual annotation: technical raters plus clinical raters to calibrate category agreement.</li>
-        <li>Track outcomes over time rather than one-off incident snapshots.</li>
-        <li>Version the schema and publish revisions so evidence and definitions can co-evolve.</li>
-      </ul>
-    ),
-  },
-  {
-    id: "reality-check",
-    title: "Reality Check",
-    summary: "Current constraints that explain why the field is still open.",
-    tags: [DOC_TAGS.fieldStatus],
-    content: (
-      <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>This is a pre-paradigm area with no dominant owner and no standard vocabulary.</li>
-        <li>No billing codes and limited reimbursement pathways currently constrain deployment scale.</li>
-        <li>That constraint is also the opportunity: the standards layer is still available to build.</li>
+        <li>Causality: which share of deterioration is attributable to model behavior versus pre-existing vulnerability?</li>
+        <li>Prevalence: how frequent are severe delusion-reinforcing interactions in general population use?</li>
+        <li>Dose-response: what thresholds of context depth, memory, and interaction frequency trigger risk escalation?</li>
+        <li>Policy efficacy: which deployment controls reduce harm without eliminating legitimate utility?</li>
       </ul>
     ),
   },

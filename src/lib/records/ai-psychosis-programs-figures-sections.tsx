@@ -1,105 +1,93 @@
 import type { DocSection } from "@/components/docs/DocumentationPage";
+import { GraphPlaceholderSection } from "@/components/sections/GraphPlaceholderSection";
+import { StakeholderGapGrid } from "@/components/sections/StakeholderGapGrid";
 import { DOC_TAGS } from "@/lib/records/tag-records";
 
 export const aiPsychosisProgramsFiguresSections: DocSection[] = [
   {
     id: "overview",
-    title: "Overview",
-    summary: "A field map of who has leverage, what they hold, and what is missing.",
-    tags: [DOC_TAGS.landscape],
+    title: "Landscape Overview",
+    summary: "The field is active but structurally fragmented across clinical, technical, platform, and policy silos.",
+    tags: [DOC_TAGS.landscape, DOC_TAGS.fieldStatus],
     content: (
       <p className="text-sm text-muted-foreground leading-relaxed">
-        The AI psychosis space is still pre-paradigm: no dominant player, no shared terminology, and no clear
-        operational owner of the clinical and technical intersection. This page tracks the current actor landscape
-        and the cross-silo gaps that create the opportunity.
+        No single group currently owns the integration layer between model behavior data, clinical interpretation,
+        trust-and-safety incident streams, and policy codification. The opportunity is to build the connective
+        standards and infrastructure across these silos.
       </p>
     ),
   },
   {
-    id: "clinical-psychiatry-leaders",
-    title: "Clinical and Psychiatry Leaders",
-    summary: "Where AI psychosis can become clinically legible and fundable.",
-    tags: [DOC_TAGS.clinical],
+    id: "clinical-leadership",
+    title: "Clinical and Psychiatry Leadership",
+    summary: "Where classification legitimacy and care integration are most likely to emerge.",
+    tags: [DOC_TAGS.clinical, DOC_TAGS.clinicalEvidence],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>John Torous (Harvard / Beth Israel): mainstream bridge from digital psychiatry to AI-linked harm signals.</li>
-        <li>Nina Vasan (Stanford Brainstorm): systems-level psychiatry and implementation framing.</li>
-        <li>Thomas Insel: measurable, infrastructure-oriented mental health models and early detection emphasis.</li>
-        <li>OnTrackNY: mature early-psychosis care network and potential intake path for AI-related symptom cases.</li>
-        <li>Reality check: no major clinical leader explicitly owns an "AI psychosis" program yet.</li>
+        <li>Digital psychiatry leaders and early psychosis networks are natural intake points for AI-linked cases.</li>
+        <li>Current gap: limited standardized AI-mechanism language inside clinical workflow and documentation.</li>
+        <li>Priority: integrate digital phenomenology into structured intake, triage, and follow-up templates.</li>
       </ul>
     ),
   },
   {
-    id: "ai-safety-and-alignment",
-    title: "AI Safety and Alignment Researchers",
-    summary: "Strong on reinforcement mechanisms, weaker on psychiatric framing.",
-    tags: [DOC_TAGS.aiLabs, DOC_TAGS.mechanisms],
+    id: "ai-labs-and-alignment",
+    title: "AI Labs and Alignment Teams",
+    summary: "Strong mechanism research capacity, with limited direct clinical coupling.",
+    tags: [DOC_TAGS.aiLabs, DOC_TAGS.mechanisms, DOC_TAGS.sycophancy],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>Anthropic: alignment and model behavior research relevant to harmful reinforcement dynamics.</li>
-        <li>OpenAI: trust and safety and evaluation work with conversation-level failure trajectories.</li>
-        <li>Jan Leike and adjacent alignment researchers: control and reinforcement behavior under optimization pressure.</li>
-        <li>Alignment Research Center: dangerous model behavior focus, with limited psychosis-specific clinical depth.</li>
-        <li>Gap: mechanism expertise exists, but clinical operationalization is not yet integrated.</li>
+        <li>Labs can instrument reinforcement dynamics and evaluate model behavior at large scale.</li>
+        <li>Current gap: limited external access to high-resolution safety trajectories and user outcomes.</li>
+        <li>Priority: shared protocol interfaces with clinicians for interpretable risk escalation signals.</li>
       </ul>
     ),
   },
   {
-    id: "trust-safety-platform-risk",
-    title: "Trust and Safety and Platform Risk Teams",
-    summary: "Highest-velocity incident exposure, but largely private datasets.",
-    tags: [DOC_TAGS.trustAndSafety],
+    id: "trust-safety-and-platform-risk",
+    title: "Trust and Safety and Platform Risk",
+    summary: "Highest-signal incident visibility, but mostly private and operationally constrained.",
+    tags: [DOC_TAGS.trustAndSafety, DOC_TAGS.chatLogEvidence, DOC_TAGS.implicitRisk],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>Google DeepMind safety and red-teaming functions.</li>
-        <li>Meta integrity and safety organizations.</li>
-        <li>TikTok content and behavioral risk teams.</li>
-        <li>These groups see live delusional loops, design escalation policy, and deploy suppression or redirection.</li>
-        <li>Critical limitation: the highest-signal case data is operationally sensitive and not public.</li>
+        <li>Platform teams observe delusion-adjacent loops in production and enforce escalation policy.</li>
+        <li>Current gap: weak long-term outcome coupling after moderation or intervention actions.</li>
+        <li>Priority: interoperable incident schema that supports privacy-preserving cross-system analysis.</li>
       </ul>
     ),
   },
   {
-    id: "public-health-policy",
-    title: "Public Health and Policy Actors",
-    summary: "Institutions that determine whether this becomes a recognized category.",
-    tags: [DOC_TAGS.policy],
+    id: "policy-and-standards-actors",
+    title: "Policy and Standards Actors",
+    summary: "Entities that determine codification, incentives, and eventual care-system scale.",
+    tags: [DOC_TAGS.policy, DOC_TAGS.governance],
     content: (
       <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>World Health Organization: digital mental health framing and global norm influence.</li>
-        <li>National Institute of Mental Health: funding priorities and research direction-setting.</li>
-        <li>American Psychiatric Association: DSM pathways and diagnostic gatekeeping.</li>
-        <li>Working assumption: without DSM or ICD pathway traction, the field remains informal and underfunded.</li>
+        <li>Standards bodies and public-health institutions can convert fragmented evidence into durable guidance.</li>
+        <li>Current gap: insufficient harmonized evidence packages for formal pathway adoption.</li>
+        <li>Priority: shared vocabulary, minimum reporting standards, and versioned risk definitions.</li>
       </ul>
     ),
   },
   {
-    id: "independent-early-signal-researchers",
-    title: "Independent and Early-Signal Researchers",
-    summary: "Closest to the thesis, but fragmented and not yet operationalized.",
-    tags: [DOC_TAGS.earlySignals],
-    content: (
-      <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>Research threads include LLM sycophancy, hallucination reinforcement, and parasocial chatbot dependency.</li>
-        <li>Frequent institutional homes include Stanford, MIT Media Lab, and the Oxford Internet Institute.</li>
-        <li>Current state: fragmented outputs, limited clinical integration, and weak implementation pathways.</li>
-      </ul>
-    ),
+    id: "capability-gap-grid",
+    title: "Capability Gap Grid",
+    summary: "A practical map of who has what and what they still lack.",
+    tags: [DOC_TAGS.gapAnalysis, DOC_TAGS.execution],
+    content: <StakeholderGapGrid />,
   },
   {
-    id: "system-gap-map",
-    title: "System Gap Map",
-    summary: "The field is split across four silos with no integration owner.",
-    tags: [DOC_TAGS.gapAnalysis],
+    id: "ecosystem-map-placeholder",
+    title: "Ecosystem Map (Placeholder)",
+    summary: "Reserved slot for actor network and data-flow visualization.",
+    tags: [DOC_TAGS.landscape, DOC_TAGS.gapAnalysis],
     content: (
-      <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-        <li>AI labs have behavioral data, but lack clinical interpretation infrastructure.</li>
-        <li>Clinicians have diagnostic frameworks, but lack AI-specific mechanism models.</li>
-        <li>Trust and safety teams have incident visibility, but not long-term outcomes.</li>
-        <li>Policy institutions have authority, but insufficient harmonized evidence.</li>
-        <li>No persistent cross-silo integration layer currently owns this interface.</li>
-      </ul>
+      <GraphPlaceholderSection
+        title="Actor and Data-Flow Placeholder"
+        placeholderId="ecosystem-map-clinical-labs-platform-policy"
+        description="Recommended visual: network graph with nodes for stakeholders and edges for data, referral, and governance flows."
+      />
     ),
   },
 ];
+
