@@ -5,28 +5,17 @@ import { DOC_TAGS } from "@/lib/records/tag-records";
 
 export const aiPsychosisCasesSections: DocSection[] = [
   {
-    id: "overview",
-    title: "Overview",
-    summary: "Documented literature cases and conceptual case models of AI-associated psychosis risk.",
-    tags: [DOC_TAGS.risk, DOC_TAGS.clinicalContext, DOC_TAGS.referenced],
-    content: (
-      <p className="text-sm text-muted-foreground leading-relaxed">
-        This page is populated with published references treated as core cases for AI psychosis framing.
-        Each case below is summarized directly from the reference abstract and labeled with its reference tag.
-      </p>
-    ),
-  },
-  {
     id: "case-jmir-2025",
     title: "Case: JMIR Mental Health (2025)",
-    summary: "Stress-vulnerability and theory-of-mind framing for AI-mediated delusional escalation.",
+    summary: (
+      <span className="inline-flex flex-wrap items-center gap-2">
+        <span>Stress-vulnerability and theory-of-mind framing for AI-mediated delusional escalation.</span>
+        <ReferenceChip refs={REFERENCES} id="ai_psychosis_jmir_2025" />
+      </span>
+    ),
     tags: [DOC_TAGS.aiPsychosisFramework, DOC_TAGS.literatureCase],
     content: (
       <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-foreground font-medium">Reference</span>
-          <ReferenceChip refs={REFERENCES} id="ai_psychosis_jmir_2025" />
-        </div>
         <p className="text-foreground/90">{REFERENCES.ai_psychosis_jmir_2025.title}</p>
         <p>
           This Viewpoint frames AI psychosis as an interaction between pre-existing vulnerability and algorithmic
@@ -45,14 +34,15 @@ export const aiPsychosisCasesSections: DocSection[] = [
   {
     id: "case-lancet-2026",
     title: "Case: The Lancet Psychiatry (2026)",
-    summary: "Delusion co-creation risks and AI-informed care safeguards for vulnerable users.",
+    summary: (
+      <span className="inline-flex flex-wrap items-center gap-2">
+        <span>Delusion co-creation risks and AI-informed care safeguards for vulnerable users.</span>
+        <ReferenceChip refs={REFERENCES} id="ai_associated_delusions_lancet_2026" />
+      </span>
+    ),
     tags: [DOC_TAGS.aiDelusionSafeguards, DOC_TAGS.literatureCase],
     content: (
       <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-foreground font-medium">Reference</span>
-          <ReferenceChip refs={REFERENCES} id="ai_associated_delusions_lancet_2026" />
-        </div>
         <p className="text-foreground/90">{REFERENCES.ai_associated_delusions_lancet_2026.title}</p>
         <p>
           This Personal View examines how agential LLM interactions might validate or amplify delusional and

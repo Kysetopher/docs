@@ -14,7 +14,7 @@ import { type ReactNode } from "react";
 export type DocSection = {
   id: string;
   title: string;
-  summary?: string;
+  summary?: ReactNode;
   tags?: DocTag[];
   content?: ReactNode;
   children?: DocSection[];
@@ -85,9 +85,9 @@ function SectionContent({
             </p>
 
             {section.summary ? (
-              <p className="min-w-0 flex-1 text-left text-sm text-muted-foreground leading-relaxed">
+              <div className="min-w-0 flex-1 text-left text-sm text-muted-foreground leading-relaxed">
                 {section.summary}
-              </p>
+              </div>
             ) : null}
           </div>
 
