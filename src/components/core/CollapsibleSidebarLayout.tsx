@@ -12,7 +12,7 @@ interface CollapsibleSidebarLayoutProps {
 export default function CollapsibleSidebarLayout({
   sidebar,
   children,
-  sidebarWidth = "w-[300px]",
+  sidebarWidth = "w-[600px]",
 }: CollapsibleSidebarLayoutProps) {
   const [collapsed, setCollapsed] = useState(
     () => (typeof window !== "undefined" ? window.innerWidth < 1024 : true)
