@@ -241,7 +241,7 @@ export function TimelineGraph({ title, columns, renderEventFooter }: TimelineGra
           .attr("y", y + 20)
           .attr("text-anchor", "middle")
           .attr("fill", "rgba(255,255,255,0.95)")
-          .style("font-size", "16px")
+          .style("font-size", "12px")
           .style("font-weight", 600)
           .text(eventLabel);
 
