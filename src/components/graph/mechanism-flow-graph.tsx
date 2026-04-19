@@ -152,7 +152,7 @@ export function MechanismFlowGraph({ title, nodes, links }: MechanismFlowGraphPr
         .append("path")
         .attr("d", d)
         .attr("fill", "none")
-        .attr("stroke", "rgba(226,232,240,0.68)")
+        .attr("stroke", "rgba(27, 109, 215, 0.68)")
         .attr("stroke-width", 1.4)
         .attr("marker-end", `url(#${markerId})`);
     });
@@ -169,7 +169,7 @@ export function MechanismFlowGraph({ title, nodes, links }: MechanismFlowGraphPr
         .attr("height", node.h)
         .attr("rx", 2)
         .attr("ry", 2)
-        .attr("fill", "rgba(17,24,39,0.66)")
+        .attr("fill", "rgba(114, 117, 124, 0.31)")
         .attr("stroke", "rgba(226,232,240,0.56)")
         .attr("stroke-width", 1);
 
