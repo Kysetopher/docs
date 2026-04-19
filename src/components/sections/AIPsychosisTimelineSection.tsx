@@ -16,7 +16,7 @@ type TimelineYearRecord = {
 const AI_PSYCHOSIS_TIMELINE_DATA: TimelineYearRecord[] = [
   {
     year: "2023",
-    color: "rgba(39, 44, 52, 0.92)",
+    color: "rgba(15, 93, 219, 0.14)",
     events: [
       {
         label: "Sharma et al. on sycophancy in RLHF assistants",
@@ -30,7 +30,7 @@ const AI_PSYCHOSIS_TIMELINE_DATA: TimelineYearRecord[] = [
   },
   {
     year: "2024",
-    color: "rgba(38, 9, 9, 0.92)",
+    color: "rgba(218, 26, 26, 0.25)",
     events: [
       {
         label: "Liu et al. survey LVLM hallucination taxonomy and evaluation",
@@ -44,7 +44,7 @@ const AI_PSYCHOSIS_TIMELINE_DATA: TimelineYearRecord[] = [
   },
   {
     year: "2025",
-    color: "rgba(105, 17, 86, 0.95)",
+    color: "rgba(163, 16, 131, 0.4)",
     events: [
       {
         label: "SycEval quantifies progressive and regressive sycophancy",
@@ -78,7 +78,7 @@ const AI_PSYCHOSIS_TIMELINE_DATA: TimelineYearRecord[] = [
   },
   {
     year: "2026",
-    color: "rgba(88, 110, 122, 0.95)",
+    color: "rgba(23, 135, 195, 0.29)",
     events: [
       {
         label: "Chandra et al. formalize delusional spiraling",
