@@ -136,7 +136,9 @@ function SectionContent({
 export type DocumentationHeader = {
   title: string;
   description?: string;
-  icon?:string;
+  icon?: string;
+  bannerImageUrl?: string;
+  bannerImageAlt?: string;
 };
 
 export type DocumentationPageProps = {
@@ -244,6 +246,17 @@ export function DocumentationPage({
         <main className="flex h-full flex-col overflow-hidden">
           <SimpleBar className="flex-1" style={{ maxHeight: "100%" }}>
             <div className="mx-auto  space-y-10 px-6 py-10 lg:py-12">
+              {header.bannerImageUrl ? (
+                <div className="overflow-hidden rounded-2xl border border-border/50 bg-background/30">
+                  <img
+                    src={header.bannerImageUrl}
+                    alt={header.bannerImageAlt ?? `${header.title} banner`}
+                    className="h-48 w-full object-cover sm:h-56 lg:h-64"
+                    loading="lazy"
+                  />
+                </div>
+              ) : null}
+
               <header className="space-y-3">
                 <div className="flex items-center  gap-2 text-sm font-semibold uppercase tracking-wide "> {header.title}
                   </div>
