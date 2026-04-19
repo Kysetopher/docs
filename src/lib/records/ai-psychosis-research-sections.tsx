@@ -1,7 +1,7 @@
 import type { DocSection } from "@/components/docs/DocumentationPage";
 import { AIPsychosisTimelineSection } from "@/components/sections/AIPsychosisTimelineSection";
 import { EvidenceConfidenceMatrix } from "@/components/sections/EvidenceConfidenceMatrix";
-import { GraphPlaceholderSection } from "@/components/sections/GraphPlaceholderSection";
+import { MechanismMapSection } from "@/components/sections/MechanismMapSection";
 import { TermBoundarySection } from "@/components/sections/TermBoundarySection";
 import { DOC_TAGS } from "@/lib/records/tag-records";
 
@@ -80,17 +80,11 @@ export const aiPsychosisResearchSections: DocSection[] = [
     content: <AIPsychosisTimelineSection />,
   },
   {
-    id: "mechanism-map-placeholder",
-    title: "Mechanism Map (Placeholder)",
-    summary: "Reserved slot for a causal flow diagram from model behavior to user-level outcomes.",
+    id: "mechanism-map",
+    title: "Mechanism Map",
+    summary: "Causal flow from training and interaction dynamics to user-level risk outcomes.",
     tags: [DOC_TAGS.mechanisms, DOC_TAGS.multiTurnRisk],
-    content: (
-      <GraphPlaceholderSection
-        title="Mechanism Flow Placeholder"
-        placeholderId="mechanism-map-sycophancy-to-harm"
-        description="Recommended visual: causal graph linking RLHF incentives, sycophancy, long context, user vulnerability, and risk outcomes."
-      />
-    ),
+    content: <MechanismMapSection />,
   },
   {
     id: "open-questions",
