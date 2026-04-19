@@ -76,7 +76,7 @@ export function ReferenceChip<TMap extends ReferenceMap>({
       <HoverCardContent
         align={align}
         side={side}
-        className="max-w-[800px] bg-accent/60 rounded-2xl border border-border/40 shadow-xl backdrop-blur"
+        className="max-w-[800px] bg-background/60 rounded-2xl border border-border/40 shadow-xl backdrop-blur"
       >
 
           <div className="flex p-4 border-b justify-between">
