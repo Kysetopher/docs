@@ -144,6 +144,8 @@ export type DocumentationHeader = {
 export type DocumentationPageProps = {
   sections: DocSection[];
   header?: DocumentationHeader;
+  backHref?: string;
+  backLabel?: string;
 };
 
 export function DocumentationPage({
@@ -153,6 +155,8 @@ export function DocumentationPage({
     description:
       "A living reference for the astrology companion app. Update the documentation below to refresh the navigation automatically.",
   },
+  backHref = "/docs",
+  backLabel = "Documentation Spaces",
 }: DocumentationPageProps) {
   const [selectedId, setSelectedId] = useState<string>(sections[0]?.id ?? "");
   const navigate = useNavigate();
@@ -228,10 +232,10 @@ export function DocumentationPage({
               type="button"
               variant="outline"
               className="w-full border-0 border-b justify-start rounded-none"
-              onClick={() => navigate("/docs")}
+              onClick={() => navigate(backHref)}
             >
               <Icon icon="mdi:arrow-left" className="mr-2 h-4 w-4" />
-              Documentation Site Map
+              {backLabel}
             </Button>
 
             <Hierarchy
