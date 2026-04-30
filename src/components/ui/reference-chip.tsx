@@ -6,8 +6,6 @@ import {
 import { Tag } from "@/components/ui/tag";
 import type { DocTag } from "@/lib/records/tag-records";
 import { Icon } from "@iconify/react";
-import React from "react";
-
 export type ReferenceRecord = {
   id: string;
   authors: string;
@@ -17,6 +15,7 @@ export type ReferenceRecord = {
   note?: string;
   href?: string;
   tags?: readonly DocTag[];
+  metadata?: Record<string, string>;
   photo?: {
     src: string;
     alt?: string;
@@ -127,6 +126,26 @@ export function ReferenceChip<TMap extends ReferenceMap>({
             {r.note && (
               <div className="text-xs text-white/90 bg-white/5 p-4 rounded-xl border border-white/10 leading-relaxed italic shadow-inner">
                 "{r.note}"
+              </div>
+            )}
+
+            {r.metadata && Object.keys(r.metadata).length > 0 && (
+              <div className="space-y-3">
+                <span className="font-bold text-[10px] uppercase tracking-[0.2em] text-white/40 block">
+                  Qualification Metadata
+                </span>
+                <div className="grid grid-cols-2 gap-2">
+                  {Object.entries(r.metadata).map(([key, value]) => (
+                    <div key={key} className="flex flex-col gap-0.5 rounded-lg border border-white/10 bg-white/5 p-3">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/40">
+                        {key}
+                      </span>
+                      <span className="text-[11px] font-medium leading-tight text-white/90">
+                        {value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 

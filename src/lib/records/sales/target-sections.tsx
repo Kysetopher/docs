@@ -24,7 +24,7 @@ export const SALES_REFERENCES = {
   st_engg: { id: "st_engg", authors: "ST Engg", title: "ST Engineering", note: "Multi-sector conglomerate with complex global manufacturing drag.", photo: manufacturingImg, href: "https://www.stengg.com/", tags: [DOC_TAGS.manufacturing, DOC_TAGS.innovation], painPoints: ["Cross-Divisional Silos", "Legacy Workflows"], sellingStrategy: "Create a 'Unified Engineering Dataset'. Position as the control layer across Aerospace and Electronics." },
   
   dyson: { id: "dyson", authors: "Dyson", title: "Dyson Global", note: "Fragmented R&D channels create high-cost drag. Signals are manual.", photo: { src: "/assets/sales/dyson_premium.png" }, href: "https://www.dyson.com.sg/", tags: [DOC_TAGS.manufacturing, DOC_TAGS.innovation], painPoints: ["High-Cost Data Drag", "Manual Signal Analysis"], sellingStrategy: "Implement a 'Control Layer' for R&D. Normalize global manufacturing inputs into a central dataset to drive execution." },
-  micron: { id: "micron", authors: "Micron Tech", note: "Yield signals are lost in the cleanroom floor noise. Costs are rising.", photo: manufacturingImg, href: "https://www.micron.com/", tags: [DOC_TAGS.manufacturing, DOC_TAGS.semiconductors] },
+  micron: { id: "micron", authors: "Micron Tech", title: "Micron Technology", note: "Yield signals are lost in the cleanroom floor noise. Costs are rising.", photo: manufacturingImg, href: "https://www.micron.com/", tags: [DOC_TAGS.manufacturing, DOC_TAGS.semiconductors] },
   wohhup: { id: "wohhup", authors: "Woh Hup", title: "Woh Hup Singapore", note: "Sub-contractor inputs are non-normalized. Real site progress is invisible.", photo: constructionImg, href: "https://www.wohhup.com/", tags: [DOC_TAGS.construction, DOC_TAGS.execution], painPoints: ["Invisible Site Signals", "High-Cost Fragmentation"], sellingStrategy: "Consolidate toolsets into a single operational layer. Surface crucial site information to the executive teams in real-time." },
 
   google_sg: { id: "google_sg", authors: "Google SG", title: "Google Singapore", note: "Managing hyper-scale cloud across fragmented SEA markets.", photo: institutionalImg, href: "https://www.google.com.sg/", tags: [DOC_TAGS.enterprise, DOC_TAGS.innovation], painPoints: ["Compliance Overhead", "Regional Data Latency"] },
@@ -83,7 +83,7 @@ export const SALES_REFERENCES = {
 
   // --- JAPAN & KOREA ---
   riken_aip: { id: "riken_aip", authors: "RIKEN", title: "RIKEN AIP", note: "Implicit research signals are invisible. Veteran knowledge is manual.", photo: institutionalImg, href: "https://aip.riken.jp/", tags: [DOC_TAGS.research, DOC_TAGS.aiLabs] },
-  obayashi: { id: "obayashi", authors: "Obayashi", note: "Paper-based site signals create massive data gaps.", photo: constructionImg, href: "https://www.obayashi.co.jp/en/", tags: [DOC_TAGS.construction, DOC_TAGS.industrial] },
+  obayashi: { id: "obayashi", authors: "Obayashi", title: "Obayashi Corporation", note: "Paper-based site signals create massive data gaps.", photo: constructionImg, href: "https://www.obayashi.co.jp/en/", tags: [DOC_TAGS.construction, DOC_TAGS.industrial] },
   
   toyota: { id: "toyota", authors: "Toyota", title: "Toyota Global", note: "Extreme Just-in-Time supply chain complexity.", photo: manufacturingImg, href: "https://www.toyota-global.com/", tags: [DOC_TAGS.manufacturing, DOC_TAGS.automotive], painPoints: ["Supply Chain Transparency", "EV Transition Drag"], sellingStrategy: "Normalize global factory floor signals into a central 'JIT Control Layer'." },
   sony: { id: "sony", authors: "Sony", title: "Sony Global", note: "Highly diversified conglomerate with autonomous division silos.", photo: manufacturingImg, href: "https://www.sony.com/", tags: [DOC_TAGS.manufacturing, DOC_TAGS.innovation], painPoints: ["Division Synergy", "R&D Data Sharing"] },
@@ -132,6 +132,251 @@ export const SALES_REFERENCES = {
   accor: { id: "accor", authors: "Accor", title: "Accor Group", note: "Global multi-brand noise. Guest signals are non-normalized.", photo: hospitalityImg, href: "https://group.accor.com/", tags: [DOC_TAGS.hospitality, DOC_TAGS.enterprise] },
   ihg: { id: "ihg", authors: "IHG", title: "IHG Hotels & Resorts", note: "Massive franchise noise. Real-time ops signals are invisible.", photo: hospitalityImg, href: "https://www.ihgplc.com/", tags: [DOC_TAGS.hospitality, DOC_TAGS.enterprise] },
   soho_house: { id: "soho_house", authors: "Soho House", title: "Soho House", note: "Member intent signals are lost in manual community noise.", photo: hospitalityImg, href: "https://www.sohohouse.com/", tags: [DOC_TAGS.hospitality, DOC_TAGS.culture] },
+
+  // --- CORE ICP / GLOBAL SCALE-UPS ---
+  revolut: {
+    id: "revolut",
+    authors: "Revolut",
+    title: "Revolut",
+    note: "Multi-country fintech ops need crisp decision rights before automation scales further.",
+    photo: institutionalImg,
+    href: "https://www.revolut.com/",
+    tags: [DOC_TAGS.enterprise, DOC_TAGS.scale],
+    metadata: { Buyer: "COO / Ops", Trigger: "Policy drift", Entry: "Governance Assessment", Next: "Architecture" },
+    painPoints: ["Regional Policy Drift", "Escalation Overload"],
+    sellingStrategy: "Open with a Governance Readiness Assessment to map country-by-country decision rights, then reshape the operating architecture around the highest-friction workflows."
+  },
+  wise: {
+    id: "wise",
+    authors: "Wise",
+    title: "Wise",
+    note: "Cross-border money movement demands measurable accountability at every handoff.",
+    photo: institutionalImg,
+    href: "https://wise.com/",
+    tags: [DOC_TAGS.enterprise, DOC_TAGS.metrics],
+    metadata: { Buyer: "COO / Risk", Trigger: "Traceability gap", Entry: "Revenue Audit", Next: "Architecture" },
+    painPoints: ["Compliance Traceability", "Cost-to-Serve Visibility"],
+    sellingStrategy: "Start with a Revenue System Audit to expose where ownership breaks across transfer, compliance, and support, then move into an accountable architecture."
+  },
+  monzo: {
+    id: "monzo",
+    authors: "Monzo",
+    title: "Monzo",
+    note: "Digital banking at scale creates heavy support, fraud, and escalation load.",
+    photo: institutionalImg,
+    href: "https://monzo.com/",
+    tags: [DOC_TAGS.enterprise, DOC_TAGS.execution],
+    metadata: { Buyer: "COO / CX Ops", Trigger: "Support load", Entry: "Delivery Upgrade", Next: "Implementation" },
+    painPoints: ["Support Escalations", "Fraud Review Ownership"],
+    sellingStrategy: "Lead with a Delivery System Upgrade to map where human override is missing, then design the fraud and support architecture around that operating reality."
+  },
+  personio: {
+    id: "personio",
+    authors: "Personio",
+    title: "Personio",
+    note: "HR operations only scale when policy, workflow, and ownership stay in sync.",
+    photo: institutionalImg,
+    href: "https://www.personio.com/",
+    tags: [DOC_TAGS.enterprise, DOC_TAGS.framework],
+    metadata: { Buyer: "COO / People Ops", Trigger: "Workflow sprawl", Entry: "Governance Assessment", Next: "Architecture" },
+    painPoints: ["Workflow Hand-offs", "Policy Drift"],
+    sellingStrategy: "Use a Governance Readiness Assessment to map decision rights across HR workflows, then package the redesign as a clear path from diagnosis to implementation."
+  },
+  deel: {
+    id: "deel",
+    authors: "Deel",
+    title: "Deel",
+    note: "Global employment ops need consistent rule handling across jurisdictions and vendors.",
+    photo: institutionalImg,
+    href: "https://www.deel.com/",
+    tags: [DOC_TAGS.enterprise, DOC_TAGS.governance],
+    metadata: { Buyer: "COO / Legal Ops", Trigger: "Jurisdiction drift", Entry: "Governance Assessment", Next: "Architecture" },
+    painPoints: ["Jurisdiction Drift", "Contract Exception Handling"],
+    sellingStrategy: "Anchor the conversation in governance first, then move from the diagnostic into an architecture that makes policy execution operable."
+  },
+
+  stripe: {
+    id: "stripe",
+    authors: "Stripe",
+    title: "Stripe",
+    note: "Payments operations require precise routing, ownership, and escalation logic.",
+    photo: manufacturingImg,
+    href: "https://stripe.com/",
+    tags: [DOC_TAGS.enterprise, DOC_TAGS.execution],
+    metadata: { Buyer: "RevOps / COO", Trigger: "Decision traceability", Entry: "Revenue Audit", Next: "Architecture" },
+    painPoints: ["Decision Traceability", "Risk Escalation"],
+    sellingStrategy: "Lead with a Revenue System Audit to surface exception paths and ownership gaps, then turn the findings into a payment-ops architecture."
+  },
+  checkout: {
+    id: "checkout",
+    authors: "Checkout.com",
+    title: "Checkout.com",
+    note: "Merchant risk and payment ops need one accountable partner for the messy middle.",
+    photo: manufacturingImg,
+    href: "https://www.checkout.com/",
+    tags: [DOC_TAGS.enterprise, DOC_TAGS.governance],
+    metadata: { Buyer: "COO / Risk", Trigger: "Merchant friction", Entry: "Governance Assessment", Next: "Implementation" },
+    painPoints: ["Merchant Exceptions", "Risk Routing"],
+    sellingStrategy: "Start by mapping how risk decisions actually flow, then propose architecture that unifies operational ownership across the payment stack."
+  },
+  shopify: {
+    id: "shopify",
+    authors: "Shopify",
+    title: "Shopify",
+    note: "Merchant operations need scalable workflows that do not collapse into vendor chaos.",
+    photo: institutionalImg,
+    href: "https://www.shopify.com/",
+    tags: [DOC_TAGS.marketplace, DOC_TAGS.scale],
+    metadata: { Buyer: "COO / Ops", Trigger: "Merchant support load", Entry: "Revenue Audit", Next: "Architecture" },
+    painPoints: ["Merchant Support Overload", "Feature Rollout Drift"],
+    sellingStrategy: "Use a Revenue System Audit to reveal where merchant outcomes are being lost, then move quickly into an architecture that tightens accountability."
+  },
+  booking: {
+    id: "booking",
+    authors: "Booking.com",
+    title: "Booking.com",
+    note: "Travel marketplace ops depend on clean partner coordination and measurable escalation paths.",
+    photo: hospitalityImg,
+    href: "https://www.booking.com/",
+    tags: [DOC_TAGS.marketplace, DOC_TAGS.scale],
+    metadata: { Buyer: "COO / Marketplace Ops", Trigger: "Partner variance", Entry: "Delivery Upgrade", Next: "Architecture" },
+    painPoints: ["Partner Exceptions", "Conversion Leakage"],
+    sellingStrategy: "Lead with a Delivery System Upgrade that maps partner handoffs and exceptions, then package the redesign as a more reliable operating architecture."
+  },
+  getyourguide: {
+    id: "getyourguide",
+    authors: "GetYourGuide",
+    title: "GetYourGuide",
+    note: "Experience marketplaces need cleaner handoffs between supply, support, and conversion teams.",
+    photo: hospitalityImg,
+    href: "https://www.getyourguide.com/",
+    tags: [DOC_TAGS.marketplace, DOC_TAGS.execution],
+    metadata: { Buyer: "COO / Growth Ops", Trigger: "Conversion leakage", Entry: "Revenue Audit", Next: "Architecture" },
+    painPoints: ["Supply Coordination", "Booking Exceptions"],
+    sellingStrategy: "Use the diagnostic to find where conversion and fulfillment diverge, then propose a workflow architecture that keeps the revenue path accountable."
+  },
+
+  deliveroo: {
+    id: "deliveroo",
+    authors: "Deliveroo",
+    title: "Deliveroo",
+    note: "Delivery routing only works when ownership of exceptions is explicit and fast.",
+    photo: eventsImg,
+    href: "https://deliveroo.co.uk/",
+    tags: [DOC_TAGS.scale, DOC_TAGS.execution],
+    metadata: { Buyer: "COO / Ops", Trigger: "Service recovery", Entry: "Delivery Upgrade", Next: "Implementation" },
+    painPoints: ["Dispatch Ownership", "Service Recovery"],
+    sellingStrategy: "Start with the delivery workflow, not the AI tool, so the eventual implementation has clear human override and escalation rules."
+  },
+  hellofresh: {
+    id: "hellofresh",
+    authors: "HelloFresh",
+    title: "HelloFresh",
+    note: "Demand planning, supply chain, and delivery all need the same operating picture.",
+    photo: eventsImg,
+    href: "https://www.hellofresh.com/",
+    tags: [DOC_TAGS.scale, DOC_TAGS.metrics],
+    metadata: { Buyer: "COO / Supply Chain", Trigger: "Forecast misses", Entry: "Revenue Audit", Next: "Architecture" },
+    painPoints: ["Forecast Accuracy", "Ops Coordination"],
+    sellingStrategy: "Use a Revenue System Audit to tie planning and execution together, then move into architecture that turns planning errors into measurable operating signals."
+  },
+  ocado: {
+    id: "ocado",
+    authors: "Ocado",
+    title: "Ocado",
+    note: "Automated fulfillment needs governance over the exceptions automation cannot solve alone.",
+    photo: manufacturingImg,
+    href: "https://www.ocado.com/",
+    tags: [DOC_TAGS.scale, DOC_TAGS.innovation],
+    metadata: { Buyer: "COO / Automation", Trigger: "Fulfillment exceptions", Entry: "Governance Assessment", Next: "Implementation" },
+    painPoints: ["Fulfillment Exceptions", "Automation Governance"],
+    sellingStrategy: "Open with governance so the conversation stays about operational control, then translate the findings into an implementation roadmap."
+  },
+  bolt: {
+    id: "bolt",
+    authors: "Bolt",
+    title: "Bolt",
+    note: "City-by-city operations need local flexibility without losing policy consistency.",
+    photo: institutionalImg,
+    href: "https://bolt.eu/",
+    tags: [DOC_TAGS.scale, DOC_TAGS.execution],
+    metadata: { Buyer: "COO / Market Ops", Trigger: "Local policy drift", Entry: "Delivery Upgrade", Next: "Architecture" },
+    painPoints: ["Local Policy Drift", "Incident Escalation"],
+    sellingStrategy: "Use a Delivery System Upgrade to surface the variance between markets, then design a scalable operating model with clear decision rights."
+  },
+  airbnb: {
+    id: "airbnb",
+    authors: "Airbnb",
+    title: "Airbnb",
+    note: "Marketplace trust, safety, and support all rely on rapid, accountable decisions.",
+    photo: hospitalityImg,
+    href: "https://www.airbnb.com/",
+    tags: [DOC_TAGS.marketplace, DOC_TAGS.governance],
+    metadata: { Buyer: "COO / Trust & Safety", Trigger: "Policy inconsistency", Entry: "Governance Assessment", Next: "Architecture" },
+    painPoints: ["Trust and Safety Escalation", "Policy Consistency"],
+    sellingStrategy: "Lead with the governance gap, then move into an architecture that keeps trust decisions measurable and human-owned."
+  },
+
+  klarna: {
+    id: "klarna",
+    authors: "Klarna",
+    title: "Klarna",
+    note: "AI-heavy consumer finance needs explicit ownership for exceptions and customer outcomes.",
+    photo: institutionalImg,
+    href: "https://www.klarna.com/",
+    tags: [DOC_TAGS.enterprise, DOC_TAGS.innovation],
+    metadata: { Buyer: "COO / Risk", Trigger: "AI pilot sprawl", Entry: "Governance Assessment", Next: "Architecture" },
+    painPoints: ["Exception Ownership", "Pilot-to-Prod Gap"],
+    sellingStrategy: "Use a Governance Readiness Assessment to separate experimentation from operational accountability, then turn the findings into a clear architecture roadmap."
+  },
+  truelayer: {
+    id: "truelayer",
+    authors: "TrueLayer",
+    title: "TrueLayer",
+    note: "Connectivity platforms need crisp escalation paths when partner integrations fail.",
+    photo: institutionalImg,
+    href: "https://truelayer.com/",
+    tags: [DOC_TAGS.enterprise, DOC_TAGS.execution],
+    metadata: { Buyer: "COO / Platform Ops", Trigger: "Integration failure", Entry: "Revenue Audit", Next: "Architecture" },
+    painPoints: ["Integration Ownership", "Partner Failure Routing"],
+    sellingStrategy: "Start with a Revenue System Audit to map where partner data and escalation break down, then move into the operating architecture that owns the fix."
+  },
+  bunq: {
+    id: "bunq",
+    authors: "bunq",
+    title: "bunq",
+    note: "Digital banking growth amplifies process drift unless governance stays explicit.",
+    photo: institutionalImg,
+    href: "https://www.bunq.com/",
+    tags: [DOC_TAGS.enterprise, DOC_TAGS.governance],
+    metadata: { Buyer: "Founder / COO", Trigger: "Process drift", Entry: "Governance Assessment", Next: "Implementation" },
+    painPoints: ["Policy Drift", "Workflow Sprawl"],
+    sellingStrategy: "Lead with governance and keep the diagnostic concrete, then define the implementation scope only after decision rights are clear."
+  },
+  n26: {
+    id: "n26",
+    authors: "N26",
+    title: "N26",
+    note: "Digital banking operations need measurable accountability across product and support flows.",
+    photo: institutionalImg,
+    href: "https://n26.com/",
+    tags: [DOC_TAGS.enterprise, DOC_TAGS.metrics],
+    metadata: { Buyer: "COO / Ops", Trigger: "Support load", Entry: "Delivery Upgrade", Next: "Architecture" },
+    painPoints: ["Support Triage", "Decision Traceability"],
+    sellingStrategy: "Use a Delivery System Upgrade to show where human review is missing, then redesign the operating model around measurable escalation paths."
+  },
+  canva: {
+    id: "canva",
+    authors: "Canva",
+    title: "Canva",
+    note: "Distributed product and people operations benefit from a single accountable operating system.",
+    photo: institutionalImg,
+    href: "https://www.canva.com/",
+    tags: [DOC_TAGS.enterprise, DOC_TAGS.framework],
+    metadata: { Buyer: "COO / People Ops", Trigger: "Operating sprawl", Entry: "Governance Assessment", Next: "Architecture" },
+    painPoints: ["Ownership Ambiguity", "Process Sprawl"],
+    sellingStrategy: "Lead with a governance diagnostic that exposes how work actually moves, then package the resulting architecture as a cleaner operating system."
+  },
 };
 
 function ReferenceList({ label, ids }: { label: string; ids: (keyof typeof SALES_REFERENCES)[] }) {
@@ -268,6 +513,45 @@ export const targetSectionsContent = [
       country: "europe-uk",
       infraManufacturing: ["siemens", "sap", "airbus", "volkswagen"],
       serviceHotelsSpas: ["lvmh", "kering", "hermes", "locke", "hoxton", "selina", "accor", "ihg", "soho_house", "mama_shelter", "twenty_five_hours"],
+    })
+  },
+  {
+    id: "united-kingdom",
+    title: "United Kingdom",
+    content: <SectorHeader title="United Kingdom" subtitle="UK-based operators and finance platforms where governance, accountability, and escalation paths decide whether AI can scale." icon="twemoji:flag-united-kingdom" gradientFrom="from-slate-950/40" gradientTo="to-slate-900/40" minHeight="min-h-[180px]" />,
+    children: CountrySections({
+      country: "united-kingdom",
+      infraInstitutional: ["revolut", "wise", "monzo", "stripe", "checkout", "truelayer"],
+      serviceMarketplaces: ["deliveroo", "ocado", "bolt"],
+    })
+  },
+  {
+    id: "dach",
+    title: "DACH",
+    content: <SectorHeader title="DACH" subtitle="German-speaking scale-ups where process discipline is already real, but AI governance and handoff ownership still need tightening." icon="mdi:earth-europe" gradientFrom="from-slate-950/40" gradientTo="to-slate-900/40" minHeight="min-h-[180px]" />,
+    children: CountrySections({
+      country: "dach",
+      infraInstitutional: ["personio", "n26", "bunq"],
+      serviceMarketplaces: ["hellofresh", "getyourguide"],
+    })
+  },
+  {
+    id: "nordics",
+    title: "Nordics",
+    content: <SectorHeader title="Nordics" subtitle="Nordic operators that turn governance into a product advantage when the operating model stays crisp." icon="mdi:earth" gradientFrom="from-slate-950/40" gradientTo="to-slate-900/40" minHeight="min-h-[180px]" />,
+    children: CountrySections({
+      country: "nordics",
+      infraInstitutional: ["klarna"],
+    })
+  },
+  {
+    id: "global-platforms",
+    title: "Global Platforms",
+    content: <SectorHeader title="Global Platforms" subtitle="Cross-border platform companies that need one accountable operating layer across products, partners, and customers." icon="mdi:cloud-sync" gradientFrom="from-slate-950/40" gradientTo="to-slate-900/40" minHeight="min-h-[180px]" />,
+    children: CountrySections({
+      country: "global-platforms",
+      infraInstitutional: ["deel", "canva"],
+      serviceMarketplaces: ["shopify", "booking", "getyourguide", "airbnb"],
     })
   },
 ];

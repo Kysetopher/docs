@@ -1,4 +1,3 @@
-import React from "react";
 import { SectorHeader } from "./SectorHeader";
 import { MarketMaturityGraph } from "@/components/graph/MarketMaturityGraph";
 import { DigitalAdoptionGraph } from "@/components/graph/DigitalAdoptionGraph";

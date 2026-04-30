@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import { SALES_REFERENCES } from "@/lib/records/sales/target-sections";
 
@@ -178,7 +178,6 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
       .attr("class", "category-icon");
 
     // Render Leaf Icons (depth 4)
-    const ringThickness = (radius / (root.height + 1)) * 0.8;
     const leafIcons = leafIconGroup.selectAll("image")
       .data(root.descendants().filter(d => d.depth === 4))
       .join("image")
@@ -194,7 +193,7 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
       .attr("height", 32)
       .attr("x", (d: any) => arc.centroid(d as any)[0] - 16)
       .attr("y", (d: any) => arc.centroid(d as any)[1] - 16)
-      .attr("clip-path", (d: any, i) => `url(#clip-${i})`)
+      .attr("clip-path", (_d: any, i) => `url(#clip-${i})`)
       .attr("pointer-events", "none")
       .attr("opacity", 0.95)
       .attr("class", "leaf-brand-icon");
@@ -205,7 +204,7 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
       .attr("d", arc as any)
       .attr("fill", "transparent")
       .style("cursor", "crosshair")
-      .on("mouseenter", function(event, d: any) {
+      .on("mouseenter", function(_event, d: any) {
         const offset = 25;
         const descendants = d.descendants();
         const descendantIds = new Set(descendants.map((desc: any) => desc.id));
@@ -247,7 +246,7 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
 
             tooltip
               .style("opacity", 1)
-              .style("width", "420px")
+              .style("width", "620px")
               .html(`
                 <div class="flex flex-col bg-slate-900 overflow-hidden rounded-xl border border-white/10 shadow-2xl">
                   <div class="flex items-start justify-between gap-3 p-4 border-b border-white/10 bg-white/5">
@@ -259,11 +258,24 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
                       </div>
                     </div>
                   </div>
-                  <div class="flex gap-4 p-4">
-                    <div class="flex-1 space-y-5">
+                <div class="flex gap-4 p-4">
+                  <div class="flex-1 space-y-5">
                       ${ref.note ? `
                         <div class="text-xs text-white/80 bg-white/5 p-3 rounded-lg border border-white/5 leading-relaxed">
                           ${ref.note}
+                        </div>
+                      ` : ''}
+                      ${ref.metadata && Object.keys(ref.metadata).length > 0 ? `
+                        <div class="space-y-2">
+                          <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 block">QUALIFICATION METADATA</span>
+                          <div class="grid grid-cols-2 gap-2">
+                            ${Object.entries(ref.metadata as Record<string, string>).map(([key, value]) => `
+                              <div class="flex flex-col gap-0.5 rounded-lg border border-white/10 bg-white/5 p-3">
+                                <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-white/40">${key}</span>
+                                <span class="text-[11px] font-medium leading-tight text-white/90">${value}</span>
+                              </div>
+                            `).join('')}
+                          </div>
                         </div>
                       ` : ''}
                       ${ref.painPoints ? `
@@ -284,10 +296,10 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
                       ` : ''}
                     </div>
                     ${ref.photo ? `
-                      <div class="w-36 shrink-0 h-44 overflow-hidden rounded-lg border border-white/10 shadow-lg">
-                        <img src="${ref.photo.src}" class="h-full w-full object-cover grayscale-[0.3] hover:grayscale-0 transition-all duration-500" />
-                      </div>
-                    ` : ''}
+                    <div class="w-48 shrink-0 h-48 overflow-hidden rounded-lg border border-white/10 shadow-lg">
+                      <img src="${ref.photo.src}" class="h-full w-full object-cover grayscale-[0.3] hover:grayscale-0 transition-all duration-500" />
+                    </div>
+                  ` : ''}
                   </div>
                 </div>
               `);
@@ -307,22 +319,19 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
             </div>
           `);
       })
-      .on("mousemove", function(event) {
+      .on("mousemove", function() {
         const tooltipNode = tooltip.node() as HTMLElement;
         const tooltipWidth = tooltipNode.offsetWidth;
         const tooltipHeight = tooltipNode.offsetHeight;
-        
-        let x = event.pageX + 20;
-        let y = event.pageY - 20;
 
-        if (x + tooltipWidth > window.innerWidth) x = event.pageX - tooltipWidth - 20;
-        if (y + tooltipHeight > window.innerHeight) y = window.innerHeight - tooltipHeight - 20;
+        const x = Math.max(24, Math.floor((window.innerWidth - tooltipWidth) / 2));
+        const y = Math.max(24, Math.floor((window.innerHeight - tooltipHeight) / 2));
 
         tooltip
           .style("left", x + "px")
           .style("top", y + "px");
       })
-      .on("click", function(event, d: any) {
+      .on("click", function(_event, d: any) {
         if (d.depth === 4 && d.data.targetId) {
           const ref = (SALES_REFERENCES as any)[d.data.targetId];
           if (ref?.href) {
@@ -335,7 +344,7 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
           }
         }
       })
-      .on("mouseleave", function(event, d: any) {
+      .on("mouseleave", function(_event, d: any) {
         const descendants = d.descendants();
         const descendantIds = new Set(descendants.map((desc: any) => desc.id));
 

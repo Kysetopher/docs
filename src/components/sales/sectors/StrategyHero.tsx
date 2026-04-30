@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { SectorHeader } from "./SectorHeader";
 import { ICPTierMatrixGraph, type TierDataPoint } from "@/components/graph/ICPTierMatrixGraph";
 import { GlobalPortfolioSunburst, type SunburstNode } from "@/components/graph/GlobalPortfolioSunburst";

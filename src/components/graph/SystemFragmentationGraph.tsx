@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import { Icon } from "@iconify/react";
 import { createRoot } from "react-dom/client";
@@ -137,7 +137,7 @@ export function SystemFragmentationGraph({ nodes, links, height = 240 }: SystemF
     // Scary "Alert" effect: Flash RED and disappear
     const alertInterval = setInterval(() => {
       const targetIdx = Math.floor(Math.random() * nodes.length);
-      const targetNode = node.filter((d, i) => i === targetIdx);
+      const targetNode = node.filter((_d, i) => i === targetIdx);
       
       targetNode.select("path")
         .transition()

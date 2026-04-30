@@ -1,4 +1,3 @@
-import React from "react";
 import { SectorHeader } from "./SectorHeader";
 import { SystemFragmentationGraph, type NetworkNode, type NetworkLink } from "@/components/graph/SystemFragmentationGraph";
 

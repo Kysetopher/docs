@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
 export type RadarPoint = {
@@ -62,15 +62,15 @@ export function AutomationIndexGraph({ data, height = 220 }: AutomationIndexGrap
 
     axes.append("line")
       .attr("x1", 0).attr("y1", 0)
-      .attr("x2", (d, i) => rScale(100) * Math.cos(angleSlice * i - Math.PI / 2))
-      .attr("y2", (d, i) => rScale(100) * Math.sin(angleSlice * i - Math.PI / 2))
+      .attr("x2", (_d, i) => rScale(100) * Math.cos(angleSlice * i - Math.PI / 2))
+      .attr("y2", (_d, i) => rScale(100) * Math.sin(angleSlice * i - Math.PI / 2))
       .attr("stroke", "currentColor")
       .attr("stroke-width", 1)
       .attr("opacity", 0.1);
 
     axes.append("text")
-      .attr("x", (d, i) => rScale(115) * Math.cos(angleSlice * i - Math.PI / 2))
-      .attr("y", (d, i) => rScale(115) * Math.sin(angleSlice * i - Math.PI / 2))
+      .attr("x", (_d, i) => rScale(115) * Math.cos(angleSlice * i - Math.PI / 2))
+      .attr("y", (_d, i) => rScale(115) * Math.sin(angleSlice * i - Math.PI / 2))
       .text(d => d.axis)
       .attr("text-anchor", "middle")
       .attr("font-size", "12px")
@@ -81,7 +81,7 @@ export function AutomationIndexGraph({ data, height = 220 }: AutomationIndexGrap
     // Radar Line
     const radarLine = d3.lineRadial<RadarPoint>()
       .radius(d => rScale(d.value))
-      .angle((d, i) => i * angleSlice)
+      .angle((_d, i) => i * angleSlice)
       .curve(d3.curveLinearClosed);
 
     container.append("path")

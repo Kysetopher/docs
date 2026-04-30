@@ -1,4 +1,3 @@
-import React from "react";
 import { UpsellGapGraph, type UpsellDataPoint } from "@/components/graph/UpsellGapGraph";
 import { SectorHeader } from "./SectorHeader";
 
