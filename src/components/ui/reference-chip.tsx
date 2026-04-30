@@ -27,6 +27,10 @@ export type ReferenceRecord = {
   pmid?: string;
   painPoints?: readonly string[];
   sellingStrategy?: string;
+  highValueTargets?: readonly { name: string; role: string; email?: string; focus?: string }[];
+  entryPoints?: readonly string[];
+  outboundStrategy?: { pitchAngle: string; triggers: readonly string[] };
+  employeeCount?: number;
 };
 
 export type ReferenceMap = Record<string, ReferenceRecord>;
@@ -176,6 +180,55 @@ export function ReferenceChip<TMap extends ReferenceMap>({
                 </span>
                 <div className="rounded-xl bg-primary/10 p-4 border border-primary/20 text-primary/90 text-xs italic leading-relaxed shadow-inner">
                   {r.sellingStrategy}
+                </div>
+              </div>
+            )}
+
+            {/* HIGH-VALUE TARGETS */}
+            {r.highValueTargets && r.highValueTargets.length > 0 && (
+              <div className="space-y-3">
+                <span className="font-bold text-[10px] uppercase tracking-[0.2em] text-white/40 block">
+                  High-Value Targets (Outbound)
+                </span>
+                <div className="space-y-2">
+                  {r.highValueTargets.map((target) => (
+                    <div key={target.name} className="flex items-center justify-between gap-3 p-3 rounded-xl bg-white/5 border border-white/10 group/target hover:bg-white/10 transition-colors">
+                      <div className="min-w-0">
+                        <div className="text-[11px] font-bold text-white group-hover/target:text-primary transition-colors">{target.name}</div>
+                        <div className="text-[10px] text-white/50 truncate">{target.role}</div>
+                      </div>
+                      {target.email && (
+                        <button 
+                          onClick={() => window.location.href = `mailto:${target.email}`}
+                          className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 border border-white/10 text-white/40 hover:text-primary hover:border-primary/40 transition-all"
+                          title={`Email ${target.name}`}
+                        >
+                          <Icon icon="mdi:email-outline" className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* OUTBOUND STRATEGY */}
+            {r.outboundStrategy && (
+              <div className="space-y-3">
+                <span className="font-bold text-[10px] uppercase tracking-[0.2em] text-amber-400/40 block">
+                  Outbound Intelligence
+                </span>
+                <div className="rounded-xl bg-amber-500/5 p-4 border border-amber-500/20 space-y-3">
+                  <div className="text-[11px] font-bold text-amber-200/90 leading-tight">
+                    Pitch Angle: "{r.outboundStrategy.pitchAngle}"
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {r.outboundStrategy.triggers.map((trigger) => (
+                      <span key={trigger} className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-500/80 text-[9px] font-bold uppercase tracking-wider">
+                        {trigger}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
