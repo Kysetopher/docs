@@ -25,6 +25,21 @@ const FLAG_MAP: Record<string, string> = {
   "Europe & UK": "https://flagcdn.com/w320/eu.png"
 };
 
+const SECTOR_IMAGE_MAP: Record<string, string> = {
+  "Hotels & Spas": "/assets/sales/hospitality_premium.png",
+  "Travel": "/assets/sales/hospitality_premium.png",
+  "Institutional": "/assets/sales/institutional_premium.png",
+  "Manufacturing": "/assets/sales/manufacturing_premium.png",
+  "Construction": "/assets/sales/construction_premium.png",
+  "Events": "/assets/sales/events_premium.png",
+  "Marketplaces": "/assets/sales/events_premium.png"
+};
+
+const CATEGORY_ICON_MAP: Record<string, string> = {
+  "Infrastructure": "https://api.iconify.design/mdi:office-building.svg?color=white",
+  "Service": "https://api.iconify.design/mdi:account-group.svg?color=white"
+};
+
 export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioSunburstProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -51,6 +66,8 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
     svg.selectAll("*").remove();
 
     const defs = svg.append("defs");
+
+    // Flags for depth 1
     Object.entries(FLAG_MAP).forEach(([name, url]) => {
       const patternId = `flag-${name.replace(/[^a-z0-9]/gi, '-').toLowerCase()}`;
       const pattern = defs.append("pattern")
@@ -64,7 +81,24 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
         .attr("width", 200)
         .attr("height", 120)
         .attr("preserveAspectRatio", "xMidYMid slice")
-        .attr("opacity", 0.5);
+        .attr("opacity", 0.4);
+    });
+
+    // Sector Images for depth 3
+    Object.entries(SECTOR_IMAGE_MAP).forEach(([name, url]) => {
+      const patternId = `sector-${name.replace(/[^a-z0-9]/gi, '-').toLowerCase()}`;
+      const pattern = defs.append("pattern")
+        .attr("id", patternId)
+        .attr("patternUnits", "objectBoundingBox")
+        .attr("width", 1)
+        .attr("height", 1);
+      
+      pattern.append("image")
+        .attr("href", url)
+        .attr("width", 300)
+        .attr("height", 200)
+        .attr("preserveAspectRatio", "xMidYMid slice")
+        .attr("opacity", 0.3);
     });
 
     const radius = Math.min(width, height) / 2;
@@ -96,7 +130,8 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
     const tooltip = d3.select(tooltipRef.current);
 
     const visualGroup = g.append("g").attr("class", "visual-segments");
-    const iconGroup = g.append("g").attr("class", "leaf-icons");
+    const categoryIconGroup = g.append("g").attr("class", "category-icons");
+    const leafIconGroup = g.append("g").attr("class", "leaf-icons");
     const hitGroup = g.append("g").attr("class", "hit-areas");
 
     // Create clip-paths for target leaves
@@ -116,17 +151,35 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
           if (FLAG_MAP[d.data.name]) return `url(#${patternId})`;
           return color(d.data.name);
         }
+        if (d.depth === 3) {
+          const patternId = `sector-${d.data.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()}`;
+          if (SECTOR_IMAGE_MAP[d.data.name]) return `url(#${patternId})`;
+        }
         const baseColor = d.depth === 2 ? color(d.parent.data.name) : d.depth === 3 ? color(d.parent.parent.data.name) : color(d.parent.parent.parent.data.name);
         return d3.interpolateRgb(baseColor, "#000")(d.depth === 4 ? 0.5 : d.depth === 3 ? 0.3 : 0.1);
       })
-      .attr("fill-opacity", d => (d.depth === 1 ? 0.9 : 0.4))
+      .attr("fill-opacity", d => (d.depth === 1 ? 0.9 : d.depth === 3 ? 0.6 : 0.4))
       .attr("stroke", "#fff")
       .attr("stroke-width", 0.5)
       .attr("stroke-opacity", 0.1)
       .attr("d", arc as any);
 
-    const iconSize = 32; // Large fixed size
-    const leafIcons = iconGroup.selectAll("image")
+    // Render Category Icons (depth 2)
+    const catIcons = categoryIconGroup.selectAll("image")
+      .data(root.descendants().filter(d => d.depth === 2))
+      .join("image")
+      .attr("xlink:href", (d: any) => CATEGORY_ICON_MAP[d.data.name] || null)
+      .attr("width", 24)
+      .attr("height", 24)
+      .attr("x", (d: any) => arc.centroid(d as any)[0] - 12)
+      .attr("y", (d: any) => arc.centroid(d as any)[1] - 12)
+      .attr("pointer-events", "none")
+      .attr("opacity", 0.8)
+      .attr("class", "category-icon");
+
+    // Render Leaf Icons (depth 4)
+    const ringThickness = (radius / (root.height + 1)) * 0.8;
+    const leafIcons = leafIconGroup.selectAll("image")
       .data(root.descendants().filter(d => d.depth === 4))
       .join("image")
       .attr("xlink:href", (d: any) => {
@@ -137,11 +190,11 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
         }
         return null;
       })
-      .attr("width", iconSize)
-      .attr("height", iconSize)
-      .attr("x", (d: any) => arc.centroid(d as any)[0] - iconSize / 2)
-      .attr("y", (d: any) => arc.centroid(d as any)[1] - iconSize / 2)
-      .attr("clip-path", (d: any, i) => `url(#clip-${i})`) // Apply clipping
+      .attr("width", 32)
+      .attr("height", 32)
+      .attr("x", (d: any) => arc.centroid(d as any)[0] - 16)
+      .attr("y", (d: any) => arc.centroid(d as any)[1] - 16)
+      .attr("clip-path", (d: any, i) => `url(#clip-${i})`)
       .attr("pointer-events", "none")
       .attr("opacity", 0.95)
       .attr("class", "leaf-brand-icon");
@@ -167,6 +220,14 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
           .ease(d3.easeCubicOut)
           .attr("transform", `translate(${tx},${ty})`)
           .attr("fill-opacity", 0.95);
+
+        catIcons.filter((node: any) => descendantIds.has(node.id))
+          .interrupt()
+          .transition()
+          .duration(350)
+          .ease(d3.easeCubicOut)
+          .attr("transform", `translate(${tx},${ty})`)
+          .attr("opacity", 1);
 
         leafIcons.filter((node: any) => descendantIds.has(node.id))
           .interrupt()
@@ -284,7 +345,15 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
           .duration(250)
           .ease(d3.easeCubicIn)
           .attr("transform", "translate(0,0)")
-          .attr("fill-opacity", (node: any) => node.depth === 1 ? 0.9 : 0.4);
+          .attr("fill-opacity", (node: any) => node.depth === 1 ? 0.9 : node.depth === 3 ? 0.6 : 0.4);
+
+        catIcons.filter((node: any) => descendantIds.has(node.id))
+          .interrupt()
+          .transition()
+          .duration(250)
+          .ease(d3.easeCubicIn)
+          .attr("transform", "translate(0,0)")
+          .attr("opacity", 0.8);
 
         leafIcons.filter((node: any) => descendantIds.has(node.id))
           .interrupt()
