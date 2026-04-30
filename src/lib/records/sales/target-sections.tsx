@@ -116,18 +116,18 @@ function ReferenceList({ ids }: { ids: (keyof typeof SALES_REFERENCES)[] }) {
   );
 }
 
-function CountrySections({ 
-  infraInstitutional = [], 
-  infraManufacturing = [], 
-  infraConstruction = [], 
-  serviceHospitality = [], 
-  serviceEvents = [] 
-}: { 
-  infraInstitutional?: (keyof typeof SALES_REFERENCES)[], 
-  infraManufacturing?: (keyof typeof SALES_REFERENCES)[], 
-  infraConstruction?: (keyof typeof SALES_REFERENCES)[], 
-  serviceHospitality?: (keyof typeof SALES_REFERENCES)[], 
-  serviceEvents?: (keyof typeof SALES_REFERENCES)[] 
+function CountrySections({
+  infraInstitutional = [],
+  infraManufacturing = [],
+  infraConstruction = [],
+  serviceHospitality = [],
+  serviceEvents = []
+}: {
+  infraInstitutional?: (keyof typeof SALES_REFERENCES)[],
+  infraManufacturing?: (keyof typeof SALES_REFERENCES)[],
+  infraConstruction?: (keyof typeof SALES_REFERENCES)[],
+  serviceHospitality?: (keyof typeof SALES_REFERENCES)[],
+  serviceEvents?: (keyof typeof SALES_REFERENCES)[]
 }) {
   return [
     {
@@ -158,26 +158,6 @@ export const targetSectionsContent = [
     content: (
       <div className="space-y-6">
         <StrategyHero />
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-xl border border-border/40 bg-background/40 p-4 backdrop-blur">
-            <h3 className="mb-2 text-sm font-bold uppercase tracking-wider text-primary">The Pitch Pivot</h3>
-            <div className="space-y-2 text-xs text-muted-foreground leading-relaxed">
-              <p>Sell <span className="font-semibold text-foreground italic">Revenue Increase</span> and <span className="font-semibold text-foreground italic">Ops Clarity</span>.</p>
-              <ul className="list-disc space-y-1 pl-4">
-                <li>"We increase revenue per guest by 15-30% without adding staff"</li>
-                <li>"We unify booking, upsell, and operations so nothing leaks"</li>
-              </ul>
-            </div>
-          </div>
-          <div className="rounded-xl border border-border/40 bg-background/40 p-4 backdrop-blur">
-             <h3 className="mb-2 text-sm font-bold uppercase tracking-wider text-primary">Tier 1 Target Logic</h3>
-             <ul className="list-disc space-y-1 pl-4 text-xs text-muted-foreground">
-               <li><span className="font-semibold text-foreground">5-50 locations</span> OR high-ticket experience ops.</li>
-               <li><span className="font-semibold text-foreground">Fragmented systems</span> (Booking / CRM / Ops).</li>
-               <li><span className="font-semibold text-foreground">Revenue leakage</span> (Upsells, retention).</li>
-             </ul>
-          </div>
-        </div>
       </div>
     ),
   },
