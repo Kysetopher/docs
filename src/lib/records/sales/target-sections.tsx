@@ -3,6 +3,8 @@ import { DOC_TAGS } from "@/lib/records/tag-records";
 import { IndonesiaHero } from "@/components/sales/sectors/IndonesiaHero";
 import { EuropeHero } from "@/components/sales/sectors/EuropeHero";
 import { StrategyHero } from "@/components/sales/sectors/StrategyHero";
+import { SingaporeHero, ThailandMalaysiaHero, JapanKoreaHero, AustraliaHero } from "@/components/sales/sectors/RegionalHeros";
+import { SectorHeader } from "@/components/sales/sectors/SectorHeader";
 
 const institutionalImg = "/assets/sales/institutional.png";
 const hospitalityImg = "/assets/sales/hospitality.png";
@@ -117,12 +119,14 @@ function ReferenceList({ ids }: { ids: (keyof typeof SALES_REFERENCES)[] }) {
 }
 
 function CountrySections({
+  country,
   infraInstitutional = [],
   infraManufacturing = [],
   infraConstruction = [],
   serviceHospitality = [],
   serviceEvents = []
 }: {
+  country: string,
   infraInstitutional?: (keyof typeof SALES_REFERENCES)[],
   infraManufacturing?: (keyof typeof SALES_REFERENCES)[],
   infraConstruction?: (keyof typeof SALES_REFERENCES)[],
@@ -131,20 +135,22 @@ function CountrySections({
 }) {
   return [
     {
-      id: "infrastructure",
+      id: `${country}-infrastructure`,
       title: "Infrastructure",
+      content: <SectorHeader title="Infrastructure" subtitle={`Institutional, Manufacturing, and Construction targets for ${country}.`} icon="mdi:office-building" gradientFrom="from-slate-900/40" gradientTo="to-slate-800/40" />,
       children: [
-        { id: "institutional", title: "Institutional", content: <ReferenceList ids={infraInstitutional} /> },
-        { id: "manufacturing", title: "Manufacturing", content: <ReferenceList ids={infraManufacturing} /> },
-        { id: "construction", title: "Construction", content: <ReferenceList ids={infraConstruction} /> },
+        { id: `${country}-institutional`, title: "Institutional", content: <ReferenceList ids={infraInstitutional} /> },
+        { id: `${country}-manufacturing`, title: "Manufacturing", content: <ReferenceList ids={infraManufacturing} /> },
+        { id: `${country}-construction`, title: "Construction", content: <ReferenceList ids={infraConstruction} /> },
       ].filter(s => (s.content as any).props.ids.length > 0)
     },
     {
-      id: "service",
+      id: `${country}-service`,
       title: "Service",
+      content: <SectorHeader title="Service" subtitle={`Hospitality and Events targets for ${country}.`} icon="mdi:account-group" gradientFrom="from-slate-900/40" gradientTo="to-slate-800/40" />,
       children: [
-        { id: "hospitality", title: "Hospitality", content: <ReferenceList ids={serviceHospitality} /> },
-        { id: "events", title: "Events", content: <ReferenceList ids={serviceEvents} /> },
+        { id: `${country}-hospitality`, title: "Hospitality", content: <ReferenceList ids={serviceHospitality} /> },
+        { id: `${country}-events`, title: "Events", content: <ReferenceList ids={serviceEvents} /> },
       ].filter(s => (s.content as any).props.ids.length > 0)
     }
   ].filter(s => s.children.length > 0);
@@ -164,7 +170,9 @@ export const targetSectionsContent = [
   {
     id: "singapore",
     title: "Singapore",
+    content: <SingaporeHero />,
     children: CountrySections({
+      country: "singapore",
       infraInstitutional: ["govtech", "sndgo", "naic", "astar", "dsta"],
       infraManufacturing: ["dyson", "micron"],
       infraConstruction: ["wohhup"],
@@ -177,6 +185,7 @@ export const targetSectionsContent = [
     title: "Indonesia",
     content: <IndonesiaHero />,
     children: CountrySections({
+      country: "indonesia",
       infraInstitutional: ["brin", "nic_v"],
       infraManufacturing: ["esb"],
       serviceHospitality: ["bobobox", "travelio", "artotel", "amithya", "awanngroup", "anmon", "ar_hospitality", "bambu_indah", "sanchaya", "lombok_lodge", "revivo", "sarinbuana", "nikoi", "villas_bukit", "seminyak_hideaways", "bingin_hideaway", "gili_beach"],
@@ -186,14 +195,18 @@ export const targetSectionsContent = [
   {
     id: "thailand-malaysia",
     title: "Thailand & Malaysia",
+    content: <ThailandMalaysiaHero />,
     children: CountrySections({
+      country: "thailand-malaysia",
       infraInstitutional: ["depa", "nia_t", "mdec"]
     })
   },
   {
     id: "japan-korea",
     title: "Japan & Korea",
+    content: <JapanKoreaHero />,
     children: CountrySections({
+      country: "japan-korea",
       infraInstitutional: ["riken_aip", "aist", "jst", "atla", "kaist"],
       infraManufacturing: ["toyota", "tsmc"],
       infraConstruction: ["obayashi", "kajima"]
@@ -202,7 +215,9 @@ export const targetSectionsContent = [
   {
     id: "australia",
     title: "Australia",
+    content: <AustraliaHero />,
     children: CountrySections({
+      country: "australia",
       infraInstitutional: ["data61", "dstg"],
       infraConstruction: ["lendlease"]
     })
@@ -212,6 +227,7 @@ export const targetSectionsContent = [
     title: "Europe & UK",
     content: <EuropeHero />,
     children: CountrySections({
+      country: "europe-uk",
       serviceHospitality: ["locke", "generator", "hoxton", "zoku", "citizenm", "yeotown", "audo", "wildfitness", "blue_marble", "collective", "habyt", "node_living", "outsite", "selina", "unplugged", "canopy_stars", "sawdays", "coolstays", "plum_guide"],
       serviceEvents: ["secret_cinema", "fever", "dice", "we_are_fstvl", "time_warp"]
     })

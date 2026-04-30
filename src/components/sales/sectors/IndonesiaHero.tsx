@@ -1,59 +1,29 @@
 import React from "react";
-import { Icon } from "@iconify/react";
 import { UpsellGapGraph, type UpsellDataPoint } from "@/components/graph/UpsellGapGraph";
+import { SectorHeader } from "./SectorHeader";
 
 const UPSELL_GAP_DATA: UpsellDataPoint[] = [
   { label: "Bookings", value: 100, color: "#3b82f6" },
   { label: "Check-in", value: 85, color: "#6366f1" },
-  { label: "Upsell", value: 40, color: "#ef4444" }, // Large drop
+  { label: "Upsell", value: 40, color: "#ef4444" },
   { label: "Retention", value: 25, color: "#f59e0b" },
 ];
 
-export function IndonesiaHero() {
+export function IndonesiaHero({ isOpen, onToggle }: { isOpen?: boolean; onToggle?: () => void }) {
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-indigo-950/20 to-cyan-950/20 backdrop-blur-xl">
-      <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-        <div className="space-y-6 flex flex-col items-center text-center">
-
-          <p className="text-lg leading-relaxed text-muted-foreground">
-            Targets in Indonesia suffer from <span className="font-semibold text-foreground">extreme fragmentation</span>.
-            Boutique resorts and operators rely on manual processes for upsells and experiences, leading to massive revenue leakage.
-          </p>
-          <div className="flex flex-wrap gap-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Icon icon="mdi:alert-circle-outline" className="text-red-400" />
-              Manual Ops Chaos
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Icon icon="mdi:trending-down" className="text-amber-400" />
-              Revenue Leakage
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Icon icon="mdi:link-variant-off" className="text-blue-400" />
-              Fragmented CRM
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center justify-center space-y-4 rounded-2xl border border-border/20 bg-background/40 p-6 shadow-inner backdrop-blur-sm">
-          <div className="text-center">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground/60">
-              The Upsell Gap
-            </h3>
-            <p className="text-xs text-muted-foreground">Estimated conversion decay in manual systems</p>
-          </div>
-          <UpsellGapGraph data={UPSELL_GAP_DATA} />
-          <div className="rounded-lg bg-red-500/10 p-3 text-center border border-red-500/20">
-            <p className="text-xs font-semibold text-red-400">
-              ICP Focus: Fragmented ops + manual upsell + heavy reliance on bookings.
-            </p>
-          </div>
-        </div>
+    <SectorHeader
+      title="Indonesia"
+      subtitle="Targets suffer from extreme fragmentation. Boutique resorts rely on manual processes for upsells and experiences, leading to massive revenue leakage."
+      icon="twemoji:flag-indonesia"
+      isOpen={isOpen}
+      onToggle={onToggle}
+    >
+      <div className="flex flex-col items-center justify-center space-y-1 bg-background/40 p-4 shadow-inner backdrop-blur-sm w-full h-full min-w-[320px]">
+        <h3 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+          The Upsell Gap
+        </h3>
+        <UpsellGapGraph data={UPSELL_GAP_DATA} height={100} />
       </div>
-
-      {/* Background decorative elements */}
-      <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
-      <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-cyan-500/5 blur-3xl" />
-    </div>
+    </SectorHeader>
   );
 }

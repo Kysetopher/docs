@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import SimpleBar from "simplebar-react";
 import { useNavigate } from "react-router-dom";
 import CollapsibleSidebarLayout from "@/components/core/CollapsibleSidebarLayout";
@@ -46,62 +46,78 @@ function SectionContent({
 }) {
   const [open, setOpen] = useState(depth <= 1);
 
+  // If content exists, it acts as the header and trigger
+  const hasContent = !!section.content;
+  const contentWithProps = hasContent && React.isValidElement(section.content)
+    ? React.cloneElement(section.content as React.ReactElement, {
+        isOpen: open,
+        onToggle: () => setOpen((v) => !v)
+      } as any)
+    : section.content;
+
   return (
     <section
       id={section.id}
       className="scroll-mt-24 pb-1"
       aria-labelledby={`${section.id}-title`}
     >
-      {/* HEADER ROW (chevron + title + summary + tags) */}
-      <header>
-        <div className="flex items-start gap-3">
-          {/* IMPORTANT: this is JUST the trigger button (so nothing can push the title) */}
-          <Button
-            type="button"
-            variant="ghost"
-            className="h-6 w-6 p-0 shrink-0"
-            aria-expanded={open}
-            aria-controls={`${section.id}-content`}
-            aria-label={`Toggle ${section.title}`}
-            onClick={() => setOpen((v) => !v)}
-          >
-            <Icon
-              icon="mdi:chevron-down"
-              className="h-4 w-4"
-              style={{
-                transition: "transform 200ms ease",
-                transform: open ? "rotate(180deg)" : "rotate(0deg)",
-              }}
-            />
-          </Button>
-
-          {/* Title + summary same line, title never shrinks */}
-          <div className="flex min-w-0 flex-1 items-baseline gap-6">
-            <p
-              id={`${section.id}-title`}
-              className="shrink-0 text-sm font-medium uppercase tracking-wide text-primary/80"
+      {/* HEADER ROW - Only show if NO content banner exists */}
+      {!hasContent && (
+        <header>
+          <div className="flex items-start gap-3">
+            <Button
+              type="button"
+              variant="ghost"
+              className="h-6 w-6 p-0 shrink-0"
+              aria-expanded={open}
+              aria-controls={`${section.id}-content`}
+              aria-label={`Toggle ${section.title}`}
+              onClick={() => setOpen((v) => !v)}
             >
-              {section.title}
-            </p>
+              <Icon
+                icon="mdi:chevron-down"
+                className="h-4 w-4"
+                style={{
+                  transition: "transform 200ms ease",
+                  transform: open ? "rotate(180deg)" : "rotate(0deg)",
+                }}
+              />
+            </Button>
 
-            {section.summary ? (
-              <div className="min-w-0 flex-1 text-left text-sm text-muted-foreground leading-relaxed">
-                {section.summary}
-              </div>
-            ) : null}
-          </div>
+            <div className="flex min-w-0 flex-1 items-baseline gap-6">
+              <p
+                id={`${section.id}-title`}
+                className="shrink-0 text-sm font-medium uppercase tracking-wide text-primary/80"
+              >
+                {section.title}
+              </p>
 
-          {section.tags && section.tags.length > 0 ? (
-          <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-2 pt-0.5">
-            {section.tags.map((tag) => (
-              <Tag key={tag.id} tag={tag} />
-            ))}
+              {section.summary ? (
+                <div className="min-w-0 flex-1 text-left text-sm text-muted-foreground leading-relaxed">
+                  {section.summary}
+                </div>
+              ) : null}
+            </div>
+
+            {section.tags && section.tags.length > 0 ? (
+            <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-2 pt-0.5">
+              {section.tags.map((tag) => (
+                <Tag key={tag.id} tag={tag} />
+              ))}
+            </div>
+          ) : null}
           </div>
-        ) : null}
+        </header>
+      )}
+
+      {/* SECTION CONTENT (Banners/Heros) - Acts as the header if it exists */}
+      {hasContent && (
+        <div className="pb-2">
+          {contentWithProps}
         </div>
-      </header>
+      )}
 
-      {/* COLLAPSIBLE CONTENT (animation + hierarchy lives here) */}
+      {/* COLLAPSIBLE CHILDREN */}
       <Collapsible
         id={`${section.id}-content`}
         open={open}
@@ -114,8 +130,6 @@ function SectionContent({
         mountNoAnimate
       >
         <div className="space-y-4 pt-2">
-          {section.content}
-
           {section.children && section.children.length > 0 ? (
             <div className=" border-l border-border/60 pl-4">
               {section.children.map((child) => (
@@ -266,7 +280,7 @@ export function DocumentationPage({
           <SimpleBar className="flex-1" style={{ maxHeight: "100%" }}>
             <div className="mx-auto space-y-8 px-6 py-6 lg:py-8">
               {header.bannerImageUrl ? (
-                <div className="overflow-hidden rounded-2xl border border-border/50 bg-background/30">
+                <div className="overflow-hidden bg-background/30">
                   <img
                     src={header.bannerImageUrl}
                     alt={header.bannerImageAlt ?? `${header.title} banner`}
