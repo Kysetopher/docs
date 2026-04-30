@@ -42,8 +42,8 @@ export function ReferenceChip<TMap extends ReferenceMap>({
   id,
   openDelay = 120,
   closeDelay = 80,
-  align = "end",
-  side = "top",
+  align = "center",
+  side = "bottom",
   className,
 }: {
   refs: TMap;
