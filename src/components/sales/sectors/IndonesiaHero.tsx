@@ -18,11 +18,13 @@ export function IndonesiaHero({ isOpen, onToggle }: { isOpen?: boolean; onToggle
       isOpen={isOpen}
       onToggle={onToggle}
     >
-      <div className="flex flex-col items-center justify-center space-y-1 bg-background/40 p-4 shadow-inner backdrop-blur-sm w-full h-full min-w-[320px]">
-        <h3 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+      <div className="flex flex-col items-center justify-center space-y-1 bg-black/20 w-full h-full min-w-[350px]">
+        <h3 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/40 mt-4">
           The Upsell Gap
         </h3>
-        <UpsellGapGraph data={UPSELL_GAP_DATA} height={100} />
+        <div className="flex-1 w-full flex items-center justify-center">
+          <UpsellGapGraph data={UPSELL_GAP_DATA} height={120} />
+        </div>
       </div>
     </SectorHeader>
   );

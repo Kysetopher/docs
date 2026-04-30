@@ -33,11 +33,13 @@ export function EuropeHero({ isOpen, onToggle }: { isOpen?: boolean; onToggle?: 
       isOpen={isOpen}
       onToggle={onToggle}
     >
-      <div className="flex flex-col items-center justify-center space-y-1 bg-background/40 p-4 shadow-inner backdrop-blur-sm w-full h-full min-w-[320px]">
-        <h3 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+      <div className="flex flex-col items-center justify-center space-y-1 bg-black/20 w-full h-full min-w-[350px]">
+        <h3 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/40 mt-4">
           System Fragmentation
         </h3>
-        <SystemFragmentationGraph nodes={FRAGMENTATION_NODES} links={FRAGMENTATION_LINKS} height={120} />
+        <div className="flex-1 w-full flex items-center justify-center overflow-hidden">
+          <SystemFragmentationGraph nodes={FRAGMENTATION_NODES} links={FRAGMENTATION_LINKS} height={140} />
+        </div>
       </div>
     </SectorHeader>
   );

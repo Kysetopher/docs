@@ -10,6 +10,7 @@ type SectorHeaderProps = {
   children?: React.ReactNode;
   isOpen?: boolean;
   onToggle?: () => void;
+  minHeight?: string;
 };
 
 export function SectorHeader({
@@ -20,15 +21,21 @@ export function SectorHeader({
   gradientTo = "to-cyan-950/20",
   children,
   isOpen,
-  onToggle
+  onToggle,
+  minHeight = "min-h-[120px]"
 }: SectorHeaderProps) {
   return (
     <div 
       className={`relative overflow-hidden bg-gradient-to-br ${gradientFrom} ${gradientTo} backdrop-blur-xl mb-4 group cursor-pointer transition-all hover:bg-white/5`}
-      onClick={onToggle}
+      onClick={(e) => {
+        // Only toggle if not clicking on a link or interactive element inside the banner
+        if ((e.target as HTMLElement).closest('a, button:not(.trigger)')) return;
+        onToggle?.();
+      }}
     >
-      <div className="grid lg:grid-cols-2 lg:items-stretch min-h-[100px]">
-        <div className="space-y-2 p-6 flex flex-col justify-center">
+      <div className={`grid lg:grid-cols-2 lg:items-stretch ${minHeight}`}>
+        {/* Left side: Text content with padding */}
+        <div className="space-y-2 p-8 flex flex-col justify-center">
           <div className="flex items-center gap-3">
             {onToggle && (
               <Icon 
@@ -47,7 +54,9 @@ export function SectorHeader({
             </p>
           )}
         </div>
-        <div className="flex justify-end items-center p-4">
+
+        {/* Right side: Graph/Content with NO padding */}
+        <div className="flex items-stretch justify-end overflow-hidden">
           {children}
         </div>
       </div>

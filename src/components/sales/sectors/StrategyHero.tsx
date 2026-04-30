@@ -20,12 +20,15 @@ export function StrategyHero({ isOpen, onToggle }: { isOpen?: boolean; onToggle?
       gradientTo="to-slate-900/40"
       isOpen={isOpen}
       onToggle={onToggle}
+      minHeight="min-h-[220px]"
     >
-      <div className="flex flex-col items-center justify-center space-y-1 bg-background/40 p-4 shadow-inner backdrop-blur-sm w-full h-full min-w-[320px]">
-        <h3 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+      <div className="flex flex-col items-center justify-center space-y-2 bg-black/20 w-full h-full min-w-[400px]">
+        <h3 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/40 mt-6">
           The ICP Tier Matrix
         </h3>
-        <ICPTierMatrixGraph data={TIER_MATRIX_DATA} height={120} />
+        <div className="flex-1 w-full flex items-center justify-center p-4">
+          <ICPTierMatrixGraph data={TIER_MATRIX_DATA} height={180} />
+        </div>
       </div>
     </SectorHeader>
   );

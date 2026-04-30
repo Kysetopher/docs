@@ -6,6 +6,7 @@ import {
 import { Tag } from "@/components/ui/tag";
 import type { DocTag } from "@/lib/records/tag-records";
 import { Icon } from "@iconify/react";
+import React from "react";
 
 export type ReferenceRecord = {
   id: string;
@@ -25,12 +26,14 @@ export type ReferenceRecord = {
   affiliations?: readonly string[];
   doi?: string;
   pmid?: string;
+  painPoints?: readonly string[];
+  sellingStrategy?: string;
 };
 
 export type ReferenceMap = Record<string, ReferenceRecord>;
 
 function getShortAuthor(authors: string) {
-  // Assumes format: "Last, F. M."
+  // Assumes format: "Last, F. M." or just "Company Name"
   return authors.split(",")[0].trim();
 }
 
@@ -77,132 +80,98 @@ export function ReferenceChip<TMap extends ReferenceMap>({
       <HoverCardContent
         align={align}
         side={side}
-        className="max-w-[800px] bg-background/60 pb-4 rounded-2xl border border-border/40 shadow-xl backdrop-blur"
+        className="max-w-[800px] bg-background/80 pb-4 rounded-2xl border border-border/40 shadow-xl backdrop-blur-xl z-50"
       >
-      <div className="flex items-start justify-between gap-3 p-4 border-b">
-        {/* LEFT: TITLE */}
-        <div className="min-w-0 flex-1">
-          <div className="text-sm leading-relaxed text-foreground/85 break-words">
-            {r.title}
+        <div className="flex items-start justify-between gap-3 p-4 border-b">
+          {/* LEFT: TITLE */}
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-bold leading-relaxed text-foreground break-words uppercase tracking-tight">
+              {r.title}
+            </div>
+          </div>
+
+          {/* RIGHT: TAGS + LINK ICON */}
+          <div className="flex shrink-0 items-center gap-1.5">
+            {r.tags?.map((tag) => (
+              <Tag key={tag.id} tag={tag} compact iconOnly borderless />
+            ))}
+
+            {r.href && (
+              <a
+                href={r.href}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center hover:text-primary justify-center rounded-md p-1 transition"
+              >
+                <Icon icon="mdi:open-in-new" className="w-5 h-5" />
+              </a>
+            )}
           </div>
         </div>
 
-        {/* RIGHT: TAGS + LINK ICON */}
-        <div className="flex shrink-0 items-center gap-1.5">
-          {r.tags?.map((tag) => (
-            <Tag key={tag.id} tag={tag} compact iconOnly borderless />
-          ))}
-
-          {r.href && (
-            <a
-              href={r.href}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center hover:text-accent justify-center rounded-md p-1 transition"
-            >
-              <Icon icon="mdi:open-in-new" className="w-6 h-6 " />
-            </a>
-          )}
-        </div>
-      </div>
-
-          {/* MAIN: LEFT TEXT + RIGHT IMAGE */}
-          <div className="flex gap-4 items-start">
-            {/* LEFT */}
-            <div className="flex-1 px-4  space-y-2 text-xs text-muted-foreground leading-relaxed">
-              <div className="text-sm font-semibold text-foreground/90">
-                {r.authors}
-                {r.year && (
-                  <span className="text-muted-foreground"> ({r.year})</span>
-                )}
+        {/* MAIN: LEFT TEXT + RIGHT IMAGE */}
+        <div className="flex gap-4 items-stretch">
+          {/* LEFT CONTENT */}
+          <div className="flex-1 p-4 space-y-4 text-xs text-muted-foreground leading-relaxed">
+            {/* COMPANY INFO / NOTE */}
+            {r.note && (
+              <div className="text-sm text-foreground/90 bg-white/5 p-3 rounded-lg border border-white/5">
+                {r.note}
               </div>
-               {r.source && (
-                <div className="text-xs text-muted-foreground">
-                  {r.source}
-                </div>
-              )}
-              {r.note && (
-                <div>
-                  <span className="font-medium text-foreground/70">
-                    Supports:
-                  </span>{" "}
-                  {r.note}
-                </div>
-              )}
+            )}
 
-              {(r.correspondingAuthor || r.correspondingAuthorEmail) && (
-                <div>
-                  <span className="font-medium text-foreground/70">
-                    Corresponding author:
-                  </span>{" "}
-                  {r.correspondingAuthor ?? "Not listed"}
-                  {r.correspondingAuthorEmail && (
-                    <>
-                      {" "}
-                      (
-                      <a
-                        href={`mailto:${r.correspondingAuthorEmail}`}
-                        className="text-accent underline underline-offset-4"
-                      >
-                        {r.correspondingAuthorEmail}
-                      </a>
-                      )
-                    </>
-                  )}
+            {/* PAIN POINTS */}
+            {r.painPoints && r.painPoints.length > 0 && (
+              <div className="space-y-2">
+                <span className="font-bold text-[10px] uppercase tracking-widest text-foreground/50 block">
+                  Core Pain Points
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {r.painPoints.map((point) => (
+                    <span 
+                      key={point} 
+                      className="px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 text-[10px] font-semibold"
+                    >
+                      {point}
+                    </span>
+                  ))}
                 </div>
-              )}
+              </div>
+            )}
 
-              {(r.doi || r.pmid) && (
-                <div>
-                  {r.doi && (
-                    <div>
-                      <span className="font-medium text-foreground/70">DOI:</span>{" "}
-                      {r.doi}
-                    </div>
-                  )}
-                  {r.pmid && (
-                    <div>
-                      <span className="font-medium text-foreground/70">PMID:</span>{" "}
-                      {r.pmid}
-                    </div>
-                  )}
+            {/* SELLING STRATEGY */}
+            {r.sellingStrategy && (
+              <div className="space-y-2">
+                <span className="font-bold text-[10px] uppercase tracking-widest text-primary/50 block">
+                  Sales Playbook
+                </span>
+                <div className="rounded-lg bg-primary/10 p-3 border border-primary/20 text-foreground italic leading-normal">
+                  {r.sellingStrategy}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
-            {/* RIGHT IMAGE */}
-            {r.photo?.src && (
-              <div className="w-60 shrink-0 overflow-hidden">
-                <img
-                  src={r.photo.src}
-                  alt={r.photo.alt ?? `${r.title} image`}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                />
+            {/* TECHNICAL REFS (DOI/PMID) - ONLY IF THEY EXIST */}
+            {(r.doi || r.pmid) && (
+              <div className="pt-2 border-t border-border/40 opacity-60">
+                {r.doi && <div><span className="font-medium">DOI:</span> {r.doi}</div>}
+                {r.pmid && <div><span className="font-medium">PMID:</span> {r.pmid}</div>}
               </div>
             )}
           </div>
 
-          {/* BOTTOM: AFFILIATIONS + LINK */}
-          {(r.affiliations?.length || r.href) && (
-            <div className="space-y-2 px-4 text-xs text-muted-foreground">
-
-              {r.affiliations && r.affiliations.length > 0 && (
-                <div>
-                  <div className="font-medium text-foreground/70">
-                    Affiliations:
-                  </div>
-                  <ul className="list-disc pl-4 space-y-1">
-                    {r.affiliations.map((affiliation) => (
-                      <li key={affiliation}>{affiliation}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-             
+          {/* RIGHT IMAGE - Flush to edges */}
+          {r.photo?.src && (
+            <div className="w-64 shrink-0 overflow-hidden border-l border-border/40">
+              <img
+                src={r.photo.src}
+                alt={r.photo.alt ?? `${r.title} image`}
+                className="h-full w-full object-cover grayscale-[0.5] hover:grayscale-0 transition-all duration-500"
+                loading="lazy"
+              />
             </div>
           )}
+        </div>
       </HoverCardContent>
     </HoverCard>
   );
