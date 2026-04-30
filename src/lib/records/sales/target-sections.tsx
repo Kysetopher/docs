@@ -12,7 +12,7 @@ const eventsImg = "/assets/sales/events.png";
 const constructionImg = "/assets/sales/construction.png";
 const manufacturingImg = "/assets/sales/manufacturing.png";
 
-const SALES_REFERENCES = {
+export const SALES_REFERENCES = {
   // --- SINGAPORE ---
   govtech: { id: "govtech", authors: "GovTech", title: "GovTech Singapore", note: "Massive raw input fragmentation. Signals are lost in agency-level silos.", photo: { src: institutionalImg }, href: "https://www.tech.gov.sg/", tags: [DOC_TAGS.government, DOC_TAGS.execution], painPoints: ["Signal Invisibility", "Legacy Silos"], sellingStrategy: "Sell 'Cross-Agency Execution Context'. Position as the control layer that normalizes raw inputs into actionable policy signals." },
   sndgo: { id: "sndgo", authors: "SNDGO", title: "Smart Nation Office", note: "Directing the digital operational layer of Singapore.", photo: { src: institutionalImg }, href: "https://www.smartnation.gov.sg/", tags: [DOC_TAGS.government, DOC_TAGS.policy], painPoints: ["Execution Gaps", "Governance Complexity"], sellingStrategy: "Focus on 'Intentional Signals'. Use agents to ensure policy intent is preserved across the entire digital implementation layer." },
@@ -27,6 +27,13 @@ const SALES_REFERENCES = {
   // Hotels & Spas (SG)
   mbs: { id: "mbs", authors: "MBS", title: "Marina Bay Sands", note: "VIP intent signals are lost in massive guest flow noise. Experience is fragmented.", photo: { src: hospitalityImg }, href: "https://www.marinabaysands.com/", tags: [DOC_TAGS.hospitality, DOC_TAGS.landmark], painPoints: ["Signal Fragmentation", "VIP Experience Leakage"], sellingStrategy: "Create a 'Central Execution Dataset' for high-ticket guests. Reduce hallucinations in service delivery with live domain context." },
   raffles: { id: "raffles", authors: "Raffles", title: "Raffles Hotel", note: "Invisible 'heritage' signals are trapped in manual butler memory. High-cost drag.", photo: { src: hospitalityImg }, href: "https://www.raffles.com/singapore/", tags: [DOC_TAGS.hospitality, DOC_TAGS.landmark], painPoints: ["Manual Knowledge Silos", "High-Cost Service Memory"], sellingStrategy: "Digitize 'Intuition'. Normalize butler knowledge into a control layer that surfaces intentional service signals." },
+  capella_sg: { id: "capella_sg", authors: "Capella", title: "Capella Singapore", note: "Ultra-luxury guest signals are manual. Context is fragile.", photo: { src: hospitalityImg }, href: "https://www.capellahotels.com/en/capella-singapore", tags: [DOC_TAGS.hospitality, DOC_TAGS.landmark] },
+  fullerton: { id: "fullerton", authors: "Fullerton", title: "The Fullerton Hotel", note: "Historic heritage signals are non-normalized. Ops drag.", photo: { src: hospitalityImg }, href: "https://www.fullertonhotels.com/", tags: [DOC_TAGS.hospitality, DOC_TAGS.landmark] },
+  pan_pacific: { id: "pan_pacific", authors: "Pan Pacific", title: "Pan Pacific Group", note: "Multi-property signal noise. Real-time context is invisible.", photo: { src: hospitalityImg }, href: "https://www.panpacific.com/", tags: [DOC_TAGS.hospitality, DOC_TAGS.enterprise] },
+
+  // Travel (SG)
+  sia: { id: "sia", authors: "SIA", title: "Singapore Airlines", note: "Premium cabin signals are lost in massive legacy data noise. High-cost drag.", photo: { src: hospitalityImg }, href: "https://www.singaporeair.com/", tags: [DOC_TAGS.aviation, DOC_TAGS.enterprise], painPoints: ["Legacy Data Noise", "High-Cost Premium Drag"], sellingStrategy: "Deploy a 'Premium Control Layer' to normalize cabin signals into actionable service context." },
+  changi_airport: { id: "changi_airport", authors: "Changi", title: "Changi Airport Group", note: "Passenger flow signals are non-normalized. Real-time ops are invisible.", photo: { src: hospitalityImg }, href: "https://www.changiairport.com/", tags: [DOC_TAGS.infrastructure, DOC_TAGS.landmark] },
 
   // --- INDONESIA ---
   brin: { id: "brin", authors: "BRIN Indonesia", note: "Institutional signals are non-normalized across 80+ disparate research institutes.", photo: { src: institutionalImg }, href: "https://www.brin.go.id/", tags: [DOC_TAGS.research, DOC_TAGS.government] },
@@ -37,15 +44,39 @@ const SALES_REFERENCES = {
   bambu_indah: { id: "bambu_indah", authors: "Bambu Indah", title: "Bambu Indah (Ubud)", note: "Ubud retreat signals are manual (WhatsApp/Excel). Ops are invisible.", photo: { src: hospitalityImg }, href: "https://bambuindah.com", tags: [DOC_TAGS.hospitality, DOC_TAGS.landmark], painPoints: ["WhatsApp Signal Noise", "Invisible Retreat Ops"], sellingStrategy: "Normalize raw retreat inputs. Consolidate fragmented guest requests into a central execution context." },
   aman: { id: "aman", authors: "Aman", title: "Aman Resorts", note: "High-ticket guest signals are trapped in manual, unrecorded memory. Fragile.", photo: { src: hospitalityImg }, href: "https://www.aman.com/", tags: [DOC_TAGS.hospitality, DOC_TAGS.landmark], painPoints: ["Fragile Memory Silos", "Invisible VIP Intent"], sellingStrategy: "Sell 'Operational Memory'. Create a global control layer that normalizes VIP signals across all Aman sites." },
   yoga_barn: { id: "yoga_barn", authors: "Yoga Barn", title: "The Yoga Barn", note: "Festival signals are chaotic and non-normalized. High-cost operational drag.", photo: { src: hospitalityImg }, href: "https://www.theyogabarn.com/", tags: [DOC_TAGS.hospitality, DOC_TAGS.culture], painPoints: ["Festival Signal Chaos", "Manual Logistics Drag"], sellingStrategy: "Create an 'Event Pipeline'. Normalize raw logistics inputs into a single composable operational layer." },
+  ayana: { id: "ayana", authors: "Ayana", title: "Ayana Estate", note: "Massive estate signals are non-normalized. Guest intent is invisible.", photo: { src: hospitalityImg }, href: "https://www.ayana.com/bali/ayana-resort-and-spa/", tags: [DOC_TAGS.hospitality, DOC_TAGS.landmark] },
+  alila: { id: "alila", authors: "Alila", title: "Alila Resorts", note: "Eco-luxury signals are manual. Context is fragmented.", photo: { src: hospitalityImg }, href: "https://www.alilahotels.com/", tags: [DOC_TAGS.hospitality, DOC_TAGS.landmark] },
+
+  // Travel (ID)
+  garuda: { id: "garuda", authors: "Garuda", title: "Garuda Indonesia", note: "National carrier signals are trapped in legacy silos. High-cost drag.", photo: { src: hospitalityImg }, href: "https://www.garuda-indonesia.com/", tags: [DOC_TAGS.aviation, DOC_TAGS.enterprise] },
+  traveloka: { id: "traveloka", authors: "Traveloka", title: "Traveloka", note: "Marketplace noise makes intent signals invisible. Hallucinations in recommendations.", photo: { src: hospitalityImg }, href: "https://www.traveloka.com/", tags: [DOC_TAGS.marketplace, DOC_TAGS.scale] },
+
+  // --- THAILAND & MALAYSIA ---
+  minor_hotels: { id: "minor_hotels", authors: "Minor", title: "Minor Hotels", note: "Global brand noise. Real-time ops signals are invisible.", photo: { src: hospitalityImg }, href: "https://www.minorhotels.com/", tags: [DOC_TAGS.hospitality, DOC_TAGS.enterprise] },
+  dusit: { id: "dusit", authors: "Dusit", title: "Dusit Thani", note: "Thai hospitality signals are manual. High-cost service drag.", photo: { src: hospitalityImg }, href: "https://www.dusit.com/", tags: [DOC_TAGS.hospitality, DOC_TAGS.landmark] },
+  banyan_tree: { id: "banyan_tree", authors: "Banyan Tree", title: "Banyan Tree", note: "Sanctuary signals are trapped in manual memory. Context is fragile.", photo: { src: hospitalityImg }, href: "https://www.banyantree.com/", tags: [DOC_TAGS.hospitality, DOC_TAGS.landmark] },
+  airasia: { id: "airasia", authors: "AirAsia", title: "AirAsia Group", note: "LCC operational signals are fragmented across regions. High-cost drag.", photo: { src: hospitalityImg }, href: "https://www.airasia.com/", tags: [DOC_TAGS.aviation, DOC_TAGS.scale] },
+  agoda: { id: "agoda", authors: "Agoda", title: "Agoda", note: "Inventory signals are non-normalized. Pricing context is invisible.", photo: { src: hospitalityImg }, href: "https://www.agoda.com/", tags: [DOC_TAGS.marketplace, DOC_TAGS.scale] },
+
+  // --- JAPAN & KOREA ---
+  riken_aip: { id: "riken_aip", authors: "RIKEN AIP", note: "Implicit research signals are invisible. Veteran knowledge is manual.", photo: { src: institutionalImg }, href: "https://aip.riken.jp/", tags: [DOC_TAGS.research, DOC_TAGS.aiLabs] },
+  obayashi: { id: "obayashi", authors: "Obayashi", note: "Paper-based site signals create massive data gaps. Real progress is invisible.", photo: { src: constructionImg }, href: "https://www.obayashi.co.jp/en/", tags: [DOC_TAGS.construction, DOC_TAGS.industrial] },
+  hoshino: { id: "hoshino", authors: "Hoshino", title: "Hoshino Resorts", note: "Omotenashi signals are manual and non-normalized. Context is fragile.", photo: { src: hospitalityImg }, href: "https://www.hoshinoresorts.com/en/", tags: [DOC_TAGS.hospitality, DOC_TAGS.landmark] },
+  apa_hotels: { id: "apa_hotels", authors: "APA", title: "APA Hotels", note: "Mass-market signals are fragmented. High-cost operational drag.", photo: { src: hospitalityImg }, href: "https://www.apahotel.com/en/", tags: [DOC_TAGS.hospitality, DOC_TAGS.scale] },
+  shilla: { id: "shilla", authors: "Shilla", title: "Hotel Shilla", note: "Luxury Korean hospitality signals are manual. Context is invisible.", photo: { src: hospitalityImg }, href: "https://www.hotelshilla.net/", tags: [DOC_TAGS.hospitality, DOC_TAGS.landmark] },
+
+  // --- AUSTRALIA ---
+  crown: { id: "crown", authors: "Crown", title: "Crown Resorts", note: "Casino and resort signals are lost in massive guest noise. High-cost drag.", photo: { src: hospitalityImg }, href: "https://www.crownresorts.com.au/", tags: [DOC_TAGS.hospitality, DOC_TAGS.landmark] },
+  meriton: { id: "meriton", authors: "Meriton", title: "Meriton Suites", note: "Apartment hotel signals are manual. Ops context is invisible.", photo: { src: hospitalityImg }, href: "https://www.meritonsuites.com.au/", tags: [DOC_TAGS.hospitality, DOC_TAGS.scale] },
+  qantas: { id: "qantas", authors: "Qantas", title: "Qantas Airways", note: "National carrier signals are trapped in legacy silos. High-cost drag.", photo: { src: hospitalityImg }, href: "https://www.qantas.com/", tags: [DOC_TAGS.aviation, DOC_TAGS.enterprise] },
 
   // --- EUROPE / UK ---
   locke: { id: "locke", authors: "Locke", title: "Locke Living", note: "Multi-city aparthotel noise. Real-time guest signals are invisible.", photo: { src: hospitalityImg }, href: "https://lockeliving.com", tags: [DOC_TAGS.hospitality, DOC_TAGS.enterprise], painPoints: ["Invisible Multi-city Signals", "High-Cost Ops Noise"], sellingStrategy: "Deploy a 'Control Layer' to normalize multi-city raw inputs into a central dataset." },
   hoxton: { id: "hoxton", authors: "Hoxton", title: "The Hoxton", note: "Brand standard signals are fragmented. CRM context is non-normalized.", photo: { src: hospitalityImg }, href: "https://thehoxton.com", tags: [DOC_TAGS.hospitality, DOC_TAGS.landmark], painPoints: ["Fragmented Brand Signals", "CRM Hallucinations"], sellingStrategy: "Consolidate CRM and guest tools into a single operational layer with live domain context." },
   selina: { id: "selina", authors: "Selina", title: "Selina", note: "High-cost operational drag across massive, fragmented global locations.", photo: { src: hospitalityImg }, href: "https://selina.com", tags: [DOC_TAGS.hospitality, DOC_TAGS.scale] },
-
-  // --- JAPAN / KOREA ---
-  riken_aip: { id: "riken_aip", authors: "RIKEN AIP", note: "Implicit research signals are invisible. Veteran knowledge is manual.", photo: { src: institutionalImg }, href: "https://aip.riken.jp/", tags: [DOC_TAGS.research, DOC_TAGS.aiLabs] },
-  obayashi: { id: "obayashi", authors: "Obayashi", note: "Paper-based site signals create massive data gaps. Real progress is invisible.", photo: { src: constructionImg }, href: "https://www.obayashi.co.jp/en/", tags: [DOC_TAGS.construction, DOC_TAGS.industrial] },
+  accor: { id: "accor", authors: "Accor", title: "Accor Group", note: "Global multi-brand noise. Guest signals are non-normalized. High-cost drag.", photo: { src: hospitalityImg }, href: "https://group.accor.com/", tags: [DOC_TAGS.hospitality, DOC_TAGS.enterprise] },
+  ihg: { id: "ihg", authors: "IHG", title: "IHG Hotels & Resorts", note: "Massive franchise noise. Real-time ops signals are invisible.", photo: { src: hospitalityImg }, href: "https://www.ihgplc.com/", tags: [DOC_TAGS.hospitality, DOC_TAGS.enterprise] },
+  soho_house: { id: "soho_house", authors: "Soho House", title: "Soho House", note: "Member intent signals are lost in manual community noise. Context is fragile.", photo: { src: hospitalityImg }, href: "https://www.sohohouse.com/", tags: [DOC_TAGS.hospitality, DOC_TAGS.culture] },
 };
 
 function ReferenceList({ label, ids }: { label: string; ids: (keyof typeof SALES_REFERENCES)[] }) {
@@ -124,7 +155,8 @@ export const targetSectionsContent = [
       infraInstitutional: ["govtech", "sndgo", "naic", "astar", "dsta"],
       infraManufacturing: ["dyson", "micron"],
       infraConstruction: ["wohhup"],
-      serviceHotelsSpas: ["mbs", "raffles"],
+      serviceHotelsSpas: ["mbs", "raffles", "capella_sg", "fullerton", "pan_pacific"],
+      serviceTravel: ["sia", "changi_airport"]
     })
   },
   {
@@ -134,7 +166,20 @@ export const targetSectionsContent = [
     children: CountrySections({
       country: "indonesia",
       infraInstitutional: ["brin"],
-      serviceHotelsSpas: ["bobobox", "artotel", "bambu_indah", "sanchaya", "yoga_barn", "aman"],
+      serviceHotelsSpas: ["bobobox", "artotel", "bambu_indah", "ayana", "alila", "yoga_barn", "aman"],
+      serviceTravel: ["garuda"],
+      serviceMarketplaces: ["traveloka"]
+    })
+  },
+  {
+    id: "thailand-malaysia",
+    title: "Thailand & Malaysia",
+    content: <ThailandMalaysiaHero />,
+    children: CountrySections({
+      country: "thailand-malaysia",
+      serviceHotelsSpas: ["minor_hotels", "dusit", "banyan_tree"],
+      serviceTravel: ["airasia"],
+      serviceMarketplaces: ["agoda"]
     })
   },
   {
@@ -145,6 +190,17 @@ export const targetSectionsContent = [
       country: "japan-korea",
       infraInstitutional: ["riken_aip"],
       infraConstruction: ["obayashi"],
+      serviceHotelsSpas: ["hoshino", "apa_hotels", "shilla"]
+    })
+  },
+  {
+    id: "australia",
+    title: "Australia",
+    content: <AustraliaHero />,
+    children: CountrySections({
+      country: "australia",
+      serviceHotelsSpas: ["crown", "meriton"],
+      serviceTravel: ["qantas"]
     })
   },
   {
@@ -153,7 +209,7 @@ export const targetSectionsContent = [
     content: <EuropeHero />,
     children: CountrySections({
       country: "europe-uk",
-      serviceHotelsSpas: ["locke", "hoxton", "selina"],
+      serviceHotelsSpas: ["locke", "hoxton", "selina", "accor", "ihg", "soho_house"],
     })
   },
 ];

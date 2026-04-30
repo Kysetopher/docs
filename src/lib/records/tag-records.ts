@@ -445,6 +445,27 @@ export const DOC_TAGS = {
     description: "Automotive manufacturing and technology.",
     color: "blue-bright",
   },
+  aviation: {
+    id: "aviation",
+    label: "Aviation",
+    icon: "mdi:airplane",
+    description: "Global airlines and aviation infrastructure.",
+    color: "sky",
+  },
+  infrastructure: {
+    id: "infrastructure",
+    label: "Infrastructure",
+    icon: "mdi:bridge",
+    description: "Critical national and urban infrastructure.",
+    color: "slate",
+  },
+  marketplace: {
+    id: "marketplace",
+    label: "Marketplace",
+    icon: "mdi:storefront-outline",
+    description: "Digital marketplaces and aggregator platforms.",
+    color: "teal",
+  },
 } as const satisfies Record<string, DocTag>;
 
 

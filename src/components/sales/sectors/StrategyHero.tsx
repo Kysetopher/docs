@@ -27,11 +27,19 @@ export function StrategyHero({ isOpen, onToggle }: { isOpen?: boolean; onToggle?
               
               if (category.children) {
                 category.children.forEach((sector: any) => {
-                  const count = sector.content?.props?.ids?.length || 0;
-                  sectors.push({
-                    name: sector.title,
-                    value: Math.max(count, 0.5)
-                  });
+                  const targetIds = sector.content?.props?.ids || [];
+                  const targets: SunburstNode[] = targetIds.map((id: string) => ({
+                    name: id.replace(/_/g, ' '),
+                    targetId: id, // Store the real ID for lookup
+                    value: 1 // Every target is a leaf with equal weight
+                  }));
+
+                  if (targets.length > 0) {
+                    sectors.push({
+                      name: sector.title,
+                      children: targets
+                    });
+                  }
                 });
               }
 
@@ -81,7 +89,7 @@ export function StrategyHero({ isOpen, onToggle }: { isOpen?: boolean; onToggle?
           {/* Transparent, edge-to-edge Sunburst Section */}
           <div className="flex items-center justify-center overflow-hidden">
             <div className="w-full flex items-center justify-center">
-              <GlobalPortfolioSunburst data={sunburstData} height={500} />
+              <GlobalPortfolioSunburst data={sunburstData} height={700} />
             </div>
           </div>
 
