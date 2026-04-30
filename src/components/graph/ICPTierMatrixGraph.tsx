@@ -20,7 +20,7 @@ export function ICPTierMatrixGraph({
   data, 
   height = 240,
   xAxisLabel = "Operational Chaos →",
-  yAxisLabel = "Revenue Leakage Potential ↑"
+  yAxisLabel = "Revenue Potential ↑"
 }: ICPTierMatrixGraphProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -40,14 +40,11 @@ export function ICPTierMatrixGraph({
   }, []);
 
   const layout = useMemo(() => {
-    const margin = { top: 30, right: 30, bottom: 40, left: 40 };
-    const innerWidth = Math.max(width - margin.left - margin.right, 1);
-    const innerHeight = Math.max(height - margin.top - margin.bottom, 1);
-
+    const margin = { top: 40, right: 100, bottom: 50, left: 60 };
     const xScale = d3.scaleLinear().domain([0, 100]).range([margin.left, width - margin.right]);
     const yScale = d3.scaleLinear().domain([0, 100]).range([height - margin.bottom, margin.top]);
 
-    return { margin, innerWidth, innerHeight, xScale, yScale };
+    return { margin, xScale, yScale };
   }, [width, height]);
 
   useEffect(() => {
@@ -58,14 +55,15 @@ export function ICPTierMatrixGraph({
 
     const { xScale, yScale, margin } = layout;
 
-    // Axes
+    // Grid Lines (Thinner, cleaner)
     svg.append("line")
       .attr("x1", margin.left)
       .attr("y1", height - margin.bottom)
       .attr("x2", width - margin.right)
       .attr("y2", height - margin.bottom)
       .attr("stroke", "currentColor")
-      .attr("opacity", 0.5);
+      .attr("stroke-width", 0.5)
+      .attr("opacity", 0.2);
 
     svg.append("line")
       .attr("x1", margin.left)
@@ -73,7 +71,8 @@ export function ICPTierMatrixGraph({
       .attr("x2", margin.left)
       .attr("y2", height - margin.bottom)
       .attr("stroke", "currentColor")
-      .attr("opacity", 0.5);
+      .attr("stroke-width", 0.5)
+      .attr("opacity", 0.2);
 
     // Points
     svg.selectAll("circle")
@@ -83,53 +82,56 @@ export function ICPTierMatrixGraph({
       .attr("cy", (d) => yScale(d.y))
       .attr("r", 0)
       .attr("fill", (d) => d.color)
-      .attr("stroke", "white")
-      .attr("stroke-width", 2)
+      .attr("stroke", "rgba(255,255,255,0.3)")
+      .attr("stroke-width", 1)
       .transition()
       .duration(800)
-      .attr("r", 8);
+      .attr("r", 10);
 
     // Labels
     svg.selectAll(".target-label")
       .data(data)
       .join("text")
       .attr("class", "target-label")
-      .attr("x", (d) => xScale(d.x) + 12)
-      .attr("y", (d) => yScale(d.y) + 4)
+      .attr("x", (d) => xScale(d.x) + 14)
+      .attr("y", (d) => yScale(d.y) + 5)
       .text((d) => d.id)
-      .attr("font-size", "9px")
+      .attr("font-size", "12px")
+      .attr("font-weight", "600")
       .attr("fill", "currentColor")
       .attr("opacity", 0)
       .transition()
       .delay(400)
       .duration(400)
-      .attr("opacity", 0.8);
+      .attr("opacity", 0.9);
 
     // Axis labels
     svg.append("text")
-      .attr("x", width / 2 + 10)
-      .attr("y", height - 5)
+      .attr("x", margin.left + (width - margin.left - margin.right) / 2)
+      .attr("y", height - 12)
       .attr("text-anchor", "middle")
       .text(xAxisLabel)
-      .attr("font-size", "10px")
+      .attr("font-size", "13px")
       .attr("fill", "currentColor")
-      .attr("font-weight", "bold");
+      .attr("font-weight", "bold")
+      .attr("opacity", 0.6);
 
     svg.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("x", -height / 2)
-      .attr("y", 15)
+      .attr("x", -(margin.top + (height - margin.top - margin.bottom) / 2))
+      .attr("y", 20)
       .attr("text-anchor", "middle")
       .text(yAxisLabel)
-      .attr("font-size", "10px")
+      .attr("font-size", "13px")
       .attr("fill", "currentColor")
-      .attr("font-weight", "bold");
+      .attr("font-weight", "bold")
+      .attr("opacity", 0.6);
 
   }, [data, layout, width, height, xAxisLabel, yAxisLabel]);
 
   return (
     <div ref={hostRef} className="w-full">
-      <svg ref={svgRef} width={width} height={height} className="text-foreground/80" />
+      <svg ref={svgRef} width={width} height={height} className="text-foreground" />
     </div>
   );
 }
