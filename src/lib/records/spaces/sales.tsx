@@ -99,7 +99,7 @@ export const salesDocs: DocRecord[] = [
     salesPlaybookSections
   ),
   createDoc(
-    "target-sectors",
+    "target-Sectors",
     "Target Sectors",
     "Customer profiles for Institutions, Hospitality, Events, and Infrastructure.",
     "Target Sectors & Customer Profiles",
