@@ -209,7 +209,6 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
         const tooltipWidth = tooltipNode.offsetWidth;
         const tooltipHeight = tooltipNode.offsetHeight;
         
-        // Prevent tooltip from going off-screen
         let x = event.pageX + 20;
         let y = event.pageY - 20;
 
@@ -219,6 +218,14 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
         tooltip
           .style("left", x + "px")
           .style("top", y + "px");
+      })
+      .on("click", function(event, d: any) {
+        if (d.depth === 4 && d.data.targetId) {
+          const ref = (SALES_REFERENCES as any)[d.data.targetId];
+          if (ref?.href) {
+            window.open(ref.href, "_blank", "noopener,noreferrer");
+          }
+        }
       })
       .on("mouseleave", function(event, d: any) {
         const descendants = d.descendants();

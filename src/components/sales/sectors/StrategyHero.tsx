@@ -30,13 +30,14 @@ export function StrategyHero({ isOpen, onToggle }: { isOpen?: boolean; onToggle?
                   const targetIds = sector.content?.props?.ids || [];
                   const targets: SunburstNode[] = targetIds.map((id: string) => ({
                     name: id.replace(/_/g, ' '),
-                    targetId: id, // Store the real ID for lookup
-                    value: 1 // Every target is a leaf with equal weight
+                    targetId: id,
+                    value: 1
                   }));
 
                   if (targets.length > 0) {
                     sectors.push({
                       name: sector.title,
+                      sectionId: sector.id,
                       children: targets
                     });
                   }
@@ -46,6 +47,7 @@ export function StrategyHero({ isOpen, onToggle }: { isOpen?: boolean; onToggle?
               if (sectors.length > 0) {
                 categories.push({
                   name: category.title,
+                  sectionId: category.id,
                   children: sectors
                 });
               }
@@ -54,6 +56,7 @@ export function StrategyHero({ isOpen, onToggle }: { isOpen?: boolean; onToggle?
 
           return {
             name: section.title,
+            sectionId: section.id,
             children: categories.length > 0 ? categories : undefined,
             value: categories.length === 0 ? 1 : undefined
           };
