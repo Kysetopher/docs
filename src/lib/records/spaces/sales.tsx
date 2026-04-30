@@ -99,10 +99,10 @@ export const salesDocs: DocRecord[] = [
     salesPlaybookSections
   ),
   createDoc(
-    "target-sections",
-    "Target Sections",
+    "target-sectors",
+    "Target Sectors",
     "Customer profiles for Institutions, Hospitality, Events, and Infrastructure.",
-    "Target Sections & Customer Profiles",
+    "Target Sectors & Customer Profiles",
     "Detailed analysis and examples of key customer segments including Government, Hospitality, Events, and Infrastructure.",
     "mdi:target",
     targetSectionsContent
