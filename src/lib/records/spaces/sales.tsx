@@ -1,5 +1,6 @@
 import type { DocRecord, DocSpace } from "@/lib/records/doc-types";
 import type { DocSection } from "@/components/docs/DocumentationPage";
+import { targetSectionsContent } from "@/lib/records/sales/target-sections";
 
 const spaceId = "sales";
 
@@ -96,6 +97,15 @@ export const salesDocs: DocRecord[] = [
     "Boilerplate sales documentation for discovery, qualification, and pipeline hygiene.",
     "mdi:briefcase-outline",
     salesPlaybookSections
+  ),
+  createDoc(
+    "target-sections",
+    "Target Sections",
+    "Customer profiles for Institutions, Hospitality, Events, and Infrastructure.",
+    "Target Sections & Customer Profiles",
+    "Detailed analysis and examples of key customer segments including Government, Hospitality, Events, and Infrastructure.",
+    "mdi:target",
+    targetSectionsContent
   ),
 ];
 

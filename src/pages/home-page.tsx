@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
+import { DocsShell } from "@/components/docs/DocsShell";
 import { DOC_SPACES } from "@/lib/records/spaces";
 
 const SPACE_CARD_BG_CLASSES = [
@@ -13,12 +14,13 @@ const SPACE_CARD_BG_CLASSES = [
 
 export function HomePage() {
   return (
-    <div className="min-h-screen bg-muted/40 px-6 py-10 text-foreground lg:py-14">
-      <div className="mx-auto max-w-7xl space-y-10">
-        <section className="rounded-3xl border bg-card/80 p-8 shadow-sm">
-          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-            Documentation Home
-          </p>
+    <DocsShell>
+      <div className="h-full overflow-y-auto bg-muted/40 px-6 py-10 text-foreground lg:py-14">
+        <div className="mx-auto max-w-7xl space-y-10">
+          <section className="rounded-3xl border bg-card/80 p-8 shadow-sm">
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+              Documentation Home
+            </p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
             Choose a documentation space
           </h1>
@@ -27,7 +29,7 @@ export function HomePage() {
           </p>
         </section>
 
-        <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {DOC_SPACES.map((space, index) => (
             <Link
               key={space.id}
@@ -70,9 +72,10 @@ export function HomePage() {
                 <span className="transition group-hover:translate-x-0.5 group-hover:text-primary">→</span>
               </div>
             </Link>
-          ))}
-        </section>
+            ))}
+          </section>
+        </div>
       </div>
-    </div>
+    </DocsShell>
   );
 }
