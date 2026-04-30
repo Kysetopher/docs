@@ -5,6 +5,7 @@ import { SALES_REFERENCES } from "@/lib/records/sales/target-sections";
 export type SunburstNode = {
   name: string;
   targetId?: string;
+  sectionId?: string;
   value?: number;
   children?: SunburstNode[];
   color?: string;
@@ -95,7 +96,16 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
     const tooltip = d3.select(tooltipRef.current);
 
     const visualGroup = g.append("g").attr("class", "visual-segments");
+    const iconGroup = g.append("g").attr("class", "leaf-icons");
     const hitGroup = g.append("g").attr("class", "hit-areas");
+
+    // Create clip-paths for target leaves
+    root.descendants().filter(d => d.depth === 4).forEach((d: any, i) => {
+      defs.append("clipPath")
+        .attr("id", `clip-${i}`)
+        .append("path")
+        .attr("d", arc(d as any));
+    });
 
     const visualPaths = visualGroup.selectAll("path")
       .data(root.descendants().filter(d => d.depth > 0))
@@ -115,6 +125,27 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
       .attr("stroke-opacity", 0.1)
       .attr("d", arc as any);
 
+    const iconSize = 32; // Large fixed size
+    const leafIcons = iconGroup.selectAll("image")
+      .data(root.descendants().filter(d => d.depth === 4))
+      .join("image")
+      .attr("xlink:href", (d: any) => {
+        const ref = (SALES_REFERENCES as any)[d.data.targetId];
+        if (ref?.href) {
+          const domain = new URL(ref.href).hostname;
+          return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+        }
+        return null;
+      })
+      .attr("width", iconSize)
+      .attr("height", iconSize)
+      .attr("x", (d: any) => arc.centroid(d as any)[0] - iconSize / 2)
+      .attr("y", (d: any) => arc.centroid(d as any)[1] - iconSize / 2)
+      .attr("clip-path", (d: any, i) => `url(#clip-${i})`) // Apply clipping
+      .attr("pointer-events", "none")
+      .attr("opacity", 0.95)
+      .attr("class", "leaf-brand-icon");
+
     hitGroup.selectAll("path")
       .data(root.descendants().filter(d => d.depth > 0))
       .join("path")
@@ -125,64 +156,75 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
         const offset = 25;
         const descendants = d.descendants();
         const descendantIds = new Set(descendants.map((desc: any) => desc.id));
+        const angle = (d.x0 + d.x1) / 2;
+        const tx = Math.sin(angle) * offset;
+        const ty = -Math.cos(angle) * offset;
 
         visualPaths.filter((node: any) => descendantIds.has(node.id))
           .interrupt()
           .transition()
           .duration(350)
           .ease(d3.easeCubicOut)
-          .attr("transform", () => {
-            const angle = (d.x0 + d.x1) / 2;
-            const x = Math.sin(angle) * offset;
-            const y = -Math.cos(angle) * offset;
-            return `translate(${x},${y})`;
-          })
+          .attr("transform", `translate(${tx},${ty})`)
           .attr("fill-opacity", 0.95);
+
+        leafIcons.filter((node: any) => descendantIds.has(node.id))
+          .interrupt()
+          .transition()
+          .duration(350)
+          .ease(d3.easeCubicOut)
+          .attr("transform", `translate(${tx},${ty})`)
+          .attr("opacity", 1);
 
         const label = d.depth === 1 ? 'REGION' : d.depth === 2 ? 'CATEGORY' : d.depth === 3 ? 'SECTOR' : 'TARGET';
         
-        // If it's a target, show the rich reference chip content
         if (d.depth === 4 && d.data.targetId) {
           const ref = (SALES_REFERENCES as any)[d.data.targetId];
           if (ref) {
+            const domain = ref.href ? new URL(ref.href).hostname : '';
+            const faviconUrl = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=128` : null;
+
             tooltip
               .style("opacity", 1)
-              .style("width", "400px")
+              .style("width", "420px")
               .html(`
                 <div class="flex flex-col bg-slate-900 overflow-hidden rounded-xl border border-white/10 shadow-2xl">
                   <div class="flex items-start justify-between gap-3 p-4 border-b border-white/10 bg-white/5">
-                    <div class="min-w-0 flex-1">
-                      <div class="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/80 mb-1">TARGET PROFILE</div>
-                      <div class="text-sm font-bold leading-tight text-white uppercase tracking-tight">${ref.title}</div>
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                      ${faviconUrl ? `<img src="${faviconUrl}" class="w-10 h-10 rounded-lg shadow-inner bg-white/10 p-1" />` : ''}
+                      <div class="min-w-0 flex-1">
+                        <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80 mb-0.5">TARGET PROFILE</div>
+                        <div class="text-base font-bold leading-tight text-white uppercase tracking-tight truncate">${ref.title}</div>
+                      </div>
                     </div>
                   </div>
                   <div class="flex gap-4 p-4">
-                    <div class="flex-1 space-y-4">
+                    <div class="flex-1 space-y-5">
                       ${ref.note ? `
-                        <div class="text-[11px] text-white/80 bg-white/5 p-3 rounded-lg border border-white/5 leading-relaxed">
+                        <div class="text-xs text-white/80 bg-white/5 p-3 rounded-lg border border-white/5 leading-relaxed">
                           ${ref.note}
                         </div>
                       ` : ''}
                       ${ref.painPoints ? `
-                        <div class="space-y-2">
-                          <span class="text-[9px] font-bold uppercase tracking-[0.2em] text-white/40 block">CRITICAL FRICTION</span>
-                          <div class="flex flex-wrap gap-1.5">
-                            ${ref.painPoints.filter(Boolean).map((p: string) => `<span class="px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 text-[9px] font-bold uppercase">${p}</span>`).join('')}
+                        <div class="space-y-3">
+                          <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 block">CRITICAL FRICTION</span>
+                          <div class="flex flex-wrap gap-2">
+                            ${ref.painPoints.filter(Boolean).map((p: string) => `<span class="px-2.5 py-1 rounded-md bg-red-500/10 text-red-400 border border-red-500/20 text-[10px] font-bold uppercase">${p}</span>`).join('')}
                           </div>
                         </div>
                       ` : ''}
                       ${ref.sellingStrategy ? `
-                        <div class="space-y-2">
-                          <span class="text-[9px] font-bold uppercase tracking-[0.2em] text-primary/40 block">EXECUTION PLAYBOOK</span>
-                          <div class="rounded-lg bg-primary/10 p-3 border border-primary/20 text-[11px] text-primary/90 italic leading-snug">
+                        <div class="space-y-3">
+                          <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/40 block">EXECUTION PLAYBOOK</span>
+                          <div class="rounded-lg bg-primary/10 p-3 border border-primary/20 text-xs text-primary/90 italic leading-relaxed">
                             ${ref.sellingStrategy}
                           </div>
                         </div>
                       ` : ''}
                     </div>
                     ${ref.photo ? `
-                      <div class="w-32 shrink-0 h-40 overflow-hidden rounded-lg border border-white/10">
-                        <img src="${ref.photo.src}" class="h-full w-full object-cover grayscale-[0.3]" />
+                      <div class="w-36 shrink-0 h-44 overflow-hidden rounded-lg border border-white/10 shadow-lg">
+                        <img src="${ref.photo.src}" class="h-full w-full object-cover grayscale-[0.3] hover:grayscale-0 transition-all duration-500" />
                       </div>
                     ` : ''}
                   </div>
@@ -192,15 +234,15 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
           }
         }
 
-        // Default tooltip for other levels
         tooltip
           .style("opacity", 1)
           .style("width", "auto")
           .html(`
-            <div class="space-y-1 min-w-[120px]">
-              <div class="text-[10px] font-bold uppercase tracking-widest text-primary/80">${label}</div>
-              <div class="text-xs font-bold text-white uppercase">${d.data.name}</div>
-              ${d.children ? `<div class="text-[10px] text-muted-foreground uppercase font-medium">Nodes: ${d.descendants().length - 1}</div>` : ''}
+            <div class="space-y-1 min-w-[140px]">
+              <div class="text-[11px] font-bold uppercase tracking-widest text-primary/80">${label}</div>
+              <div class="text-sm font-bold text-white uppercase">${d.data.name}</div>
+              ${d.children ? `<div class="text-[11px] text-muted-foreground uppercase font-medium">Nodes: ${d.descendants().length - 1}</div>` : ''}
+              ${d.data.sectionId ? `<div class="text-[11px] text-primary/60 uppercase font-bold mt-1">Click to Navigate</div>` : ''}
             </div>
           `);
       })
@@ -225,6 +267,11 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
           if (ref?.href) {
             window.open(ref.href, "_blank", "noopener,noreferrer");
           }
+        } else if (d.data.sectionId) {
+          const element = document.getElementById(d.data.sectionId);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
         }
       })
       .on("mouseleave", function(event, d: any) {
@@ -238,6 +285,14 @@ export function GlobalPortfolioSunburst({ data, height = 700 }: GlobalPortfolioS
           .ease(d3.easeCubicIn)
           .attr("transform", "translate(0,0)")
           .attr("fill-opacity", (node: any) => node.depth === 1 ? 0.9 : 0.4);
+
+        leafIcons.filter((node: any) => descendantIds.has(node.id))
+          .interrupt()
+          .transition()
+          .duration(250)
+          .ease(d3.easeCubicIn)
+          .attr("transform", "translate(0,0)")
+          .attr("opacity", 0.95);
 
         tooltip.style("opacity", 0);
       });
