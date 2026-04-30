@@ -83,12 +83,17 @@ const SALES_REFERENCES = {
   plum_guide: { id: "plum_guide", authors: "Plum Guide", title: "The Plum Guide", note: "Curated rentals. ICP: High-end manual guest management.", photo: { src: hospitalityImg }, href: "https://plumguide.com", tags: [DOC_TAGS.hospitality, DOC_TAGS.realEstate] },
 };
 
-function ReferenceList({ ids }: { ids: (keyof typeof SALES_REFERENCES)[] }) {
+function ReferenceList({ label, ids }: { label: string; ids: (keyof typeof SALES_REFERENCES)[] }) {
   return (
-    <div className="flex flex-wrap gap-2 pt-2">
-      {ids.map((id) => (
-        <ReferenceChip key={id} refs={SALES_REFERENCES} id={id} />
-      ))}
+    <div className="flex items-start gap-4 py-1">
+      <div className="w-32 shrink-0 pt-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
+        {label}
+      </div>
+      <div className="flex flex-wrap gap-2 flex-1">
+        {ids.map((id) => (
+          <ReferenceChip key={id} refs={SALES_REFERENCES} id={id} />
+        ))}
+      </div>
     </div>
   );
 }
@@ -114,9 +119,9 @@ function CountrySections({
       title: "Infrastructure",
       content: <SectorHeader title="Infrastructure" subtitle={`Institutional, Manufacturing, and Construction targets for ${country}.`} icon="mdi:office-building" gradientFrom="from-slate-900/40" gradientTo="to-slate-800/40" />,
       children: [
-        { id: `${country}-institutional`, title: "Institutional", content: <ReferenceList ids={infraInstitutional} /> },
-        { id: `${country}-manufacturing`, title: "Manufacturing", content: <ReferenceList ids={infraManufacturing} /> },
-        { id: `${country}-construction`, title: "Construction", content: <ReferenceList ids={infraConstruction} /> },
+        { id: `${country}-institutional`, title: "Institutional", content: <ReferenceList label="Institutional" ids={infraInstitutional} /> },
+        { id: `${country}-manufacturing`, title: "Manufacturing", content: <ReferenceList label="Manufacturing" ids={infraManufacturing} /> },
+        { id: `${country}-construction`, title: "Construction", content: <ReferenceList label="Construction" ids={infraConstruction} /> },
       ].filter(s => (s.content as any).props.ids.length > 0)
     },
     {
@@ -124,8 +129,8 @@ function CountrySections({
       title: "Service",
       content: <SectorHeader title="Service" subtitle={`Hospitality and Events targets for ${country}.`} icon="mdi:account-group" gradientFrom="from-slate-900/40" gradientTo="to-slate-800/40" />,
       children: [
-        { id: `${country}-hospitality`, title: "Hospitality", content: <ReferenceList ids={serviceHospitality} /> },
-        { id: `${country}-events`, title: "Events", content: <ReferenceList ids={serviceEvents} /> },
+        { id: `${country}-hospitality`, title: "Hospitality", content: <ReferenceList label="Hospitality" ids={serviceHospitality} /> },
+        { id: `${country}-events`, title: "Events", content: <ReferenceList label="Events" ids={serviceEvents} /> },
       ].filter(s => (s.content as any).props.ids.length > 0)
     }
   ].filter(s => s.children.length > 0);
