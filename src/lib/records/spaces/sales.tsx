@@ -1,6 +1,7 @@
 import type { DocRecord, DocSpace } from "@/lib/records/doc-types";
 import type { DocSection } from "@/components/docs/DocumentationPage";
 import { targetSectionsContent } from "@/lib/records/sales/target-sections";
+import { scrapingMethodsDoc } from "@/lib/records/sales/scraping-methods";
 
 const spaceId = "sales";
 
@@ -107,12 +108,13 @@ export const salesDocs: DocRecord[] = [
     "mdi:target",
     targetSectionsContent
   ),
+  scrapingMethodsDoc,
 ];
 
 export const salesSpace: DocSpace = {
   id: spaceId,
   title: "Sales",
-  description: "A boilerplate sales space for playbooks, discovery notes, and follow-up templates.",
+  description: "A sales space for playbooks, target sectors, public lead sourcing, and follow-up templates.",
   href: `/spaces/${spaceId}`,
   cardIcon: "mdi:chart-line",
   docs: salesDocs,

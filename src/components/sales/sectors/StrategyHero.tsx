@@ -27,13 +27,6 @@ type TargetProfile = {
   aiMargin: number;
 };
 
-const COMPANY_SIZE_OPTIONS: { value: CompanySizeBucket; label: string; note: string }[] = [
-  { value: "10-50", label: "10-50", note: "Founder-led or very small team" },
-  { value: "51-200", label: "51-200", note: "Lean operator / growth-stage" },
-  { value: "201-500", label: "201-500", note: "Mid-market or scaling team" },
-  { value: "500+", label: "500+", note: "Enterprise or platform-scale" },
-];
-
 const AI_MARGIN_OPTIONS: { value: AiMarginBucket; label: string; note: string }[] = [
   { value: "0-25", label: "0-25", note: "Mostly manual, early AI exposure" },
   { value: "26-50", label: "26-50", note: "Some pilots or partial integration" },
