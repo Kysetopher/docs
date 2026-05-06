@@ -36,6 +36,31 @@ export const scrapingMethodsSections: DocRecord["sections"] = [
     ),
   },
   {
+    id: "openstreetmap-sources",
+    title: "OpenStreetMap Sources",
+    summary: "A strong free raw source for business and place data.",
+    content: (
+      <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
+        <p>
+          OpenStreetMap is one of the best free raw sources for public business and place data. It can include
+          millions of businesses, hotels, clinics, restaurants, tourism operators, contractors, gyms, offices,
+          schools, industrial sites, and more.
+        </p>
+        <p>
+          The key is not to use the map visually. Instead, download country extracts, city extracts, or POI datasets
+          and filter by tags such as <code>amenity</code>, <code>tourism</code>, <code>healthcare</code>,
+          <code>office</code>, <code>shop</code>, <code>craft</code>, <code>industrial</code>, and
+          <code>leisure</code>.
+        </p>
+        <p>
+          Good entry points are Geofabrik downloads, BBBike extracts, and the Overpass API. That workflow can get you
+          highly specific lists like every dentist in Bali, every hotel in Chiang Mai, every architecture office in
+          Singapore, or every gym in Lisbon without paying for a proprietary lead database.
+        </p>
+      </div>
+    ),
+  },
+  {
     id: "whatsapp-rules",
     title: "WhatsApp Rules",
     summary: "Do not treat WhatsApp as a guaranteed field you can extract.",
@@ -72,11 +97,12 @@ export const scrapingMethodsDoc: DocRecord = {
   spaceId,
   href: `/spaces/${spaceId}/${docId}`,
   cardTitle: "Scraping Methods",
-  cardDescription: "Public lead sources, WhatsApp limits, and compliant outreach rules.",
+  cardDescription: "Public lead sources, OpenStreetMap extracts, WhatsApp limits, and compliant outreach rules.",
   cardIcon: "mdi:database-search-outline",
   header: {
     title: "Scraping Methods",
-    description: "A compliant guide to finding public business signals without drifting into private-data collection.",
+    description:
+      "A compliant guide to finding public business signals, including OpenStreetMap extracts, without drifting into private-data collection.",
     icon: "mdi:database-search-outline",
   },
   sections: scrapingMethodsSections,
