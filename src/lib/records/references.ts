@@ -1,6 +1,42 @@
 import { DOC_TAGS } from "@/lib/records/tag-records";
 
 export const REFERENCES = {
+  bls_models_2024: {
+    id: "bls_models_2024",
+    authors: "U.S. Bureau of Labor Statistics",
+    year: "2025",
+    title: "Models",
+    source: "Occupational Outlook Handbook",
+    note: "Models held about 6,700 jobs in 2024, the median pay was $89,990, and employment is projected to decline 1% from 2024 to 2034.",
+    href: "https://www.bls.gov/ooh/sales/models.htm",
+  },
+  adobe_genai_consumers_2024: {
+    id: "adobe_genai_consumers_2024",
+    authors: "Adobe",
+    year: "2024",
+    title: "The Age of Generative AI",
+    source: "Adobe Blog",
+    note: "Adobe reported that consumers were already using generative AI to create images or art and believed it could improve personalized interactions.",
+    href: "https://blog.adobe.com/en/publish/2024/04/22/age-generative-ai-over-half-americans-have-used-generative-ai-most-believe-it-will-help-them-be-more-creative",
+  },
+  adobe_stock_creators_2024: {
+    id: "adobe_stock_creators_2024",
+    authors: "Adobe",
+    year: "2024",
+    title: "Adobe Stock's continued commitment to creators in the era of Generative AI",
+    source: "Adobe Blog",
+    note: "Adobe says AI editing will often appear in post-production, but professional photography and artistic judgment will still differentiate the best content.",
+    href: "https://blog.adobe.com/en/publish/2024/09/10/adobe-stock-continued-commitments-to-creators",
+  },
+  creatoriq_state_creator_marketing_2024_2025: {
+    id: "creatoriq_state_creator_marketing_2024_2025",
+    authors: "CreatorIQ",
+    year: "2024",
+    title: "The State of Creator Marketing 2024-2025",
+    source: "CreatorIQ / Sapio Research",
+    note: "Surveyed 902 organization respondents and 231 creators; 91% of brands had used AI for creator marketing and 86% of agencies reported significant strategy changes due to AI.",
+    href: "https://www.creatoriq.com/hubfs/TheStateofCreatorMarketing2024-2025_Pr.pdf",
+  },
   ai_psychosis_jmir_2025: {
     id: "ai_psychosis_jmir_2025",
     authors: "Hudon, A. & Stip, E.",

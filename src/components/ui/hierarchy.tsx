@@ -29,6 +29,7 @@ const commonRow =
   "flex w-full items-center gap-2 min-h-7 p-0 cursor-pointer " +
   "border border-transparent border-r-0 rounded-md rounded-r-none " +
   "data-[selected=true]:bg-blue-500/10 data-[selected=true]:border-blue-500/30 " +
+  "data-[open=true]:bg-blue-500/5 data-[open=true]:border-blue-500/20 " +
   "aria-selected:bg-blue-500/10 aria-selected:border aria-selected:border-blue-500/30 " +
   "data-[disabled=true]:opacity-50";
 
@@ -71,6 +72,7 @@ function BranchNode({
       aria-expanded={open}
       aria-selected={isSelected}
       data-disabled={!!node.disabled}
+      data-open={open}
       data-selected={isSelected}
     >
       <div className={commonRow}>

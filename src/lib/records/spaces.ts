@@ -1,9 +1,10 @@
 import type { DocRecord, DocSpace } from "@/lib/records/doc-types";
 import { aiDiscoverabilitySpace } from "@/lib/records/spaces/ai-discoverability-optimization";
 import { aiSupportGroupSpace } from "@/lib/records/spaces/ai-support-group";
+import { talentAgencySpace } from "@/lib/records/spaces/talent-agency";
 import { salesSpace } from "@/lib/records/spaces/sales";
 
-export const DOC_SPACES: DocSpace[] = [aiDiscoverabilitySpace, aiSupportGroupSpace, salesSpace];
+export const DOC_SPACES: DocSpace[] = [aiDiscoverabilitySpace, talentAgencySpace, aiSupportGroupSpace, salesSpace];
 
 export const DOC_RECORDS: Record<string, DocRecord> = Object.fromEntries(
   DOC_SPACES.flatMap((space) => space.docs.map((doc) => [doc.id, doc]))

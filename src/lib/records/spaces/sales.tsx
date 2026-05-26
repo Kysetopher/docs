@@ -2,7 +2,6 @@ import type { DocRecord, DocSpace } from "@/lib/records/doc-types";
 import type { DocSection } from "@/components/docs/DocumentationPage";
 import { targetSectionsContent } from "@/lib/records/sales/target-sections";
 import { scrapingMethodsDoc } from "@/lib/records/sales/scraping-methods";
-import { geoOptimizationDoc } from "@/lib/records/sales/geo-optimization";
 
 const spaceId = "sales";
 
@@ -91,7 +90,6 @@ function createDoc(
 }
 
 export const salesDocs: DocRecord[] = [
-  geoOptimizationDoc,
   createDoc(
     "sales-playbook",
     "Sales Playbook",

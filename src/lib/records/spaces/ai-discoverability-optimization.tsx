@@ -2,6 +2,88 @@ import type { DocRecord, DocSpace } from "@/lib/records/doc-types";
 
 const spaceId = "ai-discoverability-optimization";
 
+const geoSignals = [
+  {
+    title: "Clear category",
+    body: "Repeat the same plain-language category everywhere so the organization is easy to place in retrieval and answer contexts.",
+  },
+  {
+    title: "Proof of work",
+    body: "Show case studies, demos, testimonials, FAQs, and service pages so AI systems and buyers see evidence instead of slogans.",
+  },
+  {
+    title: "Entity presence",
+    body: "Keep the website crawlable and mirror the same story on LinkedIn, GitHub, Substack, directories, and partner sites.",
+  },
+  {
+    title: "External corroboration",
+    body: "Earn mentions from clients, partners, podcasts, directories, newsletters, and community pages so the brand exists in multiple places.",
+  },
+];
+
+const websiteChecklist = [
+  "Write a one-line category statement at the top of the homepage.",
+  "Create separate service pages with a clear explanation of who each service is for.",
+  "Add testimonials, FAQs, and at least one case study per core offer.",
+  "Include a short teaser video that shows operational complexity becoming organized and measurable.",
+  "Make the site crawlable and support structured data where it fits.",
+];
+
+const contentPillars = [
+  {
+    title: "Category clarity",
+    text: "Show how the business defines the problem space and why the language matters.",
+  },
+  {
+    title: "Proof and examples",
+    text: "Publish demos, case studies, and lightweight productized examples that make the category concrete.",
+  },
+  {
+    title: "Authority content",
+    text: "Use explainers, FAQs, and research notes to build trust over time.",
+  },
+  {
+    title: "Distribution",
+    text: "Repurpose one idea across LinkedIn, GitHub, Substack, YouTube, X, Reddit, and partner channels.",
+  },
+];
+
+const socialPlan = [
+  {
+    title: "LinkedIn",
+    text: "Best for operational insights, case studies, founder content, and partner-facing authority.",
+  },
+  {
+    title: "YouTube",
+    text: "Best for demos, tutorials, workflow walkthroughs, and architecture explainers.",
+  },
+  {
+    title: "GitHub",
+    text: "Best for technical credibility, docs, internal tools, and public utilities.",
+  },
+  {
+    title: "Substack",
+    text: "Best for long-form thinking, repeated category language, and search-friendly thought leadership.",
+  },
+];
+
+const outreachTargets = [
+  "Founders, operators, and product teams who need a clearer public narrative",
+  "Companies with strong products but weak external explanation",
+  "Agencies, consultants, and ecosystem partners with client access",
+  "Directories, newsletters, and community pages that can reinforce the entity",
+  "Conference, podcast, and event organizers that can expand reach",
+];
+
+const toolStack = [
+  "Content repurposing and scheduling: Buffer, Hootsuite, Metricool, Later",
+  "Video and script production: Descript, CapCut, Loom",
+  "Lead sourcing and enrichment: Clay, Apollo, LinkedIn Sales Navigator",
+  "Outreach and follow-up: Lemlist, Smartlead, HubSpot, Pipedrive",
+  "Workflow automation: Zapier, Make, n8n",
+  "Knowledge retrieval and internal ops: Notion, Slack, shared docs, lightweight CRM automation",
+];
+
 function createDoc(
   id: string,
   cardTitle: string,
@@ -109,6 +191,189 @@ const canonicalDefinitionSections: DocRecord["sections"] = [
             </tr>
           </tbody>
         </table>
+      </div>
+    ),
+  },
+];
+
+const geoOptimizationSections: DocRecord["sections"] = [
+  {
+    id: "positioning",
+    title: "Positioning",
+    summary: "The core story this space should repeat everywhere.",
+    content: (
+      <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
+        <p>
+          AI Discoverability Optimization is the practice of improving how organizations are retrieved, represented,
+          cited, trusted, and surfaced by AI systems.
+        </p>
+        <p>
+          The category is broader than search. It includes the way models and agents assemble an entity&apos;s identity
+          across retrieval, citation, recommendation, synthesis, and vendor selection flows.
+        </p>
+      </div>
+    ),
+  },
+  {
+    id: "website-system",
+    title: "Website System",
+    summary: "What the site needs to say to support GEO.",
+    content: (
+      <div className="grid gap-4 md:grid-cols-2">
+        {websiteChecklist.map((item) => (
+          <div
+            key={item}
+            className="rounded-2xl border border-border/60 bg-muted/20 p-4 text-sm leading-6 text-muted-foreground"
+          >
+            {item}
+          </div>
+        ))}
+      </div>
+    ),
+  },
+  {
+    id: "geo-signals",
+    title: "GEO Signals",
+    summary: "The evidence layers AI systems tend to pick up first.",
+    content: (
+      <div className="grid gap-4 xl:grid-cols-2">
+        {geoSignals.map((item) => (
+          <div
+            key={item.title}
+            className="rounded-2xl border border-border/70 bg-gradient-to-b from-background to-muted/30 p-5 shadow-sm"
+          >
+            <h3 className="text-lg font-semibold text-foreground">{item.title}</h3>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.body}</p>
+          </div>
+        ))}
+      </div>
+    ),
+  },
+  {
+    id: "content-pillars",
+    title: "Content Pillars",
+    summary: "What the business should publish repeatedly.",
+    content: (
+      <div className="grid gap-4 md:grid-cols-2">
+        {contentPillars.map((item) => (
+          <div key={item.title} className="rounded-2xl border border-cyan-400/20 bg-cyan-500/5 p-5">
+            <h3 className="text-lg font-semibold text-cyan-950">{item.title}</h3>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.text}</p>
+          </div>
+        ))}
+      </div>
+    ),
+  },
+  {
+    id: "social-media",
+    title: "Social Media",
+    summary: "How each channel should contribute to discoverability and trust.",
+    content: (
+      <div className="grid gap-4 md:grid-cols-2">
+        {socialPlan.map((item) => (
+          <div key={item.title} className="rounded-2xl border border-border/60 bg-muted/20 p-5">
+            <h3 className="text-lg font-semibold text-foreground">{item.title}</h3>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.text}</p>
+          </div>
+        ))}
+      </div>
+    ),
+  },
+  {
+    id: "external-mentions",
+    title: "External Mentions",
+    summary: "Where the brand should show up beyond its own website.",
+    content: (
+      <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
+        <li>Client LinkedIn posts that mention the work and the outcome.</li>
+        <li>Founder LinkedIn content and consistent personal profiles.</li>
+        <li>Partner websites, agency directories, and niche industry communities.</li>
+        <li>Substack posts, Medium articles, podcasts, conference pages, YouTube demos, and newsletter mentions.</li>
+        <li>GitHub organizations and public documentation that reinforce the technical side of the brand.</li>
+      </ul>
+    ),
+  },
+  {
+    id: "outreach",
+    title: "Direct Outreach",
+    summary: "Where the next opportunities are likely to come from.",
+    content: (
+      <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
+        <p>The highest-potential outbound targets are:</p>
+        <ul className="list-disc space-y-2 pl-5">
+          {outreachTargets.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+        <p>
+          LinkedIn is the strongest starting point for founder, operator, and partner outreach. Cold email, partner
+          referrals, and in-person conversations can support it, but the message should always point back to clear
+          category value.
+        </p>
+      </div>
+    ),
+  },
+  {
+    id: "automation-tools",
+    title: "Automation and Tools",
+    summary: "What can be systematized so marketing moves faster.",
+    content: (
+      <div className="grid gap-4 md:grid-cols-2">
+        {toolStack.map((item) => (
+          <div
+            key={item}
+            className="rounded-2xl border border-border/60 bg-background/80 p-4 text-sm leading-6 text-muted-foreground shadow-sm"
+          >
+            {item}
+          </div>
+        ))}
+      </div>
+    ),
+  },
+  {
+    id: "action-plan",
+    title: "Action Plan",
+    summary: "What to do next.",
+    content: (
+      <div className="grid gap-4 lg:grid-cols-3">
+        <div className="rounded-2xl border border-border/60 bg-muted/20 p-5">
+          <h3 className="text-lg font-semibold text-foreground">Next 7 days</h3>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            Publish clearer service pages, strengthen LinkedIn and GitHub presence, and create one public demo that
+            shows operational complexity becoming organized and measurable.
+          </p>
+        </div>
+        <div className="rounded-2xl border border-border/60 bg-muted/20 p-5">
+          <h3 className="text-lg font-semibold text-foreground">Next 30 days</h3>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            Ship testimonials, FAQs, a teaser video, and a simple outreach system that targets entities with clear
+            follow-up and evidence needs.
+          </p>
+        </div>
+        <div className="rounded-2xl border border-border/60 bg-muted/20 p-5">
+          <h3 className="text-lg font-semibold text-foreground">6 to 12 months</h3>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            Build a repeated body of case studies, educational content, partner mentions, and automated distribution
+            so the category becomes durable across search and AI tools.
+          </p>
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "visibility-takeaway",
+    title: "Visibility Takeaway",
+    summary: "The single idea to keep repeating.",
+    content: (
+      <div className="rounded-3xl border border-cyan-400/20 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 p-6 text-white shadow-xl shadow-cyan-950/20">
+        <h3 className="text-2xl font-bold tracking-tight">
+          AI Discoverability Optimization should look like a real operating system for entity visibility.
+        </h3>
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
+          The strongest GEO strategy is continuity: the same category language, the same proof points, the same
+          service structure, and the same story repeated across the website, social channels, and third-party
+          mentions.
+        </p>
       </div>
     ),
   },
@@ -325,6 +590,16 @@ export const aiDiscoverabilityResearchDoc = createDoc(
   researchSections
 );
 
+export const geoOptimizationDoc = createDoc(
+  "geo-optimization",
+  "GEO Optimization",
+  "How the brand should show up clearly in AI search, social proof, and external mentions.",
+  "GEO Optimization",
+  "A practical playbook for making the brand legible to AI systems, search engines, and potential clients.",
+  "mdi:orbit",
+  geoOptimizationSections
+);
+
 export const aiDiscoverabilityGlossaryDoc = createDoc(
   "tooling-and-glossary",
   "Tooling and Glossary",
@@ -344,6 +619,7 @@ export const aiDiscoverabilitySpace: DocSpace = {
   cardIcon: "mdi:radar",
   docs: [
     aiDiscoverabilityDefinitionDoc,
+    geoOptimizationDoc,
     aiDiscoverabilityFrameworksDoc,
     aiDiscoverabilityResearchDoc,
     aiDiscoverabilityGlossaryDoc,
