@@ -84,7 +84,7 @@ function SectionContent({
               />
             </Button>
 
-            <div className="flex min-w-0 flex-1 items-baseline gap-6">
+            <div className="md:flex min-w-0 items-baseline gap-6">
               <p
                 id={`${section.id}-title`}
                 className="shrink-0 text-sm font-medium uppercase tracking-wide text-primary/80"

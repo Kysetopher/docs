@@ -182,18 +182,20 @@ export function TalentAgencyBrandBody() {
     <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
       <Card className="rounded-none border-border/40 bg-background/40 backdrop-blur">
         <CardHeader className="border-b border-border/40 pb-4">
-          <CardTitle className="text-lg font-semibold">What we sell</CardTitle>
+          <CardTitle className="text-lg font-semibold">Market product</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 p-4 text-sm text-muted-foreground">
           <p className="leading-6">
-            Trained personnel for frontier technology, premium hospitality, launches, conferences, activations, and
-            branded content moments.
+            The core product is trained human presence, but the market offer changes by sector. In consumer brand
+            categories, we sell trust, taste, demonstration, and social proof. In technical categories, we sell
+            translation, credibility, and live explanation. In industrial categories, we sell safety-aware
+            coordination, field readiness, and operational support.
           </p>
           <ul className="list-disc space-y-2 pl-5">
-            <li>Technical ambassadors</li>
-            <li>Event and convention staff</li>
-            <li>Hospitality and luxury presence</li>
-            <li>Influencer-grade social talent</li>
+            <li>Consumer brand educators for nutrition, beauty, retail, and lifestyle launches</li>
+            <li>Demo hosts and technical communicators for AI, data, search, biotech, and medtech</li>
+            <li>Conference, launch, and partnership support for frontier science and advanced hardware</li>
+            <li>Field-ready coordination and site support for construction, mining, energy, and logistics</li>
           </ul>
         </CardContent>
       </Card>
@@ -204,11 +206,11 @@ export function TalentAgencyBrandBody() {
         </CardHeader>
         <CardContent className="space-y-3 p-4 text-sm text-muted-foreground">
           <p className="leading-6">
-            We provide trained people who can represent advanced products and premium brands with the right mix of
-            presentation, social intelligence, and basic technical fluency.
+            We provide trained people who can represent a sector properly, whether the buyer needs a polished face,
+            a technical translator, a field coordinator, or a trusted brand educator.
           </p>
           <p className="leading-6 text-foreground/85">
-            Buyers should hear “credible human presence” instead of “model booking.”
+            Buyers should hear a flexible market product: human presence plus sector-specific service design.
           </p>
         </CardContent>
       </Card>
@@ -308,3 +310,336 @@ export function TalentAgencyResearchBody({ refs }: { refs: TalentAgencyReference
     </div>
   );
 }
+
+const UPSKILL_SERVICE_KIT = [
+  {
+    title: "Sector primers",
+    description: "Short briefs that explain the buyer, the jargon, the risk profile, and the kinds of human support the sector actually buys.",
+  },
+  {
+    title: "Roleplay scripts",
+    description: "Scenario drills for sales calls, event support, product demos, objection handling, and handoff moments.",
+  },
+  {
+    title: "Service standards",
+    description: "A shared rubric for presentation, reliability, product fluency, and professional boundaries.",
+  },
+  {
+    title: "Live coaching",
+    description: "Trainer-led rehearsals that turn the materials into repeatable field performance.",
+  },
+  {
+    title: "Certification checklist",
+    description: "A simple pass/fail gate so talent only enters live work when the sector-specific basics are covered.",
+  },
+  {
+    title: "Refresh cadence",
+    description: "Quarterly updates so the kit stays aligned as sectors, offers, and client expectations change.",
+  },
+] as const;
+
+const UPSKILL_SERVICE_PHASES: BusinessPlanPhase[] = [
+  {
+    title: "Baseline",
+    body: "Teach the common service floor: presentation, punctuality, professionalism, and client-safe behavior.",
+  },
+  {
+    title: "Sector overlay",
+    body: "Add the terminology, risks, and buyer expectations that are specific to one target sector.",
+  },
+  {
+    title: "Scenario practice",
+    body: "Rehearse the actual situations talent will face in the field, on stage, at a booth, or inside a client briefing.",
+  },
+  {
+    title: "Certified deployment",
+    body: "Only place talent into live work once they can demonstrate the required service standard.",
+  },
+];
+
+export function TalentAgencyUpskillServicesBody() {
+  return (
+    <div className="space-y-5">
+      <Card className="rounded-none border-border/40 bg-background/40 backdrop-blur">
+        <CardHeader className="border-b border-border/40 pb-4">
+          <CardTitle className="text-lg font-semibold">What the kit is</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3 p-4 text-sm leading-6 text-muted-foreground">
+          <p>
+            The upskill services kit is the training system we use to prepare the talent network for specific target
+            sectors. It is not just a handbook. It is a repeatable set of materials, rehearsals, and standards that
+            turn general talent into sector-ready talent.
+          </p>
+          <p>
+            The goal is to make onboarding faster, reduce service mistakes, and give every talent profile a clearer
+            commercial use case.
+          </p>
+        </CardContent>
+      </Card>
+
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {UPSKILL_SERVICE_KIT.map((item) => (
+          <Card key={item.title} className="rounded-none border-border/40 bg-background/30 backdrop-blur">
+            <CardHeader className="border-b border-border/40 pb-4">
+              <CardTitle className="text-base font-semibold">{item.title}</CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 text-sm leading-6 text-muted-foreground">
+              <p>{item.description}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <Card className="rounded-none border-border/40 bg-background/30 backdrop-blur">
+        <CardHeader className="border-b border-border/40 pb-4">
+          <CardTitle className="text-lg font-semibold">How it gets used</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4 p-4 text-sm text-muted-foreground">
+          <div className="rounded-xl border border-border/40 bg-background/20 p-4">
+            <BusinessPlanPhasePath
+              title="Training path"
+              subtitle="A simple progression from general readiness to sector-specific deployment."
+              phases={UPSKILL_SERVICE_PHASES}
+            />
+          </div>
+          <ul className="list-disc space-y-2 pl-5 leading-6">
+            <li>Use the kit to onboard new talent against one sector at a time.</li>
+            <li>Adapt the scripts and standards when a sector needs compliance, technical fluency, or stronger client-facing polish.</li>
+            <li>Keep the materials modular so the same base talent can be redeployed across adjacent sectors.</li>
+          </ul>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+export type SectorServiceNeed = {
+  superCategory: string;
+  sector: string;
+  serviceNeed: string;
+  talentType: string;
+  whyItDiffers: string;
+};
+
+export const SUPER_CATEGORY_ORDER = [
+  "Consumer Trust & Brand",
+  "Digital Intelligence & AI Infrastructure",
+  "Frontier Science & Advanced Hardware",
+  "Built Environment & Industrial Delivery",
+  "Energy & Climate Infrastructure",
+] as const;
+
+export const TARGET_SECTOR_NEEDS: SectorServiceNeed[] = [
+  {
+    superCategory: "Consumer Trust & Brand",
+    sector: "Nutrition",
+    serviceNeed: "Product educators, sampling support, recipe/content talent, and credible spokespersons.",
+    talentType: "Consumer-facing brand trainers",
+    whyItDiffers: "Needs trust, product explanation, and lifestyle-friendly presentation rather than pure glamour.",
+  },
+  {
+    superCategory: "Consumer Trust & Brand",
+    sector: "Lifestyle",
+    serviceNeed: "Ambassadors, hosts, community builders, and social content talent.",
+    talentType: "Brand and event presence",
+    whyItDiffers: "Usually sells aspiration and audience connection, so the service is more community and media oriented.",
+  },
+  {
+    superCategory: "Digital Intelligence & AI Infrastructure",
+    sector: "AI Automation and Infrastructure",
+    serviceNeed: "Technical evangelists, solution explainers, demo support, and workshop facilitators.",
+    talentType: "Tech-facing presenters",
+    whyItDiffers: "The buyer needs someone who can translate product complexity into business value.",
+  },
+  {
+    superCategory: "Digital Intelligence & AI Infrastructure",
+    sector: "Data Science",
+    serviceNeed: "Analyst communicators, training facilitators, conference speakers, and research explainers.",
+    talentType: "Technical educators",
+    whyItDiffers: "The service has to sound credible to technical teams while still being understandable to business buyers.",
+  },
+  {
+    superCategory: "Digital Intelligence & AI Infrastructure",
+    sector: "Search Engine Technology",
+    serviceNeed: "Product demo hosts, technical writers, search specialists, and launch support staff.",
+    talentType: "Product and platform communicators",
+    whyItDiffers: "Search companies need clear explanation of relevance, ranking, retrieval, and product performance.",
+  },
+  {
+    superCategory: "Frontier Science & Advanced Hardware",
+    sector: "Biotech and Medical products",
+    serviceNeed: "Scientifically literate presenters, field trainers, conference support, and compliance-aware brand staff.",
+    talentType: "Trust-heavy specialists",
+    whyItDiffers: "This sector needs stronger accuracy, terminology control, and careful boundaries around claims.",
+  },
+  {
+    superCategory: "Frontier Science & Advanced Hardware",
+    sector: "Superconductor technology",
+    serviceNeed: "Investor-facing explainers, lab-event support, technical demos, and frontier-tech storytellers.",
+    talentType: "Deep-tech translators",
+    whyItDiffers: "The category is highly technical, so the service is mostly about simplifying advanced science without diluting it.",
+  },
+  {
+    superCategory: "Frontier Science & Advanced Hardware",
+    sector: "Quantum and Photonic Computing",
+    serviceNeed: "Research communicators, conference hosts, partnership support, and expert-facing presentation staff.",
+    talentType: "Specialist technical talent",
+    whyItDiffers: "The audience is often researchers, investors, or enterprise buyers who expect precision and sophistication.",
+  },
+  {
+    superCategory: "Built Environment & Industrial Delivery",
+    sector: "Construction & Civil Engineering",
+    serviceNeed: "Site coordinators, safety briefers, project support, and client presentation staff.",
+    talentType: "Field-ready operators",
+    whyItDiffers: "This is more operational and site-based, so reliability and safety awareness matter more than aesthetic presentation alone.",
+  },
+  {
+    superCategory: "Consumer Trust & Brand",
+    sector: "Beauty products",
+    serviceNeed: "Makeup artists, product educators, retail demo staff, and social-first content talent.",
+    talentType: "Visual brand specialists",
+    whyItDiffers: "Beauty relies heavily on demonstration, style, and repeatable consumer-facing product education.",
+  },
+  {
+    superCategory: "Energy & Climate Infrastructure",
+    sector: "Solar",
+    serviceNeed: "Customer educators, technical sales support, installer trainers, and site survey support.",
+    talentType: "Clean-tech field support",
+    whyItDiffers: "Solar is part sales, part technical installation, so the service must bridge both buyer education and implementation.",
+  },
+  {
+    superCategory: "Energy & Climate Infrastructure",
+    sector: "Geothermal",
+    serviceNeed: "Technical communicators, policy-aware sales support, field-event staff, and stakeholder education.",
+    talentType: "Infrastructure translators",
+    whyItDiffers: "Geothermal often needs more explanation around geology, permitting, and long-term infrastructure planning.",
+  },
+  {
+    superCategory: "Energy & Climate Infrastructure",
+    sector: "Mining",
+    serviceNeed: "Site safety trainers, operational coordinators, stakeholder communicators, and technical support staff.",
+    talentType: "Industrial field operators",
+    whyItDiffers: "Mining is heavily operational and safety-sensitive, so the service needs stronger site discipline, logistics awareness, and compliance fluency.",
+  },
+  {
+    superCategory: "Energy & Climate Infrastructure",
+    sector: "Oil & Gas",
+    serviceNeed: "Technical communicators, field support, conference staff, and stakeholder engagement talent.",
+    talentType: "Industrial and policy-facing talent",
+    whyItDiffers: "This sector often needs a mix of operational credibility, safety awareness, and public-facing professionalism.",
+  },
+  {
+    superCategory: "Built Environment & Industrial Delivery",
+    sector: "Metals & Materials",
+    serviceNeed: "Factory-facing training support, trade show talent, technical explainers, and account support staff.",
+    talentType: "Industrial presenters",
+    whyItDiffers: "The work is grounded in specs, production, and supply-chain reliability, so it needs practical rather than aspirational positioning.",
+  },
+  {
+    superCategory: "Built Environment & Industrial Delivery",
+    sector: "Semiconductor Manufacturing",
+    serviceNeed: "Cleanroom-aware training support, recruiting/event talent, technical explainers, and employer-brand staff.",
+    talentType: "Precision manufacturing support",
+    whyItDiffers: "Semiconductor operations are high-precision and process-driven, so talent must understand discipline, accuracy, and process language.",
+  },
+  {
+    superCategory: "Built Environment & Industrial Delivery",
+    sector: "Aerospace & Aviation Manufacturing",
+    serviceNeed: "Technical recruiters, demo support, client briefers, and conference staff.",
+    talentType: "High-compliance industrial talent",
+    whyItDiffers: "Aerospace needs more trust, process control, and technical literacy than most standard consumer sectors.",
+  },
+  {
+    superCategory: "Built Environment & Industrial Delivery",
+    sector: "Logistics & Supply Chain",
+    serviceNeed: "Operations trainers, fulfillment communicators, customer success support, and event staff.",
+    talentType: "Workflow coordinators",
+    whyItDiffers: "The buyer cares about reliability, flow, and visibility across complex handoffs rather than brand gloss.",
+  },
+  {
+    superCategory: "Energy & Climate Infrastructure",
+    sector: "Agriculture & Agri-tech",
+    serviceNeed: "Field educators, grower support, technical sales staff, and demo/event talent.",
+    talentType: "Field-adjacent educators",
+    whyItDiffers: "Agriculture is both operational and educational, so talent needs practical credibility and strong communication.",
+  },
+  {
+    superCategory: "Consumer Trust & Brand",
+    sector: "Retail & E-commerce",
+    serviceNeed: "Brand ambassadors, livestream hosts, demo talent, and customer experience support.",
+    talentType: "Commerce-facing presenters",
+    whyItDiffers: "Retail and ecommerce rely on conversion, product storytelling, and trust at the point of sale.",
+  },
+  {
+    superCategory: "Frontier Science & Advanced Hardware",
+    sector: "Medtech",
+    serviceNeed: "Clinical trainers, conference support, regulated product explainers, and stakeholder educators.",
+    talentType: "Clinical-commercial hybrids",
+    whyItDiffers: "Medtech blends medical accuracy with product education, so the service needs extra discipline and precision.",
+  },
+] as const;
+
+export function TalentAgencyTargetSectorsBody() {
+  return (
+    <div className="space-y-5">
+      <Card className="rounded-none border-border/40 bg-background/40 backdrop-blur">
+        <CardHeader className="border-b border-border/40 pb-4">
+          <CardTitle className="text-lg font-semibold">Why the sectors differ</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3 p-4 text-sm leading-6 text-muted-foreground">
+          <p>
+            These sectors do not buy the same service. Some need polished consumer-facing talent, some need technical
+            explainers, and others need field-ready operators who can work inside regulated or highly structured
+            environments.
+          </p>
+          <p>
+            This doc is a working map for deciding what kind of training, scripts, and live support each sector
+            actually needs.
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card className="rounded-none border-border/40 bg-cyan-500/5 backdrop-blur">
+        <CardHeader className="border-b border-border/40 pb-4">
+          <CardTitle className="text-lg font-semibold text-cyan-950">Practical takeaway</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3 p-4 text-sm leading-6 text-muted-foreground">
+          <p>
+            The core difference across these sectors is whether the talent is being used to sell trust, explain
+            complexity, support operations, or deliver premium brand presence.
+          </p>
+          <p>
+            That means the upskill kit should not be one generic template. It should branch by sector so training
+            matches the actual service the client is buying.
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+export function TalentAgencySectorNeedCard({ item }: { item: SectorServiceNeed }) {
+  return (
+    <Card className="rounded-none border-border/40 bg-background/40 backdrop-blur">
+      <CardHeader className="border-b border-border/40 pb-4">
+        <CardTitle className="text-base font-semibold">{item.sector}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3 p-4 text-sm leading-6 text-muted-foreground">
+        <div>
+          <p className="text-xs uppercase tracking-wide text-muted-foreground/70">Best-fit service</p>
+          <p className="text-foreground/90">{item.serviceNeed}</p>
+        </div>
+        <div>
+          <p className="text-xs uppercase tracking-wide text-muted-foreground/70">Talent type</p>
+          <p className="text-foreground/90">{item.talentType}</p>
+        </div>
+        <div>
+          <p className="text-xs uppercase tracking-wide text-muted-foreground/70">Why it differs</p>
+          <p className="text-foreground/90">{item.whyItDiffers}</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+
