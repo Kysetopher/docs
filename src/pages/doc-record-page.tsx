@@ -1,5 +1,6 @@
 import { Navigate, useParams } from "react-router-dom";
 import DocumentationPage from "@/components/docs/DocumentationPage";
+import { getSpaceBanner } from "@/lib/records/space-banners";
 import { getDefaultSpace, getDocRecord, getSpaceById } from "@/lib/records/spaces";
 
 export function DocRecordPage() {
@@ -16,6 +17,7 @@ export function DocRecordPage() {
   return (
     <DocumentationPage
       header={doc.header}
+      banner={getSpaceBanner(resolvedSpace.id)}
       sections={doc.sections}
       backHref={resolvedSpace.href}
       backLabel={`${resolvedSpace.title} Space`}

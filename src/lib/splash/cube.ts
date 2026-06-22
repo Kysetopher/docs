@@ -21,10 +21,20 @@ export type CubeFrame = {
   outline: Array<[number, number]>;
 };
 
-function isoPoint(x: number, y: number, z: number, centerX: number, centerY: number, size: number, dx: number, dy: number, scale: number) {
+function isoPoint(
+  x: number,
+  y: number,
+  z: number,
+  centerX: number,
+  centerY: number,
+  size: number,
+  dx: number,
+  dy: number,
+  scale: number,
+): [number, number] {
   const px = (x - y) * dx;
   const py = (x + y) * dy - z * scale;
-  return [centerX + px * size, centerY + py * size] as const;
+  return [centerX + px * size, centerY + py * size];
 }
 
 export function buildCubeFrame({
@@ -123,4 +133,3 @@ export function drawPolyline(ctx: CanvasRenderingContext2D, points: Array<[numbe
     ctx.lineTo(points[i][0], points[i][1]);
   }
 }
-

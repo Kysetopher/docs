@@ -158,6 +158,7 @@ export type DocumentationHeader = {
 export type DocumentationPageProps = {
   sections: DocSection[];
   header?: DocumentationHeader;
+  banner?: ReactNode;
   backHref?: string;
   backLabel?: string;
 };
@@ -169,6 +170,7 @@ export function DocumentationPage({
     description:
       "A living reference for the astrology companion app. Update the documentation below to refresh the navigation automatically.",
   },
+  banner,
   backHref = "/docs",
   backLabel = "Documentation Spaces",
 }: DocumentationPageProps) {
@@ -278,7 +280,7 @@ export function DocumentationPage({
       >
         <main className="flex h-full flex-col overflow-hidden">
           <SimpleBar className="flex-1" style={{ maxHeight: "100%" }}>
-            <div className="mx-auto space-y-8 px-6 py-6 lg:py-8">
+            <div >
               {header.bannerImageUrl ? (
                 <div className="overflow-hidden bg-background/30">
                   <img
@@ -288,14 +290,18 @@ export function DocumentationPage({
                     loading="lazy"
                   />
                 </div>
+              ) : banner ? (
+                <div className="overflow-hidden">
+                  <div className="relative h-40 sm:h-48 lg:h-56">{banner}</div>
+                </div>
               ) : null}
 
               <header className="space-y-3">
-                <div className="flex items-center  gap-2 text-sm font-semibold uppercase tracking-wide "> {header.title}
-                  </div>
-                <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-                
-                </h1>
+                <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                  {header.icon ? <Icon icon={header.icon} className="h-4 w-4 text-primary" /> : null}
+                  <span>{header.title}</span>
+                </div>
+                <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">{header.title}</h1>
                 {header.description ? (
                   <p className="text-lg text-muted-foreground">
                     {header.description}
