@@ -1,0 +1,79 @@
+"use client";
+
+import * as React from "react";
+import { createAnimationBuffers, startAnimationLoop } from "@/lib/splash/animation";
+import { createSplashPalette } from "@/lib/splash/color";
+import { buildCubeMoireBands, drawCubeMoirePosterize } from "@/lib/splash/cube-moire-texture";
+
+const TARGET_FPS = 30;
+const FRAME_INTERVAL_MS = 1000 / TARGET_FPS;
+
+export function PosturizeSplash({ color = "#38bdf8" }: { color?: string }) {
+  const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
+  const palette = React.useMemo(() => createSplashPalette(color), [color]);
+
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const buffers = createAnimationBuffers(4096);
+    let logicalWidth = 0;
+    let logicalHeight = 0;
+    let logicalDpr = 1;
+    let bands = buildCubeMoireBands(1, 1);
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      const nextWidth = Math.max(1, Math.floor(rect.width));
+      const nextHeight = Math.max(1, Math.floor(rect.height));
+      const nextDpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      if (nextWidth === logicalWidth && nextHeight === logicalHeight && nextDpr === logicalDpr) return;
+
+      logicalWidth = nextWidth;
+      logicalHeight = nextHeight;
+      logicalDpr = nextDpr;
+      canvas.width = Math.floor(logicalWidth * logicalDpr);
+      canvas.height = Math.floor(logicalHeight * logicalDpr);
+      ctx.setTransform(logicalDpr, 0, 0, logicalDpr, 0, 0);
+      bands = buildCubeMoireBands(logicalWidth, logicalHeight);
+    };
+
+    const stopLoop = startAnimationLoop({
+      frameBudgetMs: FRAME_INTERVAL_MS,
+      onFrame(nowMs) {
+        if (!logicalWidth || !logicalHeight) return;
+        const timeSeconds = nowMs * 0.001 * 0.2;
+        buffers.beginFrame();
+        const step = Math.max(10, Math.min(logicalWidth, logicalHeight) * 0.022);
+        const cols = Math.max(2, Math.ceil(logicalWidth / step) + 1);
+        const rows = Math.max(2, Math.ceil(logicalHeight / step) + 1);
+        const field = buffers.allocScratchF32(cols * rows);
+        drawCubeMoirePosterize({
+          ctx,
+          width: logicalWidth,
+          height: logicalHeight,
+          timeSeconds,
+          bands,
+          field,
+          includeContours: false,
+          palette,
+        });
+      },
+    });
+
+    const observer = new ResizeObserver(resize);
+    observer.observe(canvas);
+    window.addEventListener("resize", resize);
+    resize();
+
+    return () => {
+      stopLoop();
+      observer.disconnect();
+      window.removeEventListener("resize", resize);
+    };
+    }, [palette]);
+
+  return <canvas ref={canvasRef} className="absolute inset-0 h-full w-full select-none pointer-events-none overflow-hidden" />;
+}
