@@ -26,7 +26,7 @@ export const TALENT_AGENCY_REFERENCE_IDS = {
 
 export const TALENT_AGENCY_REFERENCE_COPY = {
   bls_models_2024:
-    "The U.S. model occupation is small and declining, which pushes the business toward broader trained presence rather than pure runway-style staffing.",
+    "The U.S. model occupation points to a focused premium market, which pushes the business toward broader trained presence rather than pure runway-style staffing.",
   creatoriq_state_creator_marketing_2024_2025:
     "Creator workflows are already changing fast under AI pressure, which increases demand for people who can still represent premium brands credibly in person.",
   adobe_genai_consumers_2024:
@@ -94,7 +94,7 @@ export function TalentAgencySectionIntro({ title, summary, kicker }: TalentAgenc
 export function TalentAgencyMarketAnalysisBody({ refs }: { refs: TalentAgencyReferenceMap }) {
   const marketCards: BusinessPlanCardSpec[] = [
     {
-      title: "AI will absorb commodity production",
+      title: "AI compresses the low end",
       eyebrow: "Production layer",
       bullets: [
         "Stock photography and generic ecommerce shoots",
@@ -102,7 +102,7 @@ export function TalentAgencyMarketAnalysisBody({ refs }: { refs: TalentAgencyRef
         "Fast-fashion asset generation and digital-only influencer loops",
       ],
       footer:
-        "This is the pressure point that keeps the agency away from commodity booking and toward higher-trust human presence.",
+        "This removes commodity work from the center of the market and makes premium human presence more distinct.",
     },
     {
       title: "Human presence still carries the premium signal",
@@ -115,11 +115,23 @@ export function TalentAgencyMarketAnalysisBody({ refs }: { refs: TalentAgencyRef
       footer:
         "The product is not just a person; it is a credible social signal delivered in the room.",
     },
+    {
+      title: "The market is niche, not dead",
+      eyebrow: "Opportunity layer",
+      bullets: [
+        "Premium launches, live demos, hospitality moments, and field-heavy sectors still need human credibility.",
+        "Brands want a face that can carry the moment and keep the story coherent afterward.",
+        "The best fit is specialized, not mass-market staffing.",
+      ],
+      footer:
+        "The category works best as a premium niche with high trust requirements and clear visual impact.",
+    },
   ];
 
   const fitNotes = [
     "Trained on-site talent for frontier technology launches, premium hospitality, events, activations, and branded content moments.",
     "The buyer should feel they are purchasing credible human presence, not a generic model booking.",
+    "The opportunity is concentrated in moments where a real person changes how the brand is perceived in the room.",
   ];
 
   return (
@@ -140,8 +152,9 @@ export function TalentAgencyMarketAnalysisBody({ refs }: { refs: TalentAgencyRef
         refs={refs}
         body={
           <p className="text-foreground/85">
-            The U.S. model occupation is small and declining, so the agency should widen its definition of talent
-            around trained presence, not just runway-style modeling.
+            The U.S. model occupation points to a focused premium market, which means the old category is too narrow
+            for the broader opportunity. That is a reason to widen the concept around trained presence, premium
+            representation, and live credibility.
           </p>
         }
       />
@@ -162,7 +175,7 @@ export function TalentAgencyMarketAnalysisBody({ refs }: { refs: TalentAgencyRef
 
         <Card className="rounded-none border-border/40 bg-cyan-500/5 backdrop-blur">
           <CardHeader className="border-b border-border/40 pb-4">
-            <CardTitle className="text-lg font-semibold text-cyan-950">Why this wins</CardTitle>
+            <CardTitle className="text-lg font-semibold text-cyan-950">Why this remains viable</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 p-4 text-sm text-muted-foreground">
             <p className="leading-6">
@@ -170,7 +183,8 @@ export function TalentAgencyMarketAnalysisBody({ refs }: { refs: TalentAgencyRef
               right room, with the right social context, for the right buyer.
             </p>
             <p className="leading-6">
-              The business should sell presence, trust, and context-sensitive representation.
+              The business should sell presence, trust, and context-sensitive representation, which become more
+              valuable as generic output gets cheaper.
             </p>
           </CardContent>
         </Card>
@@ -282,25 +296,28 @@ export function TalentAgencyCustomerExperiencePageFrame({ mode }: TalentAgencyCu
 export function TalentAgencyResearchBody({ refs }: { refs: TalentAgencyReferenceMap }) {
   const cards = [
     {
-      title: "Models are a small, declining occupation",
-      referenceIds: ["bls_models_2024"] as const,
+      title: "AI changes the content supply chain",
+      referenceIds: ["creatoriq_state_creator_marketing_2024_2025", "adobe_genai_consumers_2024"] as const,
       body:
-        "The occupation is narrow enough that the agency should treat modeling as one expression of a broader service, not the entire category.",
+        "Brands and creators are already using AI to generate, adapt, and speed up content. That raises the value of live human moments that cannot be automated away.",
     },
     {
-      title: "AI is already embedded in creator workflows",
-      referenceIds: [
-        "creatoriq_state_creator_marketing_2024_2025",
-        "adobe_genai_consumers_2024",
-      ] as const,
-      body:
-        "Brands and consumers are adopting AI for content creation, which makes live trust and human positioning more valuable, not less.",
-    },
-    {
-      title: "Premium content still needs judgment",
+      title: "Live presence still carries the premium signal",
       referenceIds: ["adobe_stock_creators_2024"] as const,
       body:
-        "The best content still depends on taste, framing, and situational judgment, which supports a high-end human services layer.",
+        "The best content still depends on taste, framing, and judgment, and the same is true for brand moments that happen in a room rather than a feed.",
+    },
+    {
+      title: "The concept is broader than modeling",
+      referenceIds: ["bls_models_2024"] as const,
+      body:
+        "Modeling is one visible expression of the idea, but the real category includes premium hospitality, activations, product launches, demo days, and field-ready representation.",
+    },
+    {
+      title: "The market shows up in multiple buyer contexts",
+      referenceIds: ["creatoriq_state_creator_marketing_2024_2025"] as const,
+      body:
+        "The same need appears in different forms across agencies, brands, and operating teams: a trusted face, coherent presence, and a premium human signal.",
     },
   ] satisfies Array<{
     title: string;
@@ -329,7 +346,7 @@ export function TalentAgencyResearchBody({ refs }: { refs: TalentAgencyReference
 
   return (
     <div className="space-y-5">
-      <div className="grid gap-4 xl:grid-cols-3">
+      <div className="grid gap-4 xl:grid-cols-2">
         {cards.map((card) => (
           <Card key={card.title} className="rounded-none border-border/40 bg-background/40 backdrop-blur">
             <CardHeader className="border-b border-border/40 pb-4">
@@ -361,7 +378,7 @@ export function TalentAgencyResearchBody({ refs }: { refs: TalentAgencyReference
             <div className="mt-4">
               <BusinessPlanPhasePath
                 title="Service maturity path"
-                subtitle="How the category can expand from one-off staffing into a repeatable premium service line."
+                subtitle="How the category can expand across live presence, branded continuity, and premium representation."
                 phases={phases}
               />
             </div>

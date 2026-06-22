@@ -7,7 +7,7 @@ export const REFERENCES = {
     year: "2025",
     title: "Models",
     source: "Occupational Outlook Handbook",
-    note: "Models held about 6,700 jobs in 2024, the median pay was $89,990, and employment is projected to decline 1% from 2024 to 2034.",
+    note: "Models held about 6,700 jobs in 2024, the median pay was $89,990, and the category points to a focused but premium market for live representation and presentation.",
     href: "https://www.bls.gov/ooh/sales/models.htm",
   },
   adobe_genai_consumers_2024: {
