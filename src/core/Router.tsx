@@ -2,6 +2,7 @@ import { Navigate, createBrowserRouter } from 'react-router-dom'
 import { Layout } from '../components/core/layout'
 import { DocRecordPage } from '../pages/doc-record-page'
 import { HomePage } from '../pages/home-page'
+import { TalentAgencyCustomerExperiencePage } from '../pages/talent-agency-customer-experience-page'
 import { SpacePage } from '../pages/space-page'
 
 export const router = createBrowserRouter([
@@ -16,6 +17,7 @@ export const router = createBrowserRouter([
       { path: 'docs/:docId', element: <DocRecordPage /> },
       { path: 'spaces/:spaceId', element: <SpacePage /> },
       { path: 'spaces/:spaceId/:docId', element: <DocRecordPage /> },
+      { path: 'spaces/talent-agency/customer-experience', element: <TalentAgencyCustomerExperiencePage /> },
     ],
   },
 ], {

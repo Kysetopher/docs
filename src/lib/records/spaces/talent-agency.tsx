@@ -2,12 +2,12 @@ import type { DocRecord, DocSpace } from "@/lib/records/doc-types";
 import type { DocSection } from "@/components/docs/DocumentationPage";
 import { REFERENCES } from "@/lib/records/references";
 import {
-  TalentAgencyBrandBody,
   TalentAgencyMarketAnalysisBody,
+  TalentAgencyCustomerExperiencePageFrame,
   TalentAgencyResearchBody,
   TalentAgencySectionIntro,
   TalentAgencySectorNeedCard,
-  TalentAgencyUpskillServicesBody,
+  TalentAgencyProductsServicesBody,
   SUPER_CATEGORY_ORDER,
   TARGET_SECTOR_NEEDS,
   type TalentAgencyReferenceMap,
@@ -68,20 +68,23 @@ const marketAnalysisSections: DocRecord["sections"] = [
   },
 ];
 
-const marketProductSections: DocRecord["sections"] = [
+const productsServicesSections: DocRecord["sections"] = [
   {
-    id: "market-product",
-    title: "Market Product",
-    summary: "How the service should be described to prospective clients and sectors.",
+    id: "products-services",
+    title: "Products & Services",
+    summary: "What the umbrella brand sells and how the service families fit together.",
     content: (
       <div className="space-y-5">
-        <TalentAgencySectionIntro
-          kicker="Messaging"
-          title="Make the offer sound like a flexible market product, not a generic staffing line."
-          summary="The buyer should understand that the agency supplies trained human presence with different service shapes for brand, technical, and industrial sectors."
-        />
-        <TalentAgencyBrandBody />
+        <TalentAgencyProductsServicesBody />
       </div>
+    ),
+  },
+  {
+    id: "customer-experience",
+    title: "Customer Experience",
+    summary: "How a client browses and selects a rep.",
+    content: (
+      <TalentAgencyCustomerExperiencePageFrame mode="embedded" />
     ),
   },
 ];
@@ -106,19 +109,136 @@ const marketResearchSections: DocRecord["sections"] = [
 
 const upskillServicesSections: DocRecord["sections"] = [
   {
-    id: "upskill-services",
-    title: "Upskill Services",
-    summary: "A training kit for turning general talent into sector-ready talent.",
-    content: (
-      <div className="space-y-5">
-        <TalentAgencySectionIntro
-          kicker="Training system"
-          title="Build the kit around repeatable sector readiness, not one-off onboarding."
-          summary="The agency needs a practical training kit that can teach presentation, product fluency, and sector-specific behavior without rebuilding the process every time."
-        />
-        <TalentAgencyUpskillServicesBody />
-      </div>
-    ),
+    id: "sector-readiness",
+    title: "Sector Readiness",
+    summary: "Train talent for one target sector at a time.",
+    children: [
+      {
+        id: "sector-readiness-overview",
+        title: "What it covers",
+        summary: "Buyer language, service expectations, risks, and sector context.",
+        content: (
+          <div className="space-y-3 text-sm leading-6 text-muted-foreground">
+            <p>Focus on the language and behavior the client expects in that sector.</p>
+            <p>Keep the training grounded in the actual roles the network will be asked to fill.</p>
+          </div>
+        ),
+      },
+      {
+        id: "sector-readiness-modules",
+        title: "Core modules",
+        summary: "Primer, scenarios, and standards.",
+        content: (
+          <div className="space-y-3 text-sm leading-6 text-muted-foreground">
+            <ul className="list-disc space-y-2 pl-5">
+              <li>Sector primer</li>
+              <li>Terminology guide</li>
+              <li>Buyer and risk map</li>
+              <li>Scenario rehearsal</li>
+              <li>Certification gate</li>
+            </ul>
+          </div>
+        ),
+      },
+      {
+        id: "sector-readiness-output",
+        title: "Output",
+        summary: "Sector-qualified talent who can step into live work with confidence.",
+        content: (
+          <div className="space-y-3 text-sm leading-6 text-muted-foreground">
+            <p>The output is a talent profile that is ready for a specific sector brief, not a generic placement.</p>
+          </div>
+        ),
+      },
+    ],
+  },
+  {
+    id: "brand-autonomy",
+    title: "Brand Autonomy",
+    summary: "Help talent own their image, voice, and client-facing presence.",
+    children: [
+      {
+        id: "brand-autonomy-overview",
+        title: "What it covers",
+        summary: "Identity, profile, content voice, and self-directed presentation.",
+        content: (
+          <div className="space-y-3 text-sm leading-6 text-muted-foreground">
+            <p>This is about becoming legible and independent, not staying tied to one agency workflow.</p>
+            <p>The focus is consistency across profile, voice, and public presence.</p>
+          </div>
+        ),
+      },
+      {
+        id: "brand-autonomy-modules",
+        title: "Core modules",
+        summary: "Positioning, profile, and client communication.",
+        content: (
+          <div className="space-y-3 text-sm leading-6 text-muted-foreground">
+            <ul className="list-disc space-y-2 pl-5">
+              <li>Personal positioning</li>
+              <li>Profile and portfolio setup</li>
+              <li>Content voice and posting rhythm</li>
+              <li>Direct outreach and response etiquette</li>
+              <li>Boundary setting</li>
+            </ul>
+          </div>
+        ),
+      },
+      {
+        id: "brand-autonomy-output",
+        title: "Output",
+        summary: "A talent brand that can operate with or without an agency layer.",
+        content: (
+          <div className="space-y-3 text-sm leading-6 text-muted-foreground">
+            <p>The output is a more autonomous talent identity that can work independently and stay coherent over time.</p>
+          </div>
+        ),
+      },
+    ],
+  },
+  {
+    id: "field-performance",
+    title: "Field Performance",
+    summary: "Rehearse live scenarios and certify talent for face-to-face work.",
+    children: [
+      {
+        id: "field-performance-overview",
+        title: "What it covers",
+        summary: "Booths, demos, events, and live handoffs.",
+        content: (
+          <div className="space-y-3 text-sm leading-6 text-muted-foreground">
+            <p>Build comfort with the actual situations talent will face in the field.</p>
+            <p>Keep the training focused on presence, delivery, and professional reliability.</p>
+          </div>
+        ),
+      },
+      {
+        id: "field-performance-modules",
+        title: "Core modules",
+        summary: "Rehearsal, standards, and live-readiness checks.",
+        content: (
+          <div className="space-y-3 text-sm leading-6 text-muted-foreground">
+            <ul className="list-disc space-y-2 pl-5">
+              <li>Booth presence</li>
+              <li>Demo delivery</li>
+              <li>Event etiquette</li>
+              <li>Client handoff</li>
+              <li>Pass/fail readiness review</li>
+            </ul>
+          </div>
+        ),
+      },
+      {
+        id: "field-performance-output",
+        title: "Output",
+        summary: "Talent that is certified to represent the brand in person.",
+        content: (
+          <div className="space-y-3 text-sm leading-6 text-muted-foreground">
+            <p>The output is live-ready talent with a clear standard for on-site performance.</p>
+          </div>
+        ),
+      },
+    ],
   },
 ];
 
@@ -149,14 +269,14 @@ export const talentAgencyMarketAnalysisDoc = createDoc(
   marketAnalysisSections,
 );
 
-export const talentAgencyMarketProductDoc = createDoc(
-  "market-product",
-  "Market Product",
-  "How to communicate the service clearly to prospective clients and sectors.",
-  "Market Product",
-  "A concise explanation of the agency's product and how buyers should understand it.",
+export const talentAgencyProductsServicesDoc = createDoc(
+  "products-services",
+  "Products & Services",
+  "The umbrella brand's service families and delivery model.",
+  "Products & Services",
+  "A clear overview of what the company sells and how clients buy it.",
   "mdi:bullseye-arrow",
-  marketProductSections,
+  productsServicesSections,
 );
 
 export const talentAgencyMarketResearchDoc = createDoc(
@@ -171,9 +291,9 @@ export const talentAgencyMarketResearchDoc = createDoc(
 
 export const talentAgencyUpskillServicesDoc = createDoc(
   "upskill-services",
-  "Upskill Services",
+  "Talent Upskill",
   "A kit of training materials for turning talent into sector-ready talent.",
-  "Upskill Services",
+  "Talent Upskill",
   "The training kit we use to prepare the talent network for specific target sectors.",
   "mdi:school-outline",
   upskillServicesSections,
@@ -198,7 +318,7 @@ export const talentAgencySpace: DocSpace = {
   cardIcon: "mdi:account-group-outline",
   docs: [
     talentAgencyMarketAnalysisDoc,
-    talentAgencyMarketProductDoc,
+    talentAgencyProductsServicesDoc,
     talentAgencyUpskillServicesDoc,
     talentAgencyTargetSectorsDoc,
     talentAgencyMarketResearchDoc,

@@ -1,7 +1,9 @@
-import type { ReactNode } from "react";
+﻿import type { ReactNode } from "react";
 import { Icon } from "@iconify/react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ReferenceChip } from "@/components/ui/reference-chip";
+import { Button } from "@/components/ui/button";
 import { BusinessPlanPhasePath, BusinessPlanValueCard } from "@/components/docs/business-plan";
 import type { BusinessPlanPhase, BusinessPlanReferenceMap, BusinessPlanCardSpec } from "@/components/docs/business-plan";
 
@@ -177,47 +179,106 @@ export function TalentAgencyMarketAnalysisBody({ refs }: { refs: TalentAgencyRef
   );
 }
 
-export function TalentAgencyBrandBody() {
+export function TalentAgencyProductsServicesBody() {
+  const productFamilies: BusinessPlanCardSpec[] = [
+    {
+      title: "Live Human Presence",
+      eyebrow: "Physical service",
+      bullets: [
+        "Event hosts, brand ambassadors, demo staff, and launch presence",
+        "Client-facing representation in rooms, stages, booths, and site visits",
+        "Sector-specific talent placed into live moments",
+      ],
+      footer: "The client buys a person who can show up and represent the brand live.",
+    },
+    {
+      title: "Branded Digital Presence",
+      eyebrow: "Synthetic service",
+      bullets: [
+        "Licensed LoRA or profile-based brand presence",
+        "Scheduled social posting and content generation",
+        "Digital continuity when the talent is not physically present",
+      ],
+      footer:
+        "This extends a talent profile into a managed brand asset online.",
+    },
+  ];
+
   return (
-    <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+    <div className="space-y-5">
       <Card className="rounded-none border-border/40 bg-background/40 backdrop-blur">
         <CardHeader className="border-b border-border/40 pb-4">
-          <CardTitle className="text-lg font-semibold">Market product</CardTitle>
+          <CardTitle className="text-lg font-semibold">External Services</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 p-4 text-sm text-muted-foreground">
-          <p className="leading-6">
-            The core product is trained human presence, but the market offer changes by sector. In consumer brand
-            categories, we sell trust, taste, demonstration, and social proof. In technical categories, we sell
-            translation, credibility, and live explanation. In industrial categories, we sell safety-aware
-            coordination, field readiness, and operational support.
-          </p>
-          <ul className="list-disc space-y-2 pl-5">
-            <li>Consumer brand educators for nutrition, beauty, retail, and lifestyle launches</li>
-            <li>Demo hosts and technical communicators for AI, data, search, biotech, and medtech</li>
-            <li>Conference, launch, and partnership support for frontier science and advanced hardware</li>
-            <li>Field-ready coordination and site support for construction, mining, energy, and logistics</li>
-          </ul>
+        <CardContent className="space-y-3 p-4 text-sm leading-6 text-muted-foreground">
+          <p>Live human presence and branded digital presence.</p>
         </CardContent>
       </Card>
 
-      <Card className="rounded-none border-border/40 bg-background/30 backdrop-blur">
-        <CardHeader className="border-b border-border/40 pb-4">
-          <CardTitle className="text-lg font-semibold">How to say it</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3 p-4 text-sm text-muted-foreground">
-          <p className="leading-6">
-            We provide trained people who can represent a sector properly, whether the buyer needs a polished face,
-            a technical translator, a field coordinator, or a trusted brand educator.
-          </p>
-          <p className="leading-6 text-foreground/85">
-            Buyers should hear a flexible market product: human presence plus sector-specific service design.
-          </p>
-        </CardContent>
-      </Card>
+      <div className="grid gap-4 xl:grid-cols-2">
+        {productFamilies.map((card) => (
+          <BusinessPlanValueCard key={card.title} spec={card} className="border-border/40" />
+        ))}
+      </div>
     </div>
   );
 }
 
+export function TalentAgencyCustomerExperienceSurface() {
+  return (
+    <div className="relative min-h-[88vh] overflow-hidden bg-black text-white">
+      <img
+        src="/talent-agency/customer-experience-collage.png"
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.15)_0%,rgba(0,0,0,0.55)_100%)]" />
+      <div className="absolute inset-0 flex items-end p-6 sm:p-8 lg:p-12">
+        <p className="max-w-xl text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl">
+          Your personalized brand representative
+        </p>
+      </div>
+    </div>
+  );
+}
+
+type TalentAgencyCustomerExperienceFrameProps = {
+  mode: "embedded" | "expanded";
+};
+
+export function TalentAgencyCustomerExperiencePageFrame({ mode }: TalentAgencyCustomerExperienceFrameProps) {
+  const overlayButton =
+    mode === "expanded" ? (
+      <Button
+        asChild
+        variant="outline"
+        size="icon"
+        className="rounded-none border-white/15 bg-white/5 text-white hover:bg-white/10"
+      >
+        <Link to="/spaces/talent-agency" aria-label="Back to space">
+          <Icon icon="mdi:arrow-left" className="h-4 w-4" />
+        </Link>
+      </Button>
+    ) : (
+      <Button
+        asChild
+        variant="outline"
+        size="icon"
+        className="rounded-none border-white/15 bg-white/5 text-white hover:bg-white/10"
+      >
+        <Link to="/spaces/talent-agency/customer-experience" aria-label="Expand customer experience">
+          <Icon icon="mdi:open-in-new" className="h-4 w-4" />
+        </Link>
+      </Button>
+    );
+
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-black text-foreground">
+      <div className="absolute right-6 top-6 z-10 lg:right-10 lg:top-8">{overlayButton}</div>
+      <TalentAgencyCustomerExperienceSurface />
+    </div>
+  );
+}
 export function TalentAgencyResearchBody({ refs }: { refs: TalentAgencyReferenceMap }) {
   const cards = [
     {
@@ -311,30 +372,18 @@ export function TalentAgencyResearchBody({ refs }: { refs: TalentAgencyReference
   );
 }
 
-const UPSKILL_SERVICE_KIT = [
+const UPSKILL_PACKAGES = [
   {
-    title: "Sector primers",
-    description: "Short briefs that explain the buyer, the jargon, the risk profile, and the kinds of human support the sector actually buys.",
+    title: "Sector readiness",
+    description: "Train talent on the buyer, language, risks, and service expectations for one target sector at a time.",
   },
   {
-    title: "Roleplay scripts",
-    description: "Scenario drills for sales calls, event support, product demos, objection handling, and handoff moments.",
+    title: "Brand autonomy",
+    description: "Help talent own their image, profile, voice, and client-facing presence without depending on an agency for every move.",
   },
   {
-    title: "Service standards",
-    description: "A shared rubric for presentation, reliability, product fluency, and professional boundaries.",
-  },
-  {
-    title: "Live coaching",
-    description: "Trainer-led rehearsals that turn the materials into repeatable field performance.",
-  },
-  {
-    title: "Certification checklist",
-    description: "A simple pass/fail gate so talent only enters live work when the sector-specific basics are covered.",
-  },
-  {
-    title: "Refresh cadence",
-    description: "Quarterly updates so the kit stays aligned as sectors, offers, and client expectations change.",
+    title: "Field performance",
+    description: "Rehearse live scenarios, set standards, and certify talent for booths, demos, events, and other face-to-face moments.",
   },
 ] as const;
 
@@ -365,20 +414,12 @@ export function TalentAgencyUpskillServicesBody() {
           <CardTitle className="text-lg font-semibold">What the kit is</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 p-4 text-sm leading-6 text-muted-foreground">
-          <p>
-            The upskill services kit is the training system we use to prepare the talent network for specific target
-            sectors. It is not just a handbook. It is a repeatable set of materials, rehearsals, and standards that
-            turn general talent into sector-ready talent.
-          </p>
-          <p>
-            The goal is to make onboarding faster, reduce service mistakes, and give every talent profile a clearer
-            commercial use case.
-          </p>
+          <p>Training packages for sector readiness, brand autonomy, and field performance.</p>
         </CardContent>
       </Card>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {UPSKILL_SERVICE_KIT.map((item) => (
+      <div className="grid gap-4 md:grid-cols-3">
+        {UPSKILL_PACKAGES.map((item) => (
           <Card key={item.title} className="rounded-none border-border/40 bg-background/30 backdrop-blur">
             <CardHeader className="border-b border-border/40 pb-4">
               <CardTitle className="text-base font-semibold">{item.title}</CardTitle>
@@ -392,7 +433,7 @@ export function TalentAgencyUpskillServicesBody() {
 
       <Card className="rounded-none border-border/40 bg-background/30 backdrop-blur">
         <CardHeader className="border-b border-border/40 pb-4">
-          <CardTitle className="text-lg font-semibold">How it gets used</CardTitle>
+          <CardTitle className="text-lg font-semibold">How it works</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 p-4 text-sm text-muted-foreground">
           <div className="rounded-xl border border-border/40 bg-background/20 p-4">
@@ -403,9 +444,9 @@ export function TalentAgencyUpskillServicesBody() {
             />
           </div>
           <ul className="list-disc space-y-2 pl-5 leading-6">
-            <li>Use the kit to onboard new talent against one sector at a time.</li>
-            <li>Adapt the scripts and standards when a sector needs compliance, technical fluency, or stronger client-facing polish.</li>
-            <li>Keep the materials modular so the same base talent can be redeployed across adjacent sectors.</li>
+            <li>Train against one sector at a time.</li>
+            <li>Use roleplay and rehearsal to turn knowledge into repeatable behavior.</li>
+            <li>Certify talent before live deployment.</li>
           </ul>
         </CardContent>
       </Card>
@@ -641,5 +682,10 @@ export function TalentAgencySectorNeedCard({ item }: { item: SectorServiceNeed }
     </Card>
   );
 }
+
+
+
+
+
 
 
