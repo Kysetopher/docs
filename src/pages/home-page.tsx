@@ -14,7 +14,7 @@ const SPACE_CARD_LAYOUTS = [
 export function HomePage() {
   return (
     <DocsShell>
-      <div className="h-full overflow-y-auto bg-muted/40">
+      <div className="h-full overflow-y-auto">
         <div className="h-full">
           <section className="grid auto-rows-[minmax(15rem,auto)] gap-0 md:grid-cols-2 xl:grid-cols-4 xl:auto-rows-[minmax(14rem,auto)]">
             {DOC_SPACES.map((space, index) => {
