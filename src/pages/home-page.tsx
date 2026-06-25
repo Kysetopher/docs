@@ -1,75 +1,70 @@
 import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
 import { DocsShell } from "@/components/docs/DocsShell";
-import { WaveformSilkSplash } from "@/components/splash/waveform-silk-splash";
+import { getSpaceBanner } from "@/lib/records/space-banners";
 import { DOC_SPACES } from "@/lib/records/spaces";
 
-const SPACE_CARD_BG_CLASSES = [
-  "bg-indigo-950/40",
-  "bg-cyan-950/40",
-  "bg-emerald-950/40",
-  "bg-amber-950/40",
-  "bg-rose-400/20",
-  "bg-violet-950/40",
+const SPACE_CARD_LAYOUTS = [
+  "xl:col-span-2 xl:row-span-2",
+  "xl:col-span-2 xl:row-span-1",
+  "xl:col-span-1 xl:row-span-1",
+  "xl:col-span-1 xl:row-span-1",
 ];
 
 export function HomePage() {
   return (
     <DocsShell>
       <div className="h-full overflow-y-auto bg-muted/40">
-        <div className="">
-          <section className="h-[200px] relative overflow-hidden">
-            <div className="absolute inset-x-0 top-0 h-56 overflow-hidden opacity-85">
-              <WaveformSilkSplash />
-              <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/35 to-card" />
-            </div>
+        <div className="h-full">
+          <section className="grid auto-rows-[minmax(15rem,auto)] gap-0 md:grid-cols-2 xl:grid-cols-4 xl:auto-rows-[minmax(14rem,auto)]">
+            {DOC_SPACES.map((space, index) => {
+              const layoutClass = SPACE_CARD_LAYOUTS[index % SPACE_CARD_LAYOUTS.length];
 
-          </section>
+              return (
+                <Link
+                  key={space.id}
+                  to={space.href}
+                  className={`
+                    group relative isolate flex min-h-[15rem] flex-col overflow-hidden border border-border/30
+                    bg-card/10 shadow-sm backdrop-blur-[2px] transition hover:z-10 hover:shadow-xl focus-visible:outline-none
+                    focus-visible:ring-2 focus-visible:ring-primary/40 ${layoutClass}
+                  `}
+                >
+                  <div className="absolute inset-0 scale-105 opacity-90">{getSpaceBanner(space.id)}</div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-background/0 via-background/18 to-card/36" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.10),transparent_38%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.04),transparent_45%)] opacity-75" />
 
-          <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {DOC_SPACES.map((space, index) => (
-              <Link
-                key={space.id}
-                to={space.href}
-                className="
-                  group relative block overflow-hidden rounded-3xl border bg-card p-6 shadow-sm
-                  transition hover:-translate-y-1 hover:shadow-xl
-                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40
-                "
-              >
-                <div
-                  className={`absolute inset-0 -z-10 rounded-3xl ${
-                    SPACE_CARD_BG_CLASSES[index % SPACE_CARD_BG_CLASSES.length]
-                  }`}
-                />
+                  {space.cardIcon ? (
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                      <Icon
+                        icon="mdi:archive-arrow-up-outline"
+                        className="h-44 w-44 text-foreground/6 blur-[0.5px] sm:h-52 sm:w-52 xl:h-60 xl:w-60"
+                      />
+                    </div>
+                  ) : null}
 
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-3">
+                  <div className="relative z-10 flex items-start gap-4 p-4 sm:p-5">
                     {space.cardIcon ? (
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full border border-border/40 bg-background/60 text-muted-foreground transition group-hover:text-primary">
-                        <Icon icon={space.cardIcon} className="h-6 w-6" />
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center border border-border/30 bg-background/30 text-muted-foreground shadow-sm backdrop-blur-sm transition group-hover:text-primary">
+                        <Icon icon={space.cardIcon} className="h-5 w-5" />
                       </div>
                     ) : null}
 
-                    <div>
-                      <h2 className="text-xl font-semibold transition group-hover:text-primary">
+                    <div className="min-w-0">
+                      <h2 className="truncate text-xl font-semibold transition group-hover:text-primary">
                         {space.title}
                       </h2>
-                      <p className="mt-1 text-sm text-muted-foreground">{space.description}</p>
                     </div>
                   </div>
 
-                  <span className="rounded-full border border-border/60 bg-background/70 px-3 py-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                    {space.docs.length} docs
-                  </span>
-                </div>
-
-                <div className="mt-8 flex items-center justify-between text-sm text-muted-foreground">
-                  <span>Open space</span>
-                  <span className="transition group-hover:translate-x-0.5 group-hover:text-primary">-&gt;</span>
-                </div>
-              </Link>
-            ))}
+                  <div className="relative z-10 mt-auto w-full p-4 pt-0 sm:p-5 sm:pt-0">
+                    <p className="w-full text-sm leading-6 text-muted-foreground">
+                      {space.description}
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
           </section>
         </div>
       </div>
