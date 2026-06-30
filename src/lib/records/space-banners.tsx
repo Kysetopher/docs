@@ -9,6 +9,8 @@ export function getSpaceBanner(spaceId: string | undefined) {
   switch (spaceId) {
     case "ai-discoverability-optimization":
       return <HexMoireGridSplash />;
+    case "auto-build-pipeline":
+      return <WaveformSilkSplash />;
     case "talent-agency":
       return <FloatstarSplash />;
     case "ai-support-group":
