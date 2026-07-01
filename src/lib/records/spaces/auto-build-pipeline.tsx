@@ -37,19 +37,19 @@ function createDoc(
 }
 
 const revenueCard: BusinessPlanCardSpec = {
-  title: "Managed Build Retainer",
+  title: "AI-Native Website Subscription",
   eyebrow: "Primary revenue stream",
-  value: "Project + retainer",
-  valueLabel: "Launch fee plus ongoing ops",
+  value: "AI-native website + hosting",
+  valueLabel: "Hosting, updates, and ongoing site care",
   bullets: [
-    "The core sale is a managed website generation engagement tied to a clean lead record.",
-    "The operating plan bundles lead intake, site generation, and analytics into one service loop.",
-    "Once a site is live, recurring revenue comes from maintenance, iteration, and pipeline support.",
+    "The core sale is a hosted AI-native website subscription tied to a clean lead record.",
+    "The operating plan bundles hosting, automated site generation, and analytics into one service loop.",
+    "Once a site is live, the client can send a WhatsApp message to trigger site updates and keep the website current.",
   ],
   stats: [
     {
       label: "What gets billed",
-      body: "Lead qualification, website generation, preview support, and post-launch updates.",
+      body: "Hosting, AI site generation, WhatsApp-triggered updates, preview support, and post-launch changes.",
     },
     {
       label: "Why it renews",
@@ -287,11 +287,13 @@ export const autoBuildPipelineSpace: DocSpace = {
   id: spaceId,
   title: "Auto Build Pipeline",
   description:
-    "Lead ingestion, website generation, and analytics feedback in one space that mirrors the bigger operating plan.",
+    "AI-native website hosting, WhatsApp-triggered updates, and analytics feedback in one space that mirrors the bigger operating plan.",
   href: `/spaces/${spaceId}`,
   cardIcon: "mdi:robot-outline",
   docs: [autoBuildPipelineBusinessPlanDoc, autoBuildPipelineControlPlaneDoc],
 };
+
+
 
 
 
