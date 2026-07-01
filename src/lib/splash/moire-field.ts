@@ -37,7 +37,7 @@ function drawClosedShape(
   wobble: number,
   spin: number,
 ) {
-  const pointCount = 32;
+  const pointCount = 24;
   ctx.beginPath();
   for (let i = 0; i <= pointCount; i += 1) {
     const t = (i / pointCount) * Math.PI * 2;
@@ -52,18 +52,26 @@ function drawClosedShape(
   ctx.closePath();
 }
 
-export function buildMoireBands(width: number, height: number) {
+export function buildMoireBands(
+  width: number,
+  height: number,
+  options?: {
+    columns?: number;
+    rows?: number;
+    radiusScale?: number;
+  },
+) {
   const bands: MoireBand[] = [];
-  const cols = 6;
-  const rows = 5;
+  const cols = Math.max(1, options?.columns ?? 6);
+  const rows = Math.max(1, options?.rows ?? 5);
   const xStep = width / (cols + 1);
   const yStep = height / (rows + 1);
-  const radiusBase = Math.min(width, height) * 0.17;
+  const radiusBase = Math.min(width, height) * 0.17 * (options?.radiusScale ?? 1);
 
   for (let row = 0; row < rows; row += 1) {
     for (let col = 0; col < cols; col += 1) {
-      const gx = (col - 0.5) / (cols - 2);
-      const gy = (row - 0.35) / (rows - 1.2);
+      const gx = (col - 0.5) / Math.max(1, cols - 2);
+      const gy = (row - 0.35) / Math.max(1, rows - 1.2);
       const seed = row * 17 + col * 31 + 97;
       const j1 = seededValue(seed * 1.3) - 0.5;
       const j2 = seededValue(seed * 2.1 + 7.7) - 0.5;
@@ -135,7 +143,7 @@ export function drawMoireField({
     const horizontal = Math.cos((cx / Math.max(1, width)) * Math.PI * 2 * 1.7 + timeSeconds * 0.36 + band.phase);
     const vertical = Math.cos((cy / Math.max(1, height)) * Math.PI * 2 * 1.3 - timeSeconds * 0.28 + band.phase * 1.2);
     const diagonal = Math.cos(((cx - cy) / Math.max(1, Math.min(width, height) * 0.42)) - timeSeconds * 0.2 + band.phase * 0.85);
-    const moire = (horizontal * 0.44 + vertical * 0.36 + diagonal * 0.2);
+    const moire = horizontal * 0.44 + vertical * 0.36 + diagonal * 0.2;
     const active = (moire + 1) * 0.5;
     const baseOpacity = clamp(band.opacity + accentBlend * 0.18 + active * 0.08, 0, 1);
 
@@ -146,7 +154,7 @@ export function drawMoireField({
       Math.max(1, band.radius * 0.08),
       cx,
       cy,
-      band.radius * 1.35,
+      band.radius * 1.2,
     );
     primaryGradient.addColorStop(0, rgba(rgb, baseOpacity * 0.28));
     primaryGradient.addColorStop(0.45, rgba(colors[(band.hue + 1) % colors.length], baseOpacity * 0.14));

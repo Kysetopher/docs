@@ -5,8 +5,14 @@ import { createAnimationBuffers, startAnimationLoop } from "@/lib/splash/animati
 import { createSplashPalette } from "@/lib/splash/color";
 import { buildMoireBands, drawMoireField } from "@/lib/splash/moire-field";
 
-const TARGET_FPS = 30;
+const TARGET_FPS = 20;
 const FRAME_INTERVAL_MS = 1000 / TARGET_FPS;
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+const BAND_OPTIONS = {
+  columns: 1,
+  rows: 3,
+  radiusScale: 0.82,
+};
 
 export function CelluloseSplash({ color = "#38bdf8" }: { color?: string }) {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
@@ -22,13 +28,14 @@ export function CelluloseSplash({ color = "#38bdf8" }: { color?: string }) {
     let logicalWidth = 0;
     let logicalHeight = 0;
     let logicalDpr = 1;
-    let bands = buildMoireBands(1, 1);
+    let bands = buildMoireBands(1, 1, BAND_OPTIONS);
+    const reducedMotion = window.matchMedia(REDUCED_MOTION_QUERY).matches;
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
       const nextWidth = Math.max(1, Math.floor(rect.width));
       const nextHeight = Math.max(1, Math.floor(rect.height));
-      const nextDpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      const nextDpr = Math.max(1, Math.min(1.5, window.devicePixelRatio || 1));
       if (nextWidth === logicalWidth && nextHeight === logicalHeight && nextDpr === logicalDpr) return;
 
       logicalWidth = nextWidth;
@@ -37,29 +44,42 @@ export function CelluloseSplash({ color = "#38bdf8" }: { color?: string }) {
       canvas.width = Math.floor(logicalWidth * logicalDpr);
       canvas.height = Math.floor(logicalHeight * logicalDpr);
       ctx.setTransform(logicalDpr, 0, 0, logicalDpr, 0, 0);
-      bands = buildMoireBands(logicalWidth, logicalHeight);
+      bands = buildMoireBands(logicalWidth, logicalHeight, BAND_OPTIONS);
     };
 
-    const stopLoop = startAnimationLoop({
-      frameBudgetMs: FRAME_INTERVAL_MS,
-      onFrame(nowMs) {
-        buffers.beginFrame();
-        drawMoireField({
-          ctx,
-          width: logicalWidth,
-          height: logicalHeight,
-          timeSeconds: nowMs * 0.001,
-          bands,
-          accentBlend: 0.24,
-          palette,
-        });
-      },
-    });
+    const renderFrame = (nowMs: number) => {
+      if (!logicalWidth || !logicalHeight) return;
+      buffers.beginFrame();
+      drawMoireField({
+        ctx,
+        width: logicalWidth,
+        height: logicalHeight,
+        timeSeconds: nowMs * 0.001,
+        bands,
+        accentBlend: 0.18,
+        palette,
+      });
+    };
 
     const observer = new ResizeObserver(resize);
     observer.observe(canvas);
     window.addEventListener("resize", resize);
     resize();
+
+    if (reducedMotion) {
+      renderFrame(0);
+      return () => {
+        observer.disconnect();
+        window.removeEventListener("resize", resize);
+      };
+    }
+
+    const stopLoop = startAnimationLoop({
+      frameBudgetMs: FRAME_INTERVAL_MS,
+      onFrame(nowMs) {
+        renderFrame(nowMs);
+      },
+    });
 
     return () => {
       stopLoop();

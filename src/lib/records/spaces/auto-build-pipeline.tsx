@@ -1,7 +1,7 @@
 import type { DocRecord, DocSpace } from "@/lib/records/doc-types";
 import type { DocSection } from "@/components/docs/DocumentationPage";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AreaChart } from "@/components/graph/AreaChart";
+import { Card, CardContent } from "@/components/ui/card";
+import { BusinessPlanProjectionModel } from "@/components/docs/business-plan";
 import {
   BusinessPlanCostTable,
   BusinessPlanValueCard,
@@ -59,140 +59,144 @@ const revenueCard: BusinessPlanCardSpec = {
 };
 
 const hostingModelCard: BusinessPlanCardSpec = {
-  title: "Cloudflare Control Plane",
-  eyebrow: "Hosted runtime",
-  value: "Pages + Workers + Supabase",
-  valueLabel: "Public UI, server API, and durable tracking",
+  title: 'Vercel Pro beta',
+  eyebrow: 'Hosted runtime',
+  value: 'Launch on Vercel Pro',
+  valueLabel: 'Paid beta hosting with a later Cloudflare migration path',
   bullets: [
-    "Cloudflare Pages serves the docs and public-facing app shell.",
-    "Cloudflare Workers hosts the server-side API used to build and deploy the pipelines.",
-    "Supabase keeps the registry state, lead status, and repo linkage durable after each run.",
+    'Use Vercel Pro for the first client-facing beta so the app can launch quickly with a commercial-ready plan.',
+    'Keep Supabase as the source of truth for leads, builds, and published output.',
+    'Move to Cloudflare only when there is a clear cost or architecture reason to do so.',
   ],
   stats: [
     {
-      label: "Hosted API",
-      body: "Single-lead and batch-lead runs stay on one server-side synthesis path.",
+      label: 'Internal prototype',
+      body: 'Can stay near  if it remains private, static, and non-commercial.',
     },
     {
-      label: "Tracked state",
-      body: "Lead status, repo slug, and enrichment history stay queryable in Supabase.",
+      label: 'Paid market test',
+      body: 'Reserve /month for Vercel Pro and keep the rest of the stack lean.',
     },
   ],
 };
 
 const prebuildCostRows: BusinessPlanCostRow[] = [
   {
-    category: "Cloudflare Pages",
-    notes: "Static hosting for the docs app and published site previews.",
-    estimate: "$0",
+    category: 'Vercel Pro',
+    notes: 'Commercial beta hosting for the docs app, previews, and control surface.',
+    estimate: ' / month',
   },
   {
-    category: "Cloudflare Workers",
-    notes: "Only needed if Pages Functions or edge logic are added; billed as a Workers plan with a $5/month minimum.",
-    estimate: "$5 / month minimum",
+    category: 'Supabase',
+    notes: 'Auth, lead registry, and pipeline state for the beta.',
+    estimate: 'Free tier available',
   },
   {
-    category: "Cloudflare D1",
-    notes: "Optional SQL layer for lightweight structured data during beta.",
-    estimate: "Free tier available",
+    category: 'Cloudflare R2',
+    notes: 'Generated assets and previews can stay in the free tier at early scale.',
+    estimate: 'Free tier available',
   },
   {
-    category: "Cloudflare R2",
-    notes: "Asset storage for images and previews with free egress.",
-    estimate: "Free tier available",
+    category: 'Cloudflare Pages',
+    notes: 'Optional later migration target for static hosting.',
+    estimate: '',
   },
   {
-    category: "Domain + DNS",
-    notes: "Primary domain registration and the basic DNS layer.",
-    estimate: "Annual domain cost",
+    category: 'Cloudflare Workers',
+    notes: 'Only becomes a paid line item if the app actually moves server logic to Cloudflare.',
+    estimate: ' / month minimum',
+  },
+  {
+    category: 'Domain + DNS',
+    notes: 'Primary domain registration and routing, regardless of host.',
+    estimate: 'Annual domain cost',
   },
 ];
 
 const scalingCostRows: BusinessPlanCostRow[] = [
   {
-    category: "Workers usage",
-    notes: "Cloudflare Workers are billed once API traffic and edge logic move beyond the free/static path.",
-    estimate: "Per request",
+    category: 'Cloudflare Workers',
+    notes: 'Paid when the beta actually migrates edge/API work off Vercel and into Cloudflare.',
+    estimate: 'Per request',
   },
   {
-    category: "D1 reads / writes",
-    notes: "Database costs begin after the free row-read and row-write allowances are exceeded.",
-    estimate: "Per million rows",
+    category: 'D1 reads / writes',
+    notes: 'Only relevant if the team introduces D1 instead of keeping the registry in Supabase.',
+    estimate: 'Per million rows',
   },
   {
-    category: "R2 storage",
-    notes: "Storage, Class A operations, and Class B operations become billable once the free tier is exceeded.",
-    estimate: "Per GB-month / per op",
+    category: 'R2 storage',
+    notes: 'Storage, Class A operations, and Class B operations become billable once the free tier is exceeded.',
+    estimate: 'Per GB-month / per op',
   },
   {
-    category: "Lead crawling",
-    notes: "Apify and crawl volume scale with the number of sources processed.",
-    estimate: "Per lead / per crawl",
+    category: 'Lead crawling',
+    notes: 'Apify and crawl volume scale with the number of sources processed.',
+    estimate: 'Per lead / per crawl',
   },
   {
-    category: "Browser enrichment",
-    notes: "Playwright, WHOIS, and deep extraction get more expensive with depth.",
-    estimate: "Per crawl",
+    category: 'Browser enrichment',
+    notes: 'Playwright, WHOIS, and deep extraction get more expensive with depth.',
+    estimate: 'Per crawl',
   },
   {
-    category: "AI synthesis",
-    notes: "Block mapping, content shaping, and summary generation are token-based.",
-    estimate: "Per token",
+    category: 'AI synthesis',
+    notes: 'Block mapping, content shaping, and summary generation are token-based.',
+    estimate: 'Per token',
   },
 ];
 
-const overviewTraffic: { x: Date; y: number; label: string }[] = [
-  { x: new Date(2026, 0, 1), y: 2, label: "Q1" },
-  { x: new Date(2026, 1, 1), y: 4, label: "Q2" },
-  { x: new Date(2026, 2, 1), y: 7, label: "Q3" },
-  { x: new Date(2026, 3, 1), y: 11, label: "Q4" },
-  { x: new Date(2026, 4, 1), y: 16, label: "Q5" },
-  { x: new Date(2026, 5, 1), y: 24, label: "Q6" },
-];
 
 const businessPlanSections: DocSection[] = [
   {
-    id: "revenue-stream",
-    title: "Revenue Stream",
-    summary: "The core money line should be easy to name before anything else.",
+    id: 'revenue-stream',
+    title: 'Revenue Stream',
+    summary: 'The core money line should be easy to name before anything else.',
     content: <BusinessPlanValueCard spec={revenueCard} />,
   },
   {
-    id: "prebuild-costs",
-    title: "Prebuild Costs",
-    summary: "Fixed costs to reach beta before variable usage starts to matter.",
+    id: 'prebuild-costs',
+    title: 'Prebuild Costs',
+    summary: 'Separate the free prototype path from the paid beta baseline.',
     content: (
-      <div className="space-y-4">
-        <Card className="rounded-none border-border/60 bg-background/40 backdrop-blur">
-          <CardContent className="p-4 text-sm leading-6 text-muted-foreground">
-            This is the fixed prebuild budget: the minimum spend needed to get the docs, hosting, database, and
-            operator layer to a usable beta.
+      <div className='space-y-4'>
+        <Card className='rounded-none border-border/60 bg-background/40 backdrop-blur'>
+          <CardContent className='space-y-3 p-4 text-sm leading-6 text-muted-foreground'>
+            <p>
+              An internal prototype can stay very close to free. Once the product becomes a real client-facing beta,
+              the plan should reserve /month for Vercel Pro and keep the rest of the stack on the cheapest
+              available tiers.
+            </p>
+            <p>
+              Cloudflare stays in the plan as the later migration path, not as the starting assumption. That keeps the
+              beta simple while still leaving room to move when there is a real cost or architecture reason.
+            </p>
           </CardContent>
         </Card>
         <BusinessPlanCostTable
           rows={prebuildCostRows}
           totals={{
-            label: "Total fixed prebuild burn",
-            notes: "Before variable usage, the base can stay near zero if the site remains static; Workers only add a $5/month floor when functions are used.",
-            estimate: "$0 to $5 / month + domain",
+            label: 'Total fixed beta burn',
+            notes: 'Internal prototype: near . Paid beta: budget /month for Vercel Pro, plus domain and any optional usage that exceeds free tiers.',
+            estimate: ' / month + domain',
           }}
         />
       </div>
     ),
   },
   {
-    id: "scaling-costs",
-    title: "Scaling Costs",
-    summary: "What starts to climb once the system leaves beta and begins taking on more volume.",
+    id: 'scaling-costs',
+    title: 'Scaling Costs',
+    summary: 'What starts to climb once the beta grows beyond the launch stack.',
     content: (
-      <div className="space-y-4">
-        <Card className="rounded-none border-border/60 bg-background/40 backdrop-blur">
-          <CardContent className="space-y-3 p-4 text-sm leading-6 text-muted-foreground">
-            <p className="font-medium text-foreground">Scaling triggers</p>
-            <ul className="list-disc space-y-2 pl-5">
+      <div className='space-y-4'>
+        <Card className='rounded-none border-border/60 bg-background/40 backdrop-blur'>
+          <CardContent className='space-y-3 p-4 text-sm leading-6 text-muted-foreground'>
+            <p className='font-medium text-foreground'>Scaling triggers</p>
+            <ul className='list-disc space-y-2 pl-5'>
               <li>Lead crawling rises beyond low-volume testing and starts running in steady batches.</li>
-              <li>Cloudflare Workers begin handling real request traffic instead of only static hosting.</li>
-              <li>D1 reads, writes, and R2 operations move past the free tier and become measurable usage.</li>
+              <li>Cloudflare only becomes a paid runtime choice if the app actually migrates off Vercel.</li>
+              <li>D1, if introduced, should be treated as optional and not as a second source of truth during beta.</li>
               <li>Playwright enrichment and AI synthesis move from occasional work to repeated usage.</li>
             </ul>
           </CardContent>
@@ -202,21 +206,10 @@ const businessPlanSections: DocSection[] = [
     ),
   },
   {
-    id: "projection-graph",
-    title: "Projection Graph",
-    summary: "A simple output curve for the first six planning periods.",
-    content: (
-      <Card className="rounded-none border-border/60 bg-background/40 backdrop-blur">
-        <CardHeader className="border-b border-border/40 pb-4">
-          <CardTitle className="text-lg font-semibold">Planned output curve</CardTitle>
-        </CardHeader>
-        <CardContent className="p-4">
-          <div className="h-72">
-            <AreaChart data={overviewTraffic} height={288} />
-          </div>
-        </CardContent>
-      </Card>
-    ),
+    id: 'projection-graph',
+    title: 'Projection Graph',
+    summary: 'Tune the revenue model and see the forecast update in real time.',
+    content: <BusinessPlanProjectionModel />,
   },
 ];
 
@@ -224,7 +217,7 @@ const controlPlaneSections: DocSection[] = [
   {
     id: "hosting-model",
     title: "Hosting Model",
-    summary: "Cloudflare hosts the surface area and Supabase stores the state that survives the run.",
+    summary: "Launch on Vercel Pro, then move the steady-state surface area to Cloudflare.",
     content: <BusinessPlanValueCard spec={hostingModelCard} />,
   },
   {
