@@ -58,6 +58,28 @@ const revenueCard: BusinessPlanCardSpec = {
   ],
 };
 
+const hostingModelCard: BusinessPlanCardSpec = {
+  title: "Cloudflare Control Plane",
+  eyebrow: "Hosted runtime",
+  value: "Pages + Workers + Supabase",
+  valueLabel: "Public UI, server API, and durable tracking",
+  bullets: [
+    "Cloudflare Pages serves the docs and public-facing app shell.",
+    "Cloudflare Workers hosts the server-side API used to build and deploy the pipelines.",
+    "Supabase keeps the registry state, lead status, and repo linkage durable after each run.",
+  ],
+  stats: [
+    {
+      label: "Hosted API",
+      body: "Single-lead and batch-lead runs stay on one server-side synthesis path.",
+    },
+    {
+      label: "Tracked state",
+      body: "Lead status, repo slug, and enrichment history stay queryable in Supabase.",
+    },
+  ],
+};
+
 const prebuildCostRows: BusinessPlanCostRow[] = [
   {
     category: "Cloudflare Pages",
@@ -89,7 +111,7 @@ const prebuildCostRows: BusinessPlanCostRow[] = [
 const scalingCostRows: BusinessPlanCostRow[] = [
   {
     category: "Workers usage",
-    notes: "Pages Functions are billed as Workers requests once logic moves beyond static hosting.",
+    notes: "Cloudflare Workers are billed once API traffic and edge logic move beyond the free/static path.",
     estimate: "Per request",
   },
   {
@@ -169,7 +191,7 @@ const businessPlanSections: DocSection[] = [
             <p className="font-medium text-foreground">Scaling triggers</p>
             <ul className="list-disc space-y-2 pl-5">
               <li>Lead crawling rises beyond low-volume testing and starts running in steady batches.</li>
-              <li>Pages Functions begin handling real request traffic instead of only static hosting.</li>
+              <li>Cloudflare Workers begin handling real request traffic instead of only static hosting.</li>
               <li>D1 reads, writes, and R2 operations move past the free tier and become measurable usage.</li>
               <li>Playwright enrichment and AI synthesis move from occasional work to repeated usage.</li>
             </ul>
@@ -198,6 +220,61 @@ const businessPlanSections: DocSection[] = [
   },
 ];
 
+const controlPlaneSections: DocSection[] = [
+  {
+    id: "hosting-model",
+    title: "Hosting Model",
+    summary: "Cloudflare hosts the surface area and Supabase stores the state that survives the run.",
+    content: <BusinessPlanValueCard spec={hostingModelCard} />,
+  },
+  {
+    id: "build-api",
+    title: "Build API",
+    summary: "One hosted API should build both single-lead and batch-lead pipelines.",
+    content: (
+      <Card className="rounded-none border-border/60 bg-background/40 backdrop-blur">
+        <CardContent className="space-y-3 p-4 text-sm leading-6 text-muted-foreground">
+          <p className="font-medium text-foreground">Server-side synthesis path</p>
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              Resolve the lead by <code>leadId</code> or <code>leadKey</code>.
+            </li>
+            <li>Use the same route for single-lead and batch-lead runs.</li>
+            <li>Stream progress while the pipeline builds on the server.</li>
+            <li>Write the final project slug and pipeline status back to Supabase.</li>
+          </ul>
+        </CardContent>
+      </Card>
+    ),
+  },
+  {
+    id: "registry-tracking",
+    title: "Registry Tracking",
+    summary: "The database should preserve the handoff between lead, build, and published site.",
+    content: (
+      <Card className="rounded-none border-border/60 bg-background/40 backdrop-blur">
+        <CardContent className="space-y-3 p-4 text-sm leading-6 text-muted-foreground">
+          <p className="font-medium text-foreground">Supabase fields that matter</p>
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              <code>analytics.clean_leads.lead_key</code> keeps the lead identity stable.
+            </li>
+            <li>
+              <code>pipeline_status</code> marks the run as pending, ready, or processed.
+            </li>
+            <li>
+              <code>repo_slug</code> links the lead to the generated Forge repository.
+            </li>
+            <li>
+              <code>source_payload</code> and <code>enrichment</code> preserve the evidence trail.
+            </li>
+          </ul>
+        </CardContent>
+      </Card>
+    ),
+  },
+];
+
 export const autoBuildPipelineBusinessPlanDoc = createDoc(
   "business-plan",
   "Business Plan",
@@ -208,6 +285,16 @@ export const autoBuildPipelineBusinessPlanDoc = createDoc(
   businessPlanSections,
 );
 
+export const autoBuildPipelineControlPlaneDoc = createDoc(
+  "hosting-control-plane",
+  "Hosting & Control Plane",
+  "Cloudflare hosting, server-side pipeline builds, and Supabase tracking in one view.",
+  "Hosting & Control Plane",
+  "How the auto build pipeline is hosted, executed, and tracked after each run.",
+  "mdi:cloud",
+  controlPlaneSections,
+);
+
 export const autoBuildPipelineSpace: DocSpace = {
   id: spaceId,
   title: "Auto Build Pipeline",
@@ -215,5 +302,5 @@ export const autoBuildPipelineSpace: DocSpace = {
     "Lead ingestion, website generation, and analytics feedback in one space that mirrors the bigger operating plan.",
   href: `/spaces/${spaceId}`,
   cardIcon: "mdi:robot-outline",
-  docs: [autoBuildPipelineBusinessPlanDoc],
+  docs: [autoBuildPipelineBusinessPlanDoc, autoBuildPipelineControlPlaneDoc],
 };
