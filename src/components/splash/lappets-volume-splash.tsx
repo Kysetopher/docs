@@ -5,7 +5,6 @@ import * as React from "react";
 import { createAnimationBuffers, startAnimationLoop } from "@/lib/splash/animation";
 import { createSplashPalette } from "@/lib/splash/color";
 import { buildCubeMoireBands, type CubeMoireBand } from "@/lib/splash/cube-moire-texture";
-import { rgba } from "@/lib/splash/math";
 
 const TARGET_FPS = 30;
 const FRAME_INTERVAL_MS = 1000 / TARGET_FPS;

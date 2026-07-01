@@ -5,7 +5,6 @@ import * as React from "react";
 import { createAnimationBuffers, startAnimationLoop } from "@/lib/splash/animation";
 import { createSplashPalette } from "@/lib/splash/color";
 import { buildCubeMoireBands, type CubeMoireBand } from "@/lib/splash/cube-moire-texture";
-import { rgba } from "@/lib/splash/math";
 
 const TARGET_FPS = 30;
 const FRAME_INTERVAL_MS = 1000 / TARGET_FPS;
@@ -128,15 +127,6 @@ function computeTone(
   return mixRgb(lift, highlight, 0.1 + t * 0.08 + density * 0.1);
 }
 
-function tentacleOffsets(count: number, time: number) {
-  const offsets: number[] = [];
-  for (let i = 0; i < count; i += 1) {
-    const spread = i / Math.max(1, count - 1) - 0.5;
-    const wave = Math.sin(time * 0.45 + i * 0.85) * 0.5 + Math.cos(time * 0.28 + i * 0.37) * 0.35;
-    offsets.push(spread * 1.8 + wave * 0.18);
-  }
-  return offsets;
-}
 
 export function LappetsFieldSplash({ color = "#5dd6ff" }: { color?: string }) {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
@@ -232,7 +222,6 @@ function paintScene(
   const boxHeight = Math.max(1, maxY - minY);
   const image = ctx.createImageData(boxWidth, boxHeight);
   const data = image.data;
-  const tentacles = tentacleOffsets(11, time);
 
   for (let y = 0; y < boxHeight; y += 1) {
     const yAbs = minY + y + 0.5;

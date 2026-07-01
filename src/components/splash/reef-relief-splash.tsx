@@ -10,14 +10,7 @@ import { rgba } from "@/lib/splash/math";
 const TARGET_FPS = 30;
 const FRAME_INTERVAL_MS = 1000 / TARGET_FPS;
 
-function clamp01(value: number) {
-  return Math.max(0, Math.min(1, value));
-}
 
-function smoothstep(edge0: number, edge1: number, value: number) {
-  const t = clamp01((value - edge0) / (edge1 - edge0));
-  return t * t * (3 - 2 * t);
-}
 
 function sampleReefField(bands: CubeMoireBand[], x: number, y: number, timeSeconds: number) {
   let value = 0;

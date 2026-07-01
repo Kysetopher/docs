@@ -118,7 +118,6 @@ function buildOrbitPath(
   for (let i = 0; i < sampleCount * 3; i += 1) {
     const t = i / Math.max(1, sampleCount * 3 - 1);
     const angle = startAngle + t * span;
-    const bandPulse = Math.sin(time * 0.12 + band.phase) * 0.5 + 0.5;
     const wobble = Math.sin(angle * 2.2 + time * 0.56 + band.phase) * 0.065 + Math.cos(angle * 4.4 - time * 0.08) * 0.025;
     const spread = 1 + wobble;
     const fieldLift = Math.sin(time * 0.14 + band.phase * 1.2) * band.radiusY * 0.08;
