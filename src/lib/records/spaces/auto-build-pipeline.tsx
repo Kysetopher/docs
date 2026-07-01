@@ -71,11 +71,11 @@ const hostingModelCard: BusinessPlanCardSpec = {
   stats: [
     {
       label: 'Internal prototype',
-      body: 'Can stay near  if it remains private, static, and non-commercial.',
+      body: 'Can stay near $0 if it remains private, static, and non-commercial.',
     },
     {
       label: 'Paid market test',
-      body: 'Reserve /month for Vercel Pro and keep the rest of the stack lean.',
+      body: 'Reserve $20/month for Vercel Pro and keep the rest of the stack lean.',
     },
   ],
 };
@@ -84,7 +84,7 @@ const prebuildCostRows: BusinessPlanCostRow[] = [
   {
     category: 'Vercel Pro',
     notes: 'Commercial beta hosting for the docs app, previews, and control surface.',
-    estimate: ' / month',
+    estimate: '$20 / month',
   },
   {
     category: 'Supabase',
@@ -99,12 +99,7 @@ const prebuildCostRows: BusinessPlanCostRow[] = [
   {
     category: 'Cloudflare Pages',
     notes: 'Optional later migration target for static hosting.',
-    estimate: '',
-  },
-  {
-    category: 'Cloudflare Workers',
-    notes: 'Only becomes a paid line item if the app actually moves server logic to Cloudflare.',
-    estimate: ' / month minimum',
+    estimate: '$0',
   },
   {
     category: 'Domain + DNS',
@@ -164,7 +159,7 @@ const businessPlanSections: DocSection[] = [
           <CardContent className='space-y-3 p-4 text-sm leading-6 text-muted-foreground'>
             <p>
               An internal prototype can stay very close to free. Once the product becomes a real client-facing beta,
-              the plan should reserve /month for Vercel Pro and keep the rest of the stack on the cheapest
+              the plan should reserve $20/month for Vercel Pro and keep the rest of the stack on the cheapest
               available tiers.
             </p>
             <p>
@@ -177,8 +172,8 @@ const businessPlanSections: DocSection[] = [
           rows={prebuildCostRows}
           totals={{
             label: 'Total fixed beta burn',
-            notes: 'Internal prototype: near . Paid beta: budget /month for Vercel Pro, plus domain and any optional usage that exceeds free tiers.',
-            estimate: ' / month + domain',
+            notes: 'Internal prototype: near $0. Paid beta: budget $20/month for Vercel Pro, plus domain and any optional usage that exceeds free tiers.',
+            estimate: '$20 / month + domain',
           }}
         />
       </div>
@@ -297,3 +292,6 @@ export const autoBuildPipelineSpace: DocSpace = {
   cardIcon: "mdi:robot-outline",
   docs: [autoBuildPipelineBusinessPlanDoc, autoBuildPipelineControlPlaneDoc],
 };
+
+
+

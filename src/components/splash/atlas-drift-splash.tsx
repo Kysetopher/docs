@@ -220,7 +220,6 @@ export function AtlasDriftSplash({ color = "#38bdf8" }: { color?: string }) {
         buffers.beginFrame();
 
         const time = nowMs * 0.001 * MOTION_SCALE;
-        const slow = time * 0.05;
         const cameraOrbitX =
           Math.sin(time * 0.018) * logicalWidth * 0.15 +
           Math.cos(time * 0.006) * logicalWidth * 0.06 +
@@ -261,7 +260,6 @@ export function AtlasDriftSplash({ color = "#38bdf8" }: { color?: string }) {
 
         for (let i = 0; i < bands.length; i += 1) {
           const band = bands[i];
-          const pulse = Math.sin(time * 0.12 + band.phase) * 0.5 + 0.5;
           const ringTilt = band.tiltX + Math.sin(time * 0.024 + band.phase) * 0.11;
           const ringLean = band.tiltY + Math.cos(time * 0.02 + band.phase) * 0.09;
           const sampleCount = Math.max(48, Math.floor(72 * band.density));
@@ -283,16 +281,13 @@ export function AtlasDriftSplash({ color = "#38bdf8" }: { color?: string }) {
           const rgb = i % 2 === 0 ? palette.primary : palette.secondary;
 
           ctx.save();
-          ctx.filter = band.depth > 0.52 ? "blur(1.1px)" : "none";
-          ctx.shadowColor = rgba(rgb, 0.18 + pulse * 0.1);
-          ctx.shadowBlur = 10 + band.depth * 12;
           drawFadedOrbitPath(
             ctx,
             path,
             sampleCount * 3,
             rgb,
-            band.width * (0.88 + pulse * 0.42),
-            0.42 + pulse * 0.28,
+            band.width,
+            0.46,
           );
           ctx.restore();
         }
@@ -330,23 +325,6 @@ export function AtlasDriftSplash({ color = "#38bdf8" }: { color?: string }) {
           ctx.fillStyle = rgba(rgb, alpha);
           ctx.fill();
         }
-
-        ctx.save();
-        const shadow = ctx.createRadialGradient(
-          centerX,
-          centerY,
-          Math.max(28, Math.min(logicalWidth, logicalHeight) * 0.08),
-          centerX,
-          centerY,
-          Math.max(logicalWidth, logicalHeight) * 0.56,
-        );
-        shadow.addColorStop(0, rgba(palette.deep, 0));
-        shadow.addColorStop(0.74, rgba(palette.deep, 0.12));
-        shadow.addColorStop(1, rgba(palette.deep, 0.38));
-        ctx.fillStyle = shadow;
-        ctx.fillRect(0, 0, logicalWidth, logicalHeight);
-        ctx.restore();
-
         const sweep = ctx.createLinearGradient(0, 0, logicalWidth, 0);
         sweep.addColorStop(0, rgba(palette.primary, 0.02));
         sweep.addColorStop(0.35, rgba(palette.highlight, 0.01));
@@ -354,35 +332,6 @@ export function AtlasDriftSplash({ color = "#38bdf8" }: { color?: string }) {
         sweep.addColorStop(1, rgba(palette.primary, 0.02));
         ctx.fillStyle = sweep;
         ctx.fillRect(0, 0, logicalWidth, logicalHeight);
-
-        const vignette = ctx.createRadialGradient(
-          centerX,
-          centerY,
-          Math.max(48, Math.min(logicalWidth, logicalHeight) * 0.2),
-          centerX,
-          centerY,
-          Math.max(logicalWidth, logicalHeight) * 0.92,
-        );
-        vignette.addColorStop(0, rgba(palette.highlight, 0));
-        vignette.addColorStop(1, rgba(palette.deep, 0.32));
-        ctx.fillStyle = vignette;
-        ctx.fillRect(0, 0, logicalWidth, logicalHeight);
-
-        const pulseGlow = ctx.createRadialGradient(
-          centerX * 0.95,
-          centerY * 0.95,
-          Math.max(20, Math.min(logicalWidth, logicalHeight) * 0.1),
-          centerX,
-          centerY,
-          Math.max(logicalWidth, logicalHeight) * 0.82,
-        );
-        pulseGlow.addColorStop(0, rgba(palette.primary, 0.02 + slow * 0.02));
-        pulseGlow.addColorStop(0.5, rgba(palette.secondary, 0.018 + slow * 0.012));
-        pulseGlow.addColorStop(1, rgba(palette.deep, 0));
-        ctx.fillStyle = pulseGlow;
-        ctx.fillRect(0, 0, logicalWidth, logicalHeight);
-
-        ctx.restore();
       },
     });
 
@@ -400,3 +349,8 @@ export function AtlasDriftSplash({ color = "#38bdf8" }: { color?: string }) {
 
   return <canvas ref={canvasRef} className="absolute inset-0 h-full w-full select-none pointer-events-none overflow-hidden" />;
 }
+
+
+
+
+
