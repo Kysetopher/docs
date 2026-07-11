@@ -2,12 +2,14 @@ import type { DocRecord, DocSpace } from "@/lib/records/doc-types";
 import { autoBuildPipelineSpace } from "@/lib/records/spaces/auto-build-pipeline";
 import { aiDiscoverabilitySpace } from "@/lib/records/spaces/ai-discoverability-optimization";
 import { aiSupportGroupSpace } from "@/lib/records/spaces/ai-support-group";
+import { miningSpace } from "@/lib/records/spaces/mining";
 import { talentAgencySpace } from "@/lib/records/spaces/talent-agency";
 import { salesSpace } from "@/lib/records/spaces/sales";
 
 export const DOC_SPACES: DocSpace[] = [
   aiDiscoverabilitySpace,
   autoBuildPipelineSpace,
+  miningSpace,
   talentAgencySpace,
   aiSupportGroupSpace,
   salesSpace,
