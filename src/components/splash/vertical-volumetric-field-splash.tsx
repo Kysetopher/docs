@@ -53,13 +53,13 @@ function buildVolumetricStrands(width: number, height: number, paletteSize: numb
       const jitter = (random() - 0.5) * layerSpacing * 0.42;
       const baseX = column * layerSpacing + layerSpacing * 0.5 + jitter;
       const baseZ = layerDepth + Math.pow(random(), 1.8) * (160 + layerIndex * 140) + (random() - 0.5) * 42;
-      const amplitudeX = (8 + random() * 24) * (1 + layerProgress * 0.34);
-      const amplitudeZ = 20 + random() * 72;
-      const secondaryAmplitudeX = 4 + random() * 14;
-      const secondaryAmplitudeZ = 10 + random() * 22;
+      const amplitudeX = (10 + random() * 30) * (1 + layerProgress * 0.42);
+      const amplitudeZ = 28 + random() * 108;
+      const secondaryAmplitudeX = 6 + random() * 20;
+      const secondaryAmplitudeZ = 16 + random() * 34;
       const wavelength = 0.7 + random() * 0.95;
       const secondaryWavelength = 1.3 + random() * 1.1;
-      const speed = 0.05 + random() * 0.15;
+      const speed = 0.08 + random() * 0.22;
       const phase = random() * Math.PI * 2;
       const thickness = 0.74 + (layerCount - layerIndex) * 0.18 + random() * 0.46;
       const colorIndex = (Math.floor(layerIndex * 1.8 + column * 0.9 + random() * paletteSize) + paletteSize) % paletteSize;
@@ -112,18 +112,18 @@ function projectStrandPoints({
   buffers: ReturnType<typeof createAnimationBuffers>;
 }) {
   const xy = buffers.allocScratchF32(strand.pointCount * 2);
-  const yStart = -height * (0.28 + strand.layerIndex * 0.06);
-  const yEnd = height * (1.2 + strand.layerIndex * 0.08);
+  const yStart = -height * (0.34 + strand.layerIndex * 0.08);
+  const yEnd = height * (1.3 + strand.layerIndex * 0.1);
   let depthSum = 0;
-  const drift = Math.sin(timeSeconds * 0.1 + strand.phase + strand.layerIndex * 0.2);
+  const drift = Math.sin(timeSeconds * 0.16 + strand.phase + strand.layerIndex * 0.24);
 
   for (let point = 0; point < strand.pointCount; point += 1) {
     const t = strand.pointCount === 1 ? 0 : point / (strand.pointCount - 1);
     const curve = Math.sin(t * Math.PI);
     const y = yStart + t * (yEnd - yStart);
-    const waveA = Math.sin(t * Math.PI * strand.wavelength * 2 + timeSeconds * strand.speed + strand.phase);
-    const waveB = Math.cos(t * Math.PI * strand.secondaryWavelength * 2 - timeSeconds * (strand.speed * 0.72) + strand.phase * 0.86);
-    const waveC = Math.sin((t * 6.4 + strand.layerIndex * 0.14) * Math.PI + timeSeconds * 0.34 + strand.phase * 0.31);
+    const waveA = Math.sin(t * Math.PI * strand.wavelength * 2 + timeSeconds * strand.speed * 1.26 + strand.phase);
+    const waveB = Math.cos(t * Math.PI * strand.secondaryWavelength * 2 - timeSeconds * (strand.speed * 0.96) + strand.phase * 0.86);
+    const waveC = Math.sin((t * 6.4 + strand.layerIndex * 0.14) * Math.PI + timeSeconds * 0.56 + strand.phase * 0.31);
 
     const worldX =
       strand.baseX +
@@ -135,7 +135,7 @@ function projectStrandPoints({
       strand.baseZ +
       waveA * strand.amplitudeZ * 0.22 +
       waveB * strand.secondaryAmplitudeZ * 0.18 +
-      Math.cos((t - 0.5) * Math.PI * 2 + timeSeconds * 0.28 + strand.phase * 0.34) * 14 +
+      Math.cos((t - 0.5) * Math.PI * 2 + timeSeconds * 0.46 + strand.phase * 0.34) * 18 +
       strand.depthBias * 0.22;
     const perspective = FOCAL_LENGTH / (FOCAL_LENGTH + worldZ);
     const offset = point * 2;
@@ -277,9 +277,9 @@ export function VerticalVolumetricFieldSplash({ color = "#38bdf8" }: { color?: s
       onFrame(nowMs) {
         if (!logicalWidth || !logicalHeight || strands.length === 0) return;
         buffers.beginFrame();
-        const timeSeconds = nowMs * 0.001 * 0.18;
-        const cameraX = logicalWidth * 0.5;
-        const cameraY = logicalHeight * 0.42;
+        const timeSeconds = nowMs * 0.001 * 0.28;
+        const cameraX = logicalWidth * 0.5 + Math.sin(timeSeconds * 0.42) * logicalWidth * 0.025;
+        const cameraY = logicalHeight * 0.42 + Math.cos(timeSeconds * 0.31) * logicalHeight * 0.018;
 
         paintBackdrop(ctx, logicalWidth, logicalHeight, palette, timeSeconds);
 
@@ -305,7 +305,7 @@ export function VerticalVolumetricFieldSplash({ color = "#38bdf8" }: { color?: s
 
         for (let i = 0; i < projectedStrands.length; i += 1) {
           const { strand, xy, averageDepth } = projectedStrands[i];
-          const depthFactor = clamp(1 - averageDepth / 1350, 0.14, 1);
+          const depthFactor = clamp(1 - averageDepth / 1500, 0.14, 1);
           const color = fieldPalette[strand.colorIndex % fieldPalette.length];
           paintStrand(ctx, strand, xy, palette, color, depthFactor);
         }
@@ -333,5 +333,6 @@ export function VerticalVolumetricFieldSplash({ color = "#38bdf8" }: { color?: s
 
   return <canvas ref={canvasRef} className="absolute inset-0 h-full w-full select-none pointer-events-none overflow-hidden" />;
 }
+
 
 
