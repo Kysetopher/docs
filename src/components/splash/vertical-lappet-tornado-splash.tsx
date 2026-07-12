@@ -259,7 +259,6 @@ function paintBackdrop(
 function paintLappetStrand(
   ctx: CanvasRenderingContext2D,
   strand: LappetStrand,
-  center: Float32Array,
   left: Float32Array,
   right: Float32Array,
   palette: ReturnType<typeof createSplashPalette>,
@@ -268,7 +267,6 @@ function paintLappetStrand(
 ) {
   const outerGlow = clamp(0.05 + depthFactor * 0.18, 0, 0.25) * strand.opacityBias;
   const midGlow = clamp(0.08 + depthFactor * 0.24, 0, 0.34) * strand.opacityBias;
-  const coreGlow = clamp(0.12 + depthFactor * 0.34, 0, 0.54) * strand.opacityBias;
   const accent = strand.layerIndex % 2 === 0 ? palette.highlight : palette.soft;
 
   ctx.save();
@@ -279,19 +277,12 @@ function paintLappetStrand(
   fillShell(ctx, left, right, strand.pointCount, rgba(color, outerGlow * 0.18));
   fillShell(ctx, left, right, strand.pointCount, rgba(color, midGlow * 0.18));
 
-  ctx.shadowColor = rgba(color, outerGlow * 0.9);
-  ctx.shadowBlur = 24 + depthFactor * 18;
-  drawSpline(ctx, center, strand.pointCount, rgba(color, outerGlow * 0.68), strand.thickness * (2.6 + depthFactor * 1.1));
 
   ctx.shadowColor = rgba(accent, midGlow * 0.72);
   ctx.shadowBlur = 14 + depthFactor * 8;
   drawSpline(ctx, left, strand.pointCount, rgba(color, midGlow * 0.72), strand.thickness * (1.05 + depthFactor * 0.18));
   drawSpline(ctx, right, strand.pointCount, rgba(color, midGlow * 0.7), strand.thickness * (1.02 + depthFactor * 0.16));
 
-  ctx.shadowColor = rgba(color, coreGlow * 0.55);
-  ctx.shadowBlur = 8 + depthFactor * 5;
-  drawSpline(ctx, center, strand.pointCount, rgba(color, coreGlow), strand.thickness * (0.86 + depthFactor * 0.06));
-  drawSpline(ctx, center, strand.pointCount, rgba(palette.soft, coreGlow * 0.34), strand.thickness * 0.58);
   ctx.restore();
 }
 
@@ -358,10 +349,10 @@ export function VerticalLappetTornadoSplash({ color = "#38bdf8" }: { color?: str
         projected.sort((a, b) => b.averageDepth - a.averageDepth);
 
         for (let i = 0; i < projected.length; i += 1) {
-          const { strand, center, left, right, averageDepth } = projected[i];
+          const { strand, left, right, averageDepth } = projected[i];
           const depthFactor = clamp(1 - averageDepth / 1620, 0.14, 1);
           const color = tornadoPalette[strand.colorIndex % tornadoPalette.length];
-          paintLappetStrand(ctx, strand, center, left, right, palette, color, depthFactor);
+          paintLappetStrand(ctx, strand, left, right, palette, color, depthFactor);
         }
 
         const fog = ctx.createLinearGradient(0, 0, 0, logicalHeight);
@@ -387,6 +378,8 @@ export function VerticalLappetTornadoSplash({ color = "#38bdf8" }: { color?: str
 
   return <canvas ref={canvasRef} className="absolute inset-0 h-full w-full select-none pointer-events-none overflow-hidden" />;
 }
+
+
 
 
 
