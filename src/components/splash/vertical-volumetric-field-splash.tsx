@@ -112,10 +112,10 @@ function projectStrandPoints({
   buffers: ReturnType<typeof createAnimationBuffers>;
 }) {
   const xy = buffers.allocScratchF32(strand.pointCount * 2);
-  const yStart = -height * 0.22;
-  const yEnd = height * 1.16;
-  const drift = Math.sin(timeSeconds * 0.1 + strand.phase + strand.layerIndex * 0.2);
+  const yStart = -height * (0.28 + strand.layerIndex * 0.06);
+  const yEnd = height * (1.2 + strand.layerIndex * 0.08);
   let depthSum = 0;
+  const drift = Math.sin(timeSeconds * 0.1 + strand.phase + strand.layerIndex * 0.2);
 
   for (let point = 0; point < strand.pointCount; point += 1) {
     const t = strand.pointCount === 1 ? 0 : point / (strand.pointCount - 1);
@@ -333,3 +333,5 @@ export function VerticalVolumetricFieldSplash({ color = "#38bdf8" }: { color?: s
 
   return <canvas ref={canvasRef} className="absolute inset-0 h-full w-full select-none pointer-events-none overflow-hidden" />;
 }
+
+
