@@ -53,6 +53,7 @@ export function WaveformSilkSplash({ color = "#38bdf8" }: { color?: string }) {
     };
 
     const stopLoop = startAnimationLoop({
+      visibilityTarget: canvas,
       frameBudgetMs: FRAME_INTERVAL_MS,
       onFrame(nowMs) {
         if (!strands.length) return;
@@ -115,14 +116,11 @@ export function WaveformSilkSplash({ color = "#38bdf8" }: { color?: string }) {
           ctx.lineCap = "round";
           ctx.lineJoin = "round";
           ctx.globalCompositeOperation = "lighter";
-          ctx.shadowColor = rgba(rgb, glowOpacity * 1.1);
-          ctx.shadowBlur = 18;
+          // Shadow-free glow: an extra wide soft stroke replaces the previous
+          // shadowBlur halos (a gaussian blur per stroke) at a fraction of the cost.
+          drawSpline(ctx, animatedXY, strand.pointCount, rgba(rgb, glowOpacity * 0.34), strand.thickness * 8.6);
           drawSpline(ctx, animatedXY, strand.pointCount, rgba(rgb, glowOpacity * 0.7), strand.thickness * 4.8);
-          ctx.shadowColor = rgba(nextRgb, glowOpacity * 0.95);
-          ctx.shadowBlur = 10;
           drawSpline(ctx, animatedXY, strand.pointCount, rgba(nextRgb, glowOpacity), strand.thickness * 2.4);
-          ctx.shadowColor = rgba(rgb, lineOpacity * 0.7);
-          ctx.shadowBlur = 6;
           drawSpline(ctx, animatedXY, strand.pointCount, rgba(rgb, lineOpacity), strand.thickness);
           drawSpline(ctx, animatedXY, strand.pointCount, rgba(palette.soft, coreOpacity * 0.42), strand.thickness * 0.72);
           ctx.restore();

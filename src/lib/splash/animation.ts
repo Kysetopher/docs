@@ -53,16 +53,23 @@ export function createAnimationBuffers(initialScratchSize = 2048) {
 export function startAnimationLoop({
   frameBudgetMs,
   onFrame,
+  visibilityTarget,
 }: {
   frameBudgetMs: number;
   onFrame: (nowMs: number) => void;
+  /**
+   * When provided, the loop is fully paused while this element is scrolled
+   * out of the viewport, so offscreen splashes cost zero CPU/GPU.
+   */
+  visibilityTarget?: Element;
 }) {
   let rafId = 0;
   let stopped = false;
+  let running = false;
   let lastFrame = 0;
 
   const tick = (now: number) => {
-    if (stopped) return;
+    if (stopped || !running) return;
     if (now - lastFrame >= frameBudgetMs) {
       lastFrame = now;
       onFrame(now);
@@ -70,10 +77,33 @@ export function startAnimationLoop({
     rafId = window.requestAnimationFrame(tick);
   };
 
-  rafId = window.requestAnimationFrame(tick);
+  const start = () => {
+    if (stopped || running) return;
+    running = true;
+    rafId = window.requestAnimationFrame(tick);
+  };
+
+  const pause = () => {
+    if (!running) return;
+    running = false;
+    window.cancelAnimationFrame(rafId);
+  };
+
+  let observer: IntersectionObserver | null = null;
+  if (visibilityTarget && typeof IntersectionObserver !== "undefined") {
+    observer = new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      if (entry.isIntersecting) start();
+      else pause();
+    });
+    observer.observe(visibilityTarget);
+  }
+
+  start();
 
   return () => {
     stopped = true;
-    window.cancelAnimationFrame(rafId);
+    pause();
+    observer?.disconnect();
   };
 }

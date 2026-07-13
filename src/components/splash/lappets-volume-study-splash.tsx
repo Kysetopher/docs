@@ -24,15 +24,6 @@ function smoothstep(edge0: number, edge1: number, x: number) {
   return t * t * (3 - 2 * t);
 }
 
-function mixRgb(a: Rgb, b: Rgb, weight: number) {
-  const t = clamp01(weight);
-  return {
-    r: a.r * (1 - t) + b.r * t,
-    g: a.g * (1 - t) + b.g * t,
-    b: a.b * (1 - t) + b.b * t,
-  };
-}
-
 function parseRgbTriplet(input: string) {
   const match = input.replace(/\s+/g, "").match(/^rgba?\(([^)]+)\)$/i);
   if (!match) return { r: 56, g: 189, b: 248 } satisfies Rgb;
@@ -111,20 +102,34 @@ function sampleSpine(spine: Array<[number, number]>, t: number) {
   };
 }
 
-function computeTone(
-  palette: ReturnType<typeof createSplashPalette>,
-  field: number,
-  density: number,
-  t: number,
-) {
-  const primary = parseRgbTriplet(palette.primary);
-  const secondary = parseRgbTriplet(palette.secondary);
-  const highlight = parseRgbTriplet(palette.highlight);
-  const deep = parseRgbTriplet(palette.deep);
+type ParsedPalette = {
+  primary: Rgb;
+  secondary: Rgb;
+  highlight: Rgb;
+  deep: Rgb;
+};
 
-  const base = mixRgb(deep, primary, 0.16 + density * 0.28);
-  const lift = mixRgb(base, secondary, 0.22 + field * 0.2);
-  return mixRgb(lift, highlight, 0.1 + t * 0.08 + density * 0.1);
+// Scratch output reused across pixels — avoids millions of per-pixel allocations.
+const toneScratch: Rgb = { r: 0, g: 0, b: 0 };
+
+function computeTone(parsed: ParsedPalette, field: number, density: number, t: number) {
+  // Same math as the original mixRgb chain (base → lift → tone), inlined
+  // channel-wise with zero allocations and no per-pixel parsing.
+  const bT = clamp01(0.16 + density * 0.28);
+  const baseR = parsed.deep.r + (parsed.primary.r - parsed.deep.r) * bT;
+  const baseG = parsed.deep.g + (parsed.primary.g - parsed.deep.g) * bT;
+  const baseB = parsed.deep.b + (parsed.primary.b - parsed.deep.b) * bT;
+
+  const lT = clamp01(0.22 + field * 0.2);
+  const liftR = baseR + (parsed.secondary.r - baseR) * lT;
+  const liftG = baseG + (parsed.secondary.g - baseG) * lT;
+  const liftB = baseB + (parsed.secondary.b - baseB) * lT;
+
+  const tT = clamp01(0.1 + t * 0.08 + density * 0.1);
+  toneScratch.r = liftR + (parsed.highlight.r - liftR) * tT;
+  toneScratch.g = liftG + (parsed.highlight.g - liftG) * tT;
+  toneScratch.b = liftB + (parsed.highlight.b - liftB) * tT;
+  return toneScratch;
 }
 
 
@@ -161,6 +166,7 @@ export function LappetsFieldSplash({ color = "#5dd6ff" }: { color?: string }) {
     };
 
     const stopLoop = startAnimationLoop({
+      visibilityTarget: canvas,
       frameBudgetMs: FRAME_INTERVAL_MS,
       onFrame(nowMs) {
         if (!logicalWidth || !logicalHeight) return;
@@ -223,6 +229,14 @@ function paintScene(
   const image = ctx.createImageData(boxWidth, boxHeight);
   const data = image.data;
 
+  // Parse palette once per frame instead of 4 regex parses per pixel.
+  const parsed: ParsedPalette = {
+    primary: parseRgbTriplet(palette.primary),
+    secondary: parseRgbTriplet(palette.secondary),
+    highlight: parseRgbTriplet(palette.highlight),
+    deep: parseRgbTriplet(palette.deep),
+  };
+
   for (let y = 0; y < boxHeight; y += 1) {
     const yAbs = minY + y + 0.5;
     const t = clamp01((yAbs - (centerY - bellHeight * 1.2)) / (tentacleLength + bellHeight * 1.4));
@@ -257,7 +271,7 @@ function paintScene(
       if (alpha <= 0.008) continue;
 
       const density = 0.32 + 0.68 * Math.max(strand, field);
-      const tone = computeTone(palette, field, density, t);
+      const tone = computeTone(parsed, field, density, t);
       const idx = (y * boxWidth + x) * 4;
       data[idx] = tone.r;
       data[idx + 1] = tone.g;

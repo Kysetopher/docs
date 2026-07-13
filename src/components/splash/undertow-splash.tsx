@@ -77,6 +77,7 @@ export function UndertowSplash({ color = "#5dd6ff" }: { color?: string }) {
     };
 
     const stopLoop = startAnimationLoop({
+      visibilityTarget: canvas,
       frameBudgetMs: FRAME_INTERVAL_MS,
       onFrame(nowMs) {
         if (!logicalWidth || !logicalHeight) return;
@@ -120,11 +121,14 @@ function paintScene(
   const centerY = height * 0.58;
   ctx.globalCompositeOperation = "lighter";
 
+  // The field is sampled at the fixed center — identical for every ring, so
+  // compute it once instead of 10x (each sample walks all 40 bands).
+  const field = sampleUndertowField(bands, centerX, centerY, time);
+
   for (let ring = 0; ring < 10; ring += 1) {
     const t = ring / 9;
     const radius = Math.min(width, height) * (0.12 + t * 0.5);
     const turn = 2.2 + t * 2.6;
-    const field = sampleUndertowField(bands, centerX, centerY, time);
     const alpha = 0.05 + field * 0.08;
     ctx.strokeStyle = rgba(ring % 2 === 0 ? palette.highlight : palette.secondary, alpha);
     ctx.lineWidth = 0.9 + t * 1.2;

@@ -4,7 +4,13 @@ import * as React from "react";
 
 import { createAnimationBuffers, startAnimationLoop } from "@/lib/splash/animation";
 import { createSplashPalette } from "@/lib/splash/color";
-import { buildCubeMoireBands, type CubeMoireBand } from "@/lib/splash/cube-moire-texture";
+import {
+  BAND_FRAME_STRIDE,
+  buildCubeMoireBands,
+  computeBandFrameCache,
+  sampleBandValueCached,
+  type CubeMoireBand,
+} from "@/lib/splash/cube-moire-texture";
 import { rgba } from "@/lib/splash/math";
 
 const TARGET_FPS = 30;
@@ -12,40 +18,18 @@ const FRAME_INTERVAL_MS = 1000 / TARGET_FPS;
 
 
 
-function sampleDepthField(bands: CubeMoireBand[], x: number, y: number, timeSeconds: number) {
+// Band math is identical to the shared lib sampler; per-frame constants
+// (drift, rotation, radii) are precomputed once per frame instead of per grid point.
+function sampleDepthField(
+  bands: CubeMoireBand[],
+  bandFrame: Float32Array,
+  x: number,
+  y: number,
+  timeSeconds: number,
+) {
   let value = 0;
   for (let i = 0; i < bands.length; i += 1) {
-    const band = bands[i];
-    const driftX =
-      Math.cos(timeSeconds * 0.16 * band.drift + band.phase) * band.radius * 0.22 +
-      Math.sin(timeSeconds * 0.07 + band.phase * 0.41) * band.radius * 0.07;
-    const driftY =
-      Math.sin(timeSeconds * 0.12 * band.drift + band.phase * 0.73) * band.radius * 0.18 +
-      Math.cos(timeSeconds * 0.09 + band.phase * 0.57) * band.radius * 0.06;
-    const cx = band.baseX + driftX;
-    const cy = band.baseY + driftY;
-
-    const dx = x - cx;
-    const dy = y - cy;
-    const cosS = Math.cos(band.skew);
-    const sinS = Math.sin(band.skew);
-    const rx = dx * cosS - dy * sinS;
-    const ry = dx * sinS + dy * cosS;
-
-    const local = rx / band.radius;
-    const cross = ry / Math.max(1, band.radius * band.stretch);
-    const radial = Math.hypot(local, cross);
-    const warp = Math.sin((x + y) * 0.0032 + timeSeconds * 0.18 + band.phase) * 0.15;
-    const warp2 = Math.cos((x - y) * 0.0026 - timeSeconds * 0.14 - band.phase * 0.7) * 0.12;
-    const w1 = Math.sin(local + warp + timeSeconds * 0.72 + band.phase) * Math.cos(cross - warp2 - timeSeconds * 0.41 - band.phase * 0.33);
-    const w2 =
-      Math.sin((local * 0.78 + cross * 0.22) - timeSeconds * 0.28 + band.phase * 0.5) *
-      Math.cos((cross * 0.84 - local * 0.16) + timeSeconds * 0.53 - band.phase * 0.2);
-    const moire = Math.sin(w1 * Math.PI + w2 * Math.PI);
-    const core = 0.5 + 0.5 * moire;
-    const ripple = 0.5 + 0.5 * Math.sin(radial * 8.2 + timeSeconds * 0.55 + band.phase);
-    const gate = Math.exp(-(radial * radial) * 0.68);
-    value += (core * 0.82 + ripple * 0.18) * gate * band.boost;
+    value += sampleBandValueCached(bands[i], bandFrame, i * BAND_FRAME_STRIDE, x, y, timeSeconds);
   }
 
   const sweep =
@@ -88,6 +72,7 @@ export function BathymetrySplash({ color = "#5dd6ff" }: { color?: string }) {
     };
 
     const stopLoop = startAnimationLoop({
+      visibilityTarget: canvas,
       frameBudgetMs: FRAME_INTERVAL_MS,
       onFrame(nowMs) {
         if (!logicalWidth || !logicalHeight) return;
@@ -103,6 +88,8 @@ export function BathymetrySplash({ color = "#5dd6ff" }: { color?: string }) {
         const cols = Math.max(2, Math.ceil(logicalWidth / step) + 1);
         const rows = Math.max(2, Math.ceil(logicalHeight / step) + 1);
         const field = buffers.allocScratchF32(cols * rows);
+        const bandFrame = buffers.allocScratchF32(bands.length * BAND_FRAME_STRIDE);
+        computeBandFrameCache(bands, timeSeconds, bandFrame);
 
         let min = Number.POSITIVE_INFINITY;
         let max = Number.NEGATIVE_INFINITY;
@@ -110,7 +97,7 @@ export function BathymetrySplash({ color = "#5dd6ff" }: { color?: string }) {
           const py = row * step;
           for (let col = 0; col < cols; col += 1) {
             const px = col * step;
-            const value = sampleDepthField(bands, px, py, timeSeconds);
+            const value = sampleDepthField(bands, bandFrame, px, py, timeSeconds);
             const index = row * cols + col;
             field[index] = value;
             if (value < min) min = value;

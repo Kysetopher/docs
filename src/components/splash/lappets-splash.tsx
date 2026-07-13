@@ -100,6 +100,7 @@ export function LappetsSplash({ color = "#5dd6ff" }: { color?: string }) {
     };
 
     const stopLoop = startAnimationLoop({
+      visibilityTarget: canvas,
       frameBudgetMs: FRAME_INTERVAL_MS,
       onFrame(nowMs) {
         if (!logicalWidth || !logicalHeight) return;

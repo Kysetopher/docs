@@ -150,13 +150,20 @@ function projectStrandPoints({
   };
 }
 
-function paintBackdrop(
-  ctx: CanvasRenderingContext2D,
+// The sky/volume/vignette layers are static — render them once per resize into
+// an offscreen canvas so each frame pays one blit instead of four fullscreen
+// gradient fills.
+function renderStaticBackdrop(
   width: number,
   height: number,
   palette: ReturnType<typeof createSplashPalette>,
-  timeSeconds: number,
 ) {
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, width);
+  canvas.height = Math.max(1, height);
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return canvas;
+
   ctx.fillStyle = rgba(palette.deep, 1);
   ctx.fillRect(0, 0, width, height);
 
@@ -181,13 +188,6 @@ function paintBackdrop(
   ctx.fillStyle = volume;
   ctx.fillRect(0, 0, width, height);
 
-  const shafts = ctx.createLinearGradient(0, 0, width, 0);
-  shafts.addColorStop(0, rgba(palette.primary, 0.025 + Math.sin(timeSeconds * 0.13) * 0.01));
-  shafts.addColorStop(0.5, rgba(palette.highlight, 0.035 + Math.cos(timeSeconds * 0.1) * 0.01));
-  shafts.addColorStop(1, rgba(palette.secondary, 0.022));
-  ctx.fillStyle = shafts;
-  ctx.fillRect(0, 0, width, height);
-
   const vignette = ctx.createRadialGradient(
     width * 0.5,
     height * 0.48,
@@ -199,6 +199,27 @@ function paintBackdrop(
   vignette.addColorStop(0, rgba(palette.highlight, 0));
   vignette.addColorStop(1, rgba(palette.deep, 0.42));
   ctx.fillStyle = vignette;
+  ctx.fillRect(0, 0, width, height);
+
+  return canvas;
+}
+
+function paintBackdrop(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  palette: ReturnType<typeof createSplashPalette>,
+  timeSeconds: number,
+  staticBackdrop: HTMLCanvasElement,
+) {
+  ctx.drawImage(staticBackdrop, 0, 0, width, height);
+
+  // Only the light shafts are time-varying — paint them live.
+  const shafts = ctx.createLinearGradient(0, 0, width, 0);
+  shafts.addColorStop(0, rgba(palette.primary, 0.025 + Math.sin(timeSeconds * 0.13) * 0.01));
+  shafts.addColorStop(0.5, rgba(palette.highlight, 0.035 + Math.cos(timeSeconds * 0.1) * 0.01));
+  shafts.addColorStop(1, rgba(palette.secondary, 0.022));
+  ctx.fillStyle = shafts;
   ctx.fillRect(0, 0, width, height);
 }
 
@@ -220,16 +241,14 @@ function paintStrand(
   ctx.lineJoin = "round";
   ctx.globalCompositeOperation = "lighter";
 
-  ctx.shadowColor = rgba(color, glow * 0.92);
-  ctx.shadowBlur = 20 + depthFactor * 16;
+  // Shadow-free glow: extra wide soft strokes replace the previous shadowBlur
+  // halos (a gaussian blur per stroke) at a fraction of the raster cost.
+  drawSpline(ctx, xy, strand.pointCount, rgba(color, glow * 0.3), strand.thickness * (6.4 + depthFactor * 2.2));
   drawSpline(ctx, xy, strand.pointCount, rgba(color, glow * 0.72), strand.thickness * (3.6 + depthFactor * 1.2));
 
-  ctx.shadowColor = rgba(accent, glow * 0.8);
-  ctx.shadowBlur = 12 + depthFactor * 8;
+  drawSpline(ctx, xy, strand.pointCount, rgba(accent, glow * 0.34), strand.thickness * (2.9 + depthFactor * 1.1));
   drawSpline(ctx, xy, strand.pointCount, rgba(color, glow), strand.thickness * (1.95 + depthFactor * 0.76));
 
-  ctx.shadowColor = rgba(color, line * 0.55);
-  ctx.shadowBlur = 6 + depthFactor * 4;
   drawSpline(ctx, xy, strand.pointCount, rgba(color, line), strand.thickness * (1.02 + depthFactor * 0.2));
 
   drawSpline(ctx, xy, strand.pointCount, rgba(palette.soft, core * 0.4), strand.thickness * 0.7);
@@ -255,6 +274,7 @@ export function VerticalVolumetricFieldSplash({ color = "#38bdf8" }: { color?: s
     let logicalHeight = 0;
     let logicalDpr = 1;
     let strands: VolumetricStrand[] = [];
+    let staticBackdrop: HTMLCanvasElement | null = null;
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
@@ -270,18 +290,20 @@ export function VerticalVolumetricFieldSplash({ color = "#38bdf8" }: { color?: s
       canvas.height = Math.floor(logicalHeight * logicalDpr);
       ctx.setTransform(logicalDpr, 0, 0, logicalDpr, 0, 0);
       strands = buildVolumetricStrands(logicalWidth, logicalHeight, fieldPalette.length);
+      staticBackdrop = renderStaticBackdrop(logicalWidth, logicalHeight, palette);
     };
 
     const stopLoop = startAnimationLoop({
+      visibilityTarget: canvas,
       frameBudgetMs: FRAME_INTERVAL_MS,
       onFrame(nowMs) {
-        if (!logicalWidth || !logicalHeight || strands.length === 0) return;
+        if (!logicalWidth || !logicalHeight || strands.length === 0 || !staticBackdrop) return;
         buffers.beginFrame();
         const timeSeconds = nowMs * 0.001 * 0.28;
         const cameraX = logicalWidth * 0.5 + Math.sin(timeSeconds * 0.42) * logicalWidth * 0.025;
         const cameraY = logicalHeight * 0.42 + Math.cos(timeSeconds * 0.31) * logicalHeight * 0.018;
 
-        paintBackdrop(ctx, logicalWidth, logicalHeight, palette, timeSeconds);
+        paintBackdrop(ctx, logicalWidth, logicalHeight, palette, timeSeconds, staticBackdrop);
 
         const projectedStrands = strands.map((strand) => {
           const projected = projectStrandPoints({

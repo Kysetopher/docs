@@ -171,13 +171,20 @@ function projectStrand({
   };
 }
 
-function paintBackdrop(
-  ctx: CanvasRenderingContext2D,
+// The sky/haze/vignette layers are static — render them once per resize into
+// an offscreen canvas so each frame pays one blit instead of four fullscreen
+// gradient fills.
+function renderStaticBackdrop(
   width: number,
   height: number,
   palette: ReturnType<typeof createSplashPalette>,
-  timeSeconds: number,
 ) {
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, width);
+  canvas.height = Math.max(1, height);
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return canvas;
+
   ctx.fillStyle = rgba(palette.deep, 1);
   ctx.fillRect(0, 0, width, height);
 
@@ -202,13 +209,6 @@ function paintBackdrop(
   ctx.fillStyle = haze;
   ctx.fillRect(0, 0, width, height);
 
-  const shift = ctx.createLinearGradient(0, 0, width, 0);
-  shift.addColorStop(0, rgba(palette.primary, 0.026 + Math.sin(timeSeconds * 0.2) * 0.01));
-  shift.addColorStop(0.5, rgba(palette.highlight, 0.04 + Math.cos(timeSeconds * 0.14) * 0.01));
-  shift.addColorStop(1, rgba(palette.secondary, 0.024));
-  ctx.fillStyle = shift;
-  ctx.fillRect(0, 0, width, height);
-
   const vignette = ctx.createRadialGradient(
     width * 0.5,
     height * 0.5,
@@ -221,6 +221,54 @@ function paintBackdrop(
   vignette.addColorStop(1, rgba(palette.deep, 0.42));
   ctx.fillStyle = vignette;
   ctx.fillRect(0, 0, width, height);
+
+  return canvas;
+}
+
+function paintBackdrop(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  palette: ReturnType<typeof createSplashPalette>,
+  timeSeconds: number,
+  staticBackdrop: HTMLCanvasElement,
+) {
+  ctx.drawImage(staticBackdrop, 0, 0, width, height);
+
+  // Only the slow color shift is time-varying — paint it live.
+  const shift = ctx.createLinearGradient(0, 0, width, 0);
+  shift.addColorStop(0, rgba(palette.primary, 0.026 + Math.sin(timeSeconds * 0.2) * 0.01));
+  shift.addColorStop(0.5, rgba(palette.highlight, 0.04 + Math.cos(timeSeconds * 0.14) * 0.01));
+  shift.addColorStop(1, rgba(palette.secondary, 0.024));
+  ctx.fillStyle = shift;
+  ctx.fillRect(0, 0, width, height);
+}
+
+// Pre-rendered radial glow sprites, one per palette color. Drawing a cached
+// sprite with "lighter" compositing reads the same as per-particle shadowBlur
+// at a tiny fraction of the cost (shadowBlur forces a gaussian blur per fill).
+const glowSpriteCache = new Map<string, HTMLCanvasElement>();
+const GLOW_SPRITE_SIZE = 64;
+
+function getGlowSprite(rgb: string) {
+  let sprite = glowSpriteCache.get(rgb);
+  if (!sprite) {
+    sprite = document.createElement("canvas");
+    sprite.width = GLOW_SPRITE_SIZE;
+    sprite.height = GLOW_SPRITE_SIZE;
+    const spriteCtx = sprite.getContext("2d");
+    if (spriteCtx) {
+      const half = GLOW_SPRITE_SIZE / 2;
+      const gradient = spriteCtx.createRadialGradient(half, half, 0, half, half, half);
+      gradient.addColorStop(0, rgba(rgb, 0.9));
+      gradient.addColorStop(0.35, rgba(rgb, 0.34));
+      gradient.addColorStop(1, rgba(rgb, 0));
+      spriteCtx.fillStyle = gradient;
+      spriteCtx.fillRect(0, 0, GLOW_SPRITE_SIZE, GLOW_SPRITE_SIZE);
+    }
+    glowSpriteCache.set(rgb, sprite);
+  }
+  return sprite;
 }
 
 function paintParticleStrand(
@@ -237,6 +285,8 @@ function paintParticleStrand(
   const particleBase = strand.density * (1.3 + depthFactor * 1.8);
   const glow = clamp(0.04 + depthFactor * 0.16, 0, 0.24) * strand.opacityBias;
   const accent = strand.layerIndex % 2 === 0 ? palette.highlight : palette.soft;
+
+  const glowSprite = getGlowSprite(color);
 
   ctx.save();
   ctx.globalCompositeOperation = "lighter";
@@ -268,8 +318,11 @@ function paintParticleStrand(
       const alpha = glow * (0.34 + 0.66 * (1 - Math.abs(local))) * (0.72 + 0.28 * Math.max(0, flutter));
       if (alpha <= 0.004) continue;
 
-      ctx.shadowColor = rgba(color, alpha * 1.2);
-      ctx.shadowBlur = 10 + depthFactor * 10;
+      const glowRadius = size * 1.4 + 6 + depthFactor * 6;
+      ctx.globalAlpha = alpha;
+      ctx.drawImage(glowSprite, px - glowRadius, py - glowRadius, glowRadius * 2, glowRadius * 2);
+      ctx.globalAlpha = 1;
+
       ctx.fillStyle = rgba(color, alpha);
       ctx.beginPath();
       ctx.ellipse(px, py, size * (0.68 + Math.abs(flutter) * 0.45), size * (1.2 + Math.abs(curl) * 0.9), Math.atan2(ty, tx) + flutter * 0.45, 0, Math.PI * 2);
@@ -304,6 +357,7 @@ export function VerticalLappetParticleFieldSplash({ color = "#38bdf8" }: { color
     let logicalHeight = 0;
     let logicalDpr = 1;
     let strands: ParticleStrand[] = [];
+    let staticBackdrop: HTMLCanvasElement | null = null;
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
@@ -319,18 +373,20 @@ export function VerticalLappetParticleFieldSplash({ color = "#38bdf8" }: { color
       canvas.height = Math.floor(logicalHeight * logicalDpr);
       ctx.setTransform(logicalDpr, 0, 0, logicalDpr, 0, 0);
       strands = buildParticleStrands(logicalWidth, logicalHeight, fieldPalette.length);
+      staticBackdrop = renderStaticBackdrop(logicalWidth, logicalHeight, palette);
     };
 
     const stopLoop = startAnimationLoop({
+      visibilityTarget: canvas,
       frameBudgetMs: FRAME_INTERVAL_MS,
       onFrame(nowMs) {
-        if (!logicalWidth || !logicalHeight || strands.length === 0) return;
+        if (!logicalWidth || !logicalHeight || strands.length === 0 || !staticBackdrop) return;
         buffers.beginFrame();
         const timeSeconds = nowMs * 0.001 * 0.36;
         const cameraX = logicalWidth * 0.5 + Math.sin(timeSeconds * 0.74) * logicalWidth * 0.035;
         const cameraY = logicalHeight * 0.44 + Math.cos(timeSeconds * 0.52) * logicalHeight * 0.03;
 
-        paintBackdrop(ctx, logicalWidth, logicalHeight, palette, timeSeconds);
+        paintBackdrop(ctx, logicalWidth, logicalHeight, palette, timeSeconds, staticBackdrop);
 
         const projected = strands.map((strand) => {
           const result = projectStrand({

@@ -3,8 +3,23 @@
 import * as React from "react";
 import { createAnimationBuffers, startAnimationLoop } from "@/lib/splash/animation";
 import { createSplashPalette } from "@/lib/splash/color";
-import { hexPoints } from "@/lib/splash/geometry";
 import { rgba } from "@/lib/splash/math";
+
+// Unit hexagon vertex directions, precomputed once (avoids per-cell array
+// allocations and degree→radian trig in the render loop).
+const HEX_UNIT = Array.from({ length: 6 }, (_, index) => {
+  const angle = (Math.PI / 180) * (60 * index + 30);
+  return [Math.cos(angle), Math.sin(angle)] as const;
+});
+
+function traceHexPath(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number) {
+  ctx.beginPath();
+  ctx.moveTo(cx + HEX_UNIT[0][0] * r, cy + HEX_UNIT[0][1] * r);
+  for (let j = 1; j < 6; j += 1) {
+    ctx.lineTo(cx + HEX_UNIT[j][0] * r, cy + HEX_UNIT[j][1] * r);
+  }
+  ctx.closePath();
+}
 
 type HexCell = {
   x: number;
@@ -74,6 +89,7 @@ export function HexCurrentSplash({ color = "#38bdf8" }: { color?: string }) {
     };
 
     const stopLoop = startAnimationLoop({
+      visibilityTarget: canvas,
       frameBudgetMs: 1000 / 30,
       onFrame(nowMs) {
         if (!logicalWidth || !logicalHeight) return;
@@ -86,37 +102,36 @@ export function HexCurrentSplash({ color = "#38bdf8" }: { color?: string }) {
         ctx.fillStyle = rgba(palette.deep, 1);
         ctx.fillRect(0, 0, logicalWidth, logicalHeight);
 
+        const invRadialScale = 1 / Math.max(1, Math.min(logicalWidth, logicalHeight) * 0.22);
+        ctx.globalCompositeOperation = "lighter";
+
         for (let i = 0; i < cells.length; i += 1) {
           const cell = cells[i];
           const dx = cell.x - anchorX;
           const dy = cell.y - anchorY;
           const radial = Math.hypot(dx, dy);
-          const wave = Math.cos((radial / Math.max(1, Math.min(logicalWidth, logicalHeight) * 0.22)) + t * 0.7 + cell.phase) * 0.5 + 0.5;
+          const wave = Math.cos(radial * invRadialScale + t * 0.7 + cell.phase) * 0.5 + 0.5;
           const pulse = Math.sin(t * 0.5 + cell.phase) * 0.5 + 0.5;
           const x = cell.x + Math.cos(t * 0.32 + cell.phase) * cell.r * 0.08;
           const y = cell.y + Math.sin(t * 0.27 - cell.phase) * cell.r * 0.08;
-          const points = hexPoints(x, y, cell.r * (0.92 + wave * 0.16));
           const rgb = cell.hue % 2 === 0 ? palette.primary : palette.secondary;
           const fill = ctx.createRadialGradient(x, y, cell.r * 0.05, x, y, cell.r * 1.3);
           fill.addColorStop(0, rgba(rgb, 0.16 + pulse * 0.12));
           fill.addColorStop(0.55, rgba(palette.soft, 0.04 + wave * 0.05));
           fill.addColorStop(1, rgba(palette.deep, 0));
 
-          ctx.save();
-          ctx.globalCompositeOperation = "lighter";
-          ctx.filter = pulse > 0.72 ? "blur(1.6px)" : "none";
-          ctx.beginPath();
-          ctx.moveTo(points[0][0], points[0][1]);
-          for (let p = 1; p < points.length; p += 1) ctx.lineTo(points[p][0], points[p][1]);
-          ctx.closePath();
+          // Fill + stroke share one path; the previous per-cell ctx.filter blur
+          // forced an intermediate surface per hexagon and is visually
+          // indistinguishable at these low alphas.
+          traceHexPath(ctx, x, y, cell.r * (0.92 + wave * 0.16));
           ctx.fillStyle = fill;
           ctx.fill();
-          ctx.filter = "none";
           ctx.strokeStyle = rgba(rgb, 0.1 + wave * 0.08);
           ctx.lineWidth = 0.52 + wave * 0.12;
           ctx.stroke();
-          ctx.restore();
         }
+
+        ctx.globalCompositeOperation = "source-over";
 
         const bloom = ctx.createRadialGradient(
           logicalWidth * 0.5,

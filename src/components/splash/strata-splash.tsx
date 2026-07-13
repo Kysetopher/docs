@@ -19,24 +19,50 @@ function smoothstep(edge0: number, edge1: number, value: number) {
   return t * t * (3 - 2 * t);
 }
 
-function sampleStrataBands(bands: CubeMoireBand[], x: number, y: number, timeSeconds: number) {
+// Per-frame band constants hoisted out of the per-gridpoint loop.
+// Stride 7: [cx, cy, cosS, sinS, invRadius, invCrossDenom, cutoffDistSq]
+const STRATA_FRAME_STRIDE = 7;
+
+function computeStrataFrame(bands: CubeMoireBand[], timeSeconds: number, out: Float32Array) {
+  for (let i = 0; i < bands.length; i += 1) {
+    const band = bands[i];
+    const crossDenom = Math.max(1, band.radius * band.stretch);
+    // shelf >= 0.72 * dist / max(radius, crossDenom); gate is exp(-shelf^2 * 0.92),
+    // so beyond shelf ~3.5 the contribution is < 2e-5 — safe to skip.
+    const cutoff = (3.5 / 0.72) * Math.max(band.radius, crossDenom);
+    const o = i * STRATA_FRAME_STRIDE;
+    out[o] = band.baseX + Math.sin(timeSeconds * 0.08 + band.phase) * band.radius * 0.14;
+    out[o + 1] = band.baseY + Math.cos(timeSeconds * 0.06 + band.phase * 0.83) * band.radius * 0.1;
+    out[o + 2] = Math.cos(band.skew);
+    out[o + 3] = Math.sin(band.skew);
+    out[o + 4] = 1 / band.radius;
+    out[o + 5] = 1 / crossDenom;
+    out[o + 6] = cutoff * cutoff;
+  }
+}
+
+function sampleStrataBands(
+  bands: CubeMoireBand[],
+  frame: Float32Array,
+  x: number,
+  y: number,
+  timeSeconds: number,
+) {
   let value = 0;
   for (let i = 0; i < bands.length; i += 1) {
     const band = bands[i];
-    const driftX = Math.sin(timeSeconds * 0.08 + band.phase) * band.radius * 0.14;
-    const driftY = Math.cos(timeSeconds * 0.06 + band.phase * 0.83) * band.radius * 0.1;
-    const cx = band.baseX + driftX;
-    const cy = band.baseY + driftY;
+    const o = i * STRATA_FRAME_STRIDE;
+    const dx = x - frame[o];
+    const dy = y - frame[o + 1];
+    if (dx * dx + dy * dy > frame[o + 6]) continue;
 
-    const dx = x - cx;
-    const dy = y - cy;
-    const cosS = Math.cos(band.skew);
-    const sinS = Math.sin(band.skew);
+    const cosS = frame[o + 2];
+    const sinS = frame[o + 3];
     const rx = dx * cosS - dy * sinS;
     const ry = dx * sinS + dy * cosS;
 
-    const local = rx / band.radius;
-    const cross = ry / Math.max(1, band.radius * band.stretch);
+    const local = rx * frame[o + 4];
+    const cross = ry * frame[o + 5];
     const shelf = Math.hypot(local * 0.72, cross * 1.18);
     const ridge = Math.sin(local * 3.2 + timeSeconds * 0.22 + band.phase * 0.9);
     const cut = Math.cos(cross * 2.1 - timeSeconds * 0.18 - band.phase * 0.35);
@@ -86,6 +112,7 @@ export function StrataSplash({ color = "#5dd6ff" }: { color?: string }) {
     };
 
     const stopLoop = startAnimationLoop({
+      visibilityTarget: canvas,
       frameBudgetMs: FRAME_INTERVAL_MS,
       onFrame(nowMs) {
         if (!logicalWidth || !logicalHeight) return;
@@ -100,6 +127,8 @@ export function StrataSplash({ color = "#5dd6ff" }: { color?: string }) {
         const cols = Math.max(2, Math.ceil(logicalWidth / step) + 1);
         const rows = Math.max(2, Math.ceil(logicalHeight / step) + 1);
         const field = buffers.allocScratchF32(cols * rows);
+        const bandFrame = buffers.allocScratchF32(bands.length * STRATA_FRAME_STRIDE);
+        computeStrataFrame(bands, timeSeconds, bandFrame);
 
         let min = Number.POSITIVE_INFINITY;
         let max = Number.NEGATIVE_INFINITY;
@@ -107,7 +136,7 @@ export function StrataSplash({ color = "#5dd6ff" }: { color?: string }) {
           const py = row * step;
           for (let col = 0; col < cols; col += 1) {
             const px = col * step;
-            const value = sampleStrataBands(bands, px, py, timeSeconds);
+            const value = sampleStrataBands(bands, bandFrame, px, py, timeSeconds);
             const index = row * cols + col;
             field[index] = value;
             if (value < min) min = value;

@@ -3,8 +3,23 @@
 import * as React from "react";
 import { createAnimationBuffers, startAnimationLoop } from "@/lib/splash/animation";
 import { createSplashPalette } from "@/lib/splash/color";
-import { hexPoints } from "@/lib/splash/geometry";
 import { rgba } from "@/lib/splash/math";
+
+// Unit hexagon vertex directions, precomputed once (avoids per-cell array
+// allocations and degree→radian trig in the render loop).
+const HEX_UNIT = Array.from({ length: 6 }, (_, index) => {
+  const angle = (Math.PI / 180) * (60 * index + 30);
+  return [Math.cos(angle), Math.sin(angle)] as const;
+});
+
+function traceHexPath(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number) {
+  ctx.beginPath();
+  ctx.moveTo(cx + HEX_UNIT[0][0] * r, cy + HEX_UNIT[0][1] * r);
+  for (let j = 1; j < 6; j += 1) {
+    ctx.lineTo(cx + HEX_UNIT[j][0] * r, cy + HEX_UNIT[j][1] * r);
+  }
+  ctx.closePath();
+}
 
 const PERIOD_R_BASE = 220;
 const PERIOD_D_BASE = 340;
@@ -102,6 +117,7 @@ export function HexLatticeSplash({ color = "#38bdf8" }: { color?: string }) {
     };
 
     const stopLoop = startAnimationLoop({
+      visibilityTarget: canvas,
       frameBudgetMs: FRAME_INTERVAL_MS,
       onFrame(timeMs: number) {
         if (!logicalWidth || !logicalHeight) return;
@@ -164,64 +180,34 @@ export function HexLatticeSplash({ color = "#38bdf8" }: { color?: string }) {
         }
 
         ctx.globalCompositeOperation = "lighter";
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        const size = Math.max(12, Math.min(logicalWidth, logicalHeight) * 0.045);
+
         for (let i = 0; i < cells.length; i += 1) {
           const cell = cells[i];
           const wave01 = deformedWave[i];
           const cx = deformedX[i];
           const cy = deformedY[i];
-          const size = Math.max(12, Math.min(logicalWidth, logicalHeight) * 0.045);
           const radius = size * (0.92 + wave01 * 0.18);
-          const points = hexPoints(cx, cy, radius);
-          const inset = lerp(0.16, 0.02, wave01) * radius;
-
-          const insetPoints = points.map(([px, py]) => {
-            const vx = px - cx;
-            const vy = py - cy;
-            const len = Math.hypot(vx, vy) || 1;
-            return {
-              x: px - (vx / len) * inset,
-              y: py - (vy / len) * inset,
-            };
-          });
+          // Inset vertices sit along the same radial direction, so the inset
+          // hexagon is just a smaller radius — no per-vertex normalization needed.
+          const insetRadius = radius - lerp(0.16, 0.02, wave01) * radius;
 
           const rgb = tones[cell.colorIndex % tones.length];
-          const fillAlpha = 0.02 + wave01 * 0.08;
-          const strokeAlpha = 0.12 + wave01 * 0.22;
 
-          ctx.save();
-          ctx.lineJoin = "round";
-          ctx.lineCap = "round";
-
-          ctx.beginPath();
-          ctx.moveTo(insetPoints[0].x, insetPoints[0].y);
-          for (let j = 1; j < insetPoints.length; j += 1) {
-            ctx.lineTo(insetPoints[j].x, insetPoints[j].y);
-          }
-          ctx.closePath();
-          ctx.fillStyle = rgba(rgb, fillAlpha);
+          // Fill + stroke share a single traced path.
+          traceHexPath(ctx, cx, cy, insetRadius);
+          ctx.fillStyle = rgba(rgb, 0.02 + wave01 * 0.08);
           ctx.fill();
-
-          ctx.beginPath();
-          ctx.moveTo(insetPoints[0].x, insetPoints[0].y);
-          for (let j = 1; j < insetPoints.length; j += 1) {
-            ctx.lineTo(insetPoints[j].x, insetPoints[j].y);
-          }
-          ctx.closePath();
-          ctx.strokeStyle = rgba(rgb, strokeAlpha);
+          ctx.strokeStyle = rgba(rgb, 0.12 + wave01 * 0.22);
           ctx.lineWidth = 1;
           ctx.stroke();
 
-          ctx.beginPath();
-          ctx.moveTo(points[0][0], points[0][1]);
-          for (let j = 1; j < points.length; j += 1) {
-            ctx.lineTo(points[j][0], points[j][1]);
-          }
-          ctx.closePath();
+          traceHexPath(ctx, cx, cy, radius);
           ctx.strokeStyle = rgba(palette.highlight, 0.04 + wave01 * 0.07);
           ctx.lineWidth = 0.6 + cell.phase * 0.02;
           ctx.stroke();
-
-          ctx.restore();
         }
 
         const seam = ctx.createLinearGradient(0, 0, logicalWidth, logicalHeight);

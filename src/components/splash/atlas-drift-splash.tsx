@@ -109,8 +109,8 @@ function buildOrbitPath(
   centerX: number,
   centerY: number,
   zoom: number,
+  path: Float32Array,
 ) {
-  const path = new Float32Array(sampleCount * 3 * 2);
   const startAngle = -Math.PI * 2;
   const endAngle = Math.PI * 4;
   const span = endAngle - startAngle;
@@ -214,6 +214,7 @@ export function AtlasDriftSplash({ color = "#38bdf8" }: { color?: string }) {
     };
 
     const stopLoop = startAnimationLoop({
+      visibilityTarget: canvas,
       frameBudgetMs: FRAME_INTERVAL_MS,
       onFrame(nowMs) {
         if (!logicalWidth || !logicalHeight) return;
@@ -263,24 +264,24 @@ export function AtlasDriftSplash({ color = "#38bdf8" }: { color?: string }) {
           const ringTilt = band.tiltX + Math.sin(time * 0.024 + band.phase) * 0.11;
           const ringLean = band.tiltY + Math.cos(time * 0.02 + band.phase) * 0.09;
           const sampleCount = Math.max(48, Math.floor(72 * band.density));
+          // Project directly into the frame scratch buffer — no per-band
+          // allocation or copy.
           const path = buffers.allocScratchF32(sampleCount * 3 * 2);
-          path.set(
-            buildOrbitPath(
-              band,
-              time,
-              sampleCount,
-              ringTilt,
-              ringLean,
-              cameraDistance,
-              centerX,
-              centerY,
-              zoom,
-            ),
+          buildOrbitPath(
+            band,
+            time,
+            sampleCount,
+            ringTilt,
+            ringLean,
+            cameraDistance,
+            centerX,
+            centerY,
+            zoom,
+            path,
           );
 
           const rgb = i % 2 === 0 ? palette.primary : palette.secondary;
 
-          ctx.save();
           drawFadedOrbitPath(
             ctx,
             path,
@@ -289,7 +290,6 @@ export function AtlasDriftSplash({ color = "#38bdf8" }: { color?: string }) {
             band.width,
             0.46,
           );
-          ctx.restore();
         }
 
         for (let i = 0; i < dots.length; i += 1) {

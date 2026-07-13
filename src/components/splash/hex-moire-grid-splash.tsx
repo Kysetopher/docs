@@ -2,9 +2,24 @@
 
 import * as React from "react";
 import { createAnimationBuffers, startAnimationLoop } from "@/lib/splash/animation";
-import { hexPoints } from "@/lib/splash/geometry";
 import { createSplashPalette } from "@/lib/splash/color";
 import { rgba } from "@/lib/splash/math";
+
+// Unit hexagon vertex directions, precomputed once (avoids per-cell array
+// allocations and degree→radian trig in the render loop).
+const HEX_UNIT = Array.from({ length: 6 }, (_, index) => {
+  const angle = (Math.PI / 180) * (60 * index + 30);
+  return [Math.cos(angle), Math.sin(angle)] as const;
+});
+
+function traceHexPath(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number) {
+  ctx.beginPath();
+  ctx.moveTo(cx + HEX_UNIT[0][0] * r, cy + HEX_UNIT[0][1] * r);
+  for (let j = 1; j < 6; j += 1) {
+    ctx.lineTo(cx + HEX_UNIT[j][0] * r, cy + HEX_UNIT[j][1] * r);
+  }
+  ctx.closePath();
+}
 
 const TARGET_FPS = 30;
 const FRAME_INTERVAL_MS = 1000 / TARGET_FPS;
@@ -18,16 +33,6 @@ type HexCell = {
   opacity: number;
   thickness: number;
 };
-
-function drawPolygonPath(ctx: CanvasRenderingContext2D, points: { x: number; y: number }[]) {
-  if (!points.length) return;
-  ctx.beginPath();
-  ctx.moveTo(points[0].x, points[0].y);
-  for (let i = 1; i < points.length; i += 1) {
-    ctx.lineTo(points[i].x, points[i].y);
-  }
-  ctx.closePath();
-}
 
 function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
@@ -102,6 +107,7 @@ export function HexMoireGridSplash({ color = "#38bdf8" }: { color?: string }) {
     };
 
     const stopLoop = startAnimationLoop({
+      visibilityTarget: canvas,
       frameBudgetMs: FRAME_INTERVAL_MS,
       onFrame(nowMs) {
         if (!logicalWidth || !logicalHeight) return;
@@ -123,6 +129,10 @@ export function HexMoireGridSplash({ color = "#38bdf8" }: { color?: string }) {
         ctx.fillRect(0, 0, logicalWidth, logicalHeight);
         ctx.restore();
 
+        ctx.globalCompositeOperation = "lighter";
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+
         for (let i = 0; i < cells.length; i += 1) {
           const cell = cells[i];
           const dx = cell.x - anchorX;
@@ -141,50 +151,35 @@ export function HexMoireGridSplash({ color = "#38bdf8" }: { color?: string }) {
           const cx = cell.x + Math.cos(angle) * localPush + driftA;
           const cy = cell.y + Math.sin(angle) * localPush + driftB;
           const radius = cell.r * (0.92 + wave01 * 0.18);
-          const points = hexPoints(cx, cy, radius);
-          const inset = lerp(0.16, 0.02, wave01) * radius;
-
-          const insetPoints = points.map(([px, py]) => {
-            const vx = px - cx;
-            const vy = py - cy;
-            const len = Math.hypot(vx, vy) || 1;
-            return {
-              x: px - (vx / len) * inset,
-              y: py - (vy / len) * inset,
-            };
-          });
-
-          const outerPoints = points.map(([px, py]) => ({
-            x: px + Math.cos(cell.phase + t * 0.14) * cell.r * 0.03,
-            y: py + Math.sin(cell.phase + t * 0.12) * cell.r * 0.03,
-          }));
+          // Inset vertices sit along the same radial direction, so the inset
+          // hexagon is just a smaller radius — no per-vertex work needed.
+          const insetRadius = radius - lerp(0.16, 0.02, wave01) * radius;
 
           const strokeAlpha = 0.10 + wave01 * 0.24;
           const fillAlpha = 0.02 + wave01 * 0.06;
           const glowAlpha = 0.05 + wave01 * 0.09;
           const baseRgb = i % 3 === 0 ? palette.soft : palette.primary;
 
-          ctx.save();
-          ctx.lineJoin = "round";
-          ctx.lineCap = "round";
-          ctx.globalCompositeOperation = "lighter";
-
-          drawPolygonPath(ctx, insetPoints);
+          // Fill + stroke share a single traced path.
+          traceHexPath(ctx, cx, cy, insetRadius);
           ctx.fillStyle = rgba(baseRgb, fillAlpha);
           ctx.fill();
-
-          drawPolygonPath(ctx, insetPoints);
           ctx.strokeStyle = rgba(baseRgb, strokeAlpha);
           ctx.lineWidth = Math.max(0.5, cell.thickness * 0.45);
           ctx.stroke();
 
-          drawPolygonPath(ctx, outerPoints);
+          // The outer ring drift is uniform per cell — a translated hexagon.
+          traceHexPath(
+            ctx,
+            cx + Math.cos(cell.phase + t * 0.14) * cell.r * 0.03,
+            cy + Math.sin(cell.phase + t * 0.12) * cell.r * 0.03,
+            radius,
+          );
           ctx.strokeStyle = rgba(palette.highlight, glowAlpha);
           ctx.lineWidth = Math.max(0.35, cell.thickness * 0.26);
           ctx.stroke();
-
-          ctx.restore();
         }
+        ctx.globalCompositeOperation = "source-over";
 
         ctx.save();
         const vignette = ctx.createRadialGradient(

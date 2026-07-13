@@ -204,13 +204,20 @@ function fillShell(
   ctx.fill();
 }
 
-function paintBackdrop(
-  ctx: CanvasRenderingContext2D,
+// The sky/haze/vignette layers are static — render them once per resize into
+// an offscreen canvas so each frame pays one blit instead of four fullscreen
+// gradient fills.
+function renderStaticBackdrop(
   width: number,
   height: number,
   palette: ReturnType<typeof createSplashPalette>,
-  timeSeconds: number,
 ) {
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, width);
+  canvas.height = Math.max(1, height);
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return canvas;
+
   ctx.fillStyle = rgba(palette.deep, 1);
   ctx.fillRect(0, 0, width, height);
 
@@ -235,13 +242,6 @@ function paintBackdrop(
   ctx.fillStyle = haze;
   ctx.fillRect(0, 0, width, height);
 
-  const shift = ctx.createLinearGradient(0, 0, width, 0);
-  shift.addColorStop(0, rgba(palette.primary, 0.025 + Math.sin(timeSeconds * 0.16) * 0.01));
-  shift.addColorStop(0.5, rgba(palette.highlight, 0.038 + Math.cos(timeSeconds * 0.12) * 0.01));
-  shift.addColorStop(1, rgba(palette.secondary, 0.022));
-  ctx.fillStyle = shift;
-  ctx.fillRect(0, 0, width, height);
-
   const vignette = ctx.createRadialGradient(
     width * 0.5,
     height * 0.5,
@@ -253,6 +253,27 @@ function paintBackdrop(
   vignette.addColorStop(0, rgba(palette.highlight, 0));
   vignette.addColorStop(1, rgba(palette.deep, 0.42));
   ctx.fillStyle = vignette;
+  ctx.fillRect(0, 0, width, height);
+
+  return canvas;
+}
+
+function paintBackdrop(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  palette: ReturnType<typeof createSplashPalette>,
+  timeSeconds: number,
+  staticBackdrop: HTMLCanvasElement,
+) {
+  ctx.drawImage(staticBackdrop, 0, 0, width, height);
+
+  // Only the slow color shift is time-varying — paint it live.
+  const shift = ctx.createLinearGradient(0, 0, width, 0);
+  shift.addColorStop(0, rgba(palette.primary, 0.025 + Math.sin(timeSeconds * 0.16) * 0.01));
+  shift.addColorStop(0.5, rgba(palette.highlight, 0.038 + Math.cos(timeSeconds * 0.12) * 0.01));
+  shift.addColorStop(1, rgba(palette.secondary, 0.022));
+  ctx.fillStyle = shift;
   ctx.fillRect(0, 0, width, height);
 }
 
@@ -278,8 +299,10 @@ function paintLappetStrand(
   fillShell(ctx, left, right, strand.pointCount, rgba(color, midGlow * 0.18));
 
 
-  ctx.shadowColor = rgba(accent, midGlow * 0.72);
-  ctx.shadowBlur = 14 + depthFactor * 8;
+  // Shadow-free glow: wide soft strokes replace the previous shadowBlur halo
+  // (a gaussian blur per stroke) at a fraction of the raster cost.
+  drawSpline(ctx, left, strand.pointCount, rgba(accent, midGlow * 0.26), strand.thickness * (3.2 + depthFactor * 0.9));
+  drawSpline(ctx, right, strand.pointCount, rgba(accent, midGlow * 0.25), strand.thickness * (3.1 + depthFactor * 0.8));
   drawSpline(ctx, left, strand.pointCount, rgba(color, midGlow * 0.72), strand.thickness * (1.05 + depthFactor * 0.18));
   drawSpline(ctx, right, strand.pointCount, rgba(color, midGlow * 0.7), strand.thickness * (1.02 + depthFactor * 0.16));
 
@@ -305,6 +328,7 @@ export function VerticalLappetTornadoSplash({ color = "#38bdf8" }: { color?: str
     let logicalHeight = 0;
     let logicalDpr = 1;
     let strands: LappetStrand[] = [];
+    let staticBackdrop: HTMLCanvasElement | null = null;
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
@@ -320,18 +344,20 @@ export function VerticalLappetTornadoSplash({ color = "#38bdf8" }: { color?: str
       canvas.height = Math.floor(logicalHeight * logicalDpr);
       ctx.setTransform(logicalDpr, 0, 0, logicalDpr, 0, 0);
       strands = buildLappetStrands(logicalWidth, logicalHeight, tornadoPalette.length);
+      staticBackdrop = renderStaticBackdrop(logicalWidth, logicalHeight, palette);
     };
 
     const stopLoop = startAnimationLoop({
+      visibilityTarget: canvas,
       frameBudgetMs: FRAME_INTERVAL_MS,
       onFrame(nowMs) {
-        if (!logicalWidth || !logicalHeight || strands.length === 0) return;
+        if (!logicalWidth || !logicalHeight || strands.length === 0 || !staticBackdrop) return;
         buffers.beginFrame();
         const timeSeconds = nowMs * 0.001 * 0.32;
         const cameraX = logicalWidth * 0.5 + Math.sin(timeSeconds * 0.62) * logicalWidth * 0.04;
         const cameraY = logicalHeight * 0.44 + Math.cos(timeSeconds * 0.46) * logicalHeight * 0.028;
 
-        paintBackdrop(ctx, logicalWidth, logicalHeight, palette, timeSeconds);
+        paintBackdrop(ctx, logicalWidth, logicalHeight, palette, timeSeconds, staticBackdrop);
 
         const projected = strands.map((strand) => {
           const result = projectLappetStrand({

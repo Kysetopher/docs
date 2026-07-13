@@ -47,26 +47,55 @@ function drawCellPath(ctx: CanvasRenderingContext2D, x: number, y: number, step:
   ctx.rect(x, y, step, step);
 }
 
-function sampleBandValue(band: CubeMoireBand, x: number, y: number, timeSeconds: number) {
-  const driftX =
-    Math.cos(timeSeconds * 0.16 * band.drift + band.phase) * band.radius * 0.22 +
-    Math.sin(timeSeconds * 0.07 + band.phase * 0.41) * band.radius * 0.07;
-  const driftY =
-    Math.sin(timeSeconds * 0.12 * band.drift + band.phase * 0.73) * band.radius * 0.18 +
-    Math.cos(timeSeconds * 0.09 + band.phase * 0.57) * band.radius * 0.06;
-  const cx = band.baseX + driftX;
-  const cy = band.baseY + driftY;
+// Per-frame band constants (center, rotation, radii) hoisted out of the
+// per-gridpoint sampling loop. Stride layout per band:
+// [cx, cy, cosS, sinS, invRadius, invCrossDenom, cutoffDistSq]
+export const BAND_FRAME_STRIDE = 7;
 
-  const dx = x - cx;
-  const dy = y - cy;
-  const cosS = Math.cos(band.skew);
-  const sinS = Math.sin(band.skew);
+export function computeBandFrameCache(bands: CubeMoireBand[], timeSeconds: number, out: Float32Array) {
+  for (let i = 0; i < bands.length; i += 1) {
+    const band = bands[i];
+    const driftX =
+      Math.cos(timeSeconds * 0.16 * band.drift + band.phase) * band.radius * 0.22 +
+      Math.sin(timeSeconds * 0.07 + band.phase * 0.41) * band.radius * 0.07;
+    const driftY =
+      Math.sin(timeSeconds * 0.12 * band.drift + band.phase * 0.73) * band.radius * 0.18 +
+      Math.cos(timeSeconds * 0.09 + band.phase * 0.57) * band.radius * 0.06;
+    const crossDenom = Math.max(1, band.radius * band.stretch);
+    const cutoff = 3.5 * Math.max(band.radius, crossDenom);
+    const o = i * BAND_FRAME_STRIDE;
+    out[o] = band.baseX + driftX;
+    out[o + 1] = band.baseY + driftY;
+    out[o + 2] = Math.cos(band.skew);
+    out[o + 3] = Math.sin(band.skew);
+    out[o + 4] = 1 / band.radius;
+    out[o + 5] = 1 / crossDenom;
+    out[o + 6] = cutoff * cutoff;
+  }
+}
+
+export function sampleBandValueCached(
+  band: CubeMoireBand,
+  frame: Float32Array,
+  o: number,
+  x: number,
+  y: number,
+  timeSeconds: number,
+) {
+  const dx = x - frame[o];
+  const dy = y - frame[o + 1];
+  // Beyond the cutoff the gaussian gate is < 3e-4, visually zero — skip.
+  if (dx * dx + dy * dy > frame[o + 6]) return 0;
+
+  const cosS = frame[o + 2];
+  const sinS = frame[o + 3];
   const rx = dx * cosS - dy * sinS;
   const ry = dx * sinS + dy * cosS;
 
-  const local = rx / band.radius;
-  const cross = ry / Math.max(1, band.radius * band.stretch);
-  const radial = Math.hypot(local, cross);
+  const local = rx * frame[o + 4];
+  const cross = ry * frame[o + 5];
+  const radialSq = local * local + cross * cross;
+  const radial = Math.sqrt(radialSq);
   const warp = Math.sin((x + y) * 0.0032 + timeSeconds * 0.18 + band.phase) * 0.15;
   const warp2 = Math.cos((x - y) * 0.0026 - timeSeconds * 0.14 - band.phase * 0.7) * 0.12;
   const w1 = Math.sin(local + warp + timeSeconds * 0.72 + band.phase) * Math.cos(cross - warp2 - timeSeconds * 0.41 - band.phase * 0.33);
@@ -76,8 +105,17 @@ function sampleBandValue(band: CubeMoireBand, x: number, y: number, timeSeconds:
   const moire = Math.sin(w1 * Math.PI + w2 * Math.PI);
   const core = 0.5 + 0.5 * moire;
   const ripple = 0.5 + 0.5 * Math.sin(radial * 8.2 + timeSeconds * 0.55 + band.phase);
-  const gate = Math.exp(-(radial * radial) * 0.68);
+  const gate = Math.exp(-radialSq * 0.68);
   return (core * 0.82 + ripple * 0.18) * gate * band.boost;
+}
+
+let sharedBandFrame = new Float32Array(0);
+
+function getBandFrame(bands: CubeMoireBand[], timeSeconds: number) {
+  const required = bands.length * BAND_FRAME_STRIDE;
+  if (sharedBandFrame.length < required) sharedBandFrame = new Float32Array(required);
+  computeBandFrameCache(bands, timeSeconds, sharedBandFrame);
+  return sharedBandFrame;
 }
 
 function buildSegmentsForLevel(
@@ -234,6 +272,8 @@ export function drawCubeMoireTexture({
   let min = Number.POSITIVE_INFINITY;
   let max = Number.NEGATIVE_INFINITY;
 
+  const bandFrame = getBandFrame(bands, timeSeconds);
+
   for (let row = 0; row < rows; row += 1) {
     const py = row * step;
     for (let col = 0; col < cols; col += 1) {
@@ -241,7 +281,7 @@ export function drawCubeMoireTexture({
       let value = 0;
 
       for (let i = 0; i < bands.length; i += 1) {
-        value += sampleBandValue(bands[i], px, py, timeSeconds);
+        value += sampleBandValueCached(bands[i], bandFrame, i * BAND_FRAME_STRIDE, px, py, timeSeconds);
       }
 
       const sweep =
@@ -280,17 +320,18 @@ export function drawCubeMoireTexture({
     const strokeAlpha = 0.12 + levelIndex * 0.024;
     const lineWidth = 0.52 + levelIndex * 0.12;
 
+    // Shadow-free glow: a wider soft underlay stroke reads the same as the
+    // previous shadowBlur halo at a fraction of the raster cost.
     ctx.beginPath();
     for (let i = 0; i < segments.length; i += 1) drawSegment(ctx, segments[i]);
-    ctx.shadowColor = rgba(rgb, glowAlpha);
-    ctx.shadowBlur = 4 + levelIndex;
+    ctx.strokeStyle = rgba(rgb, glowAlpha * 0.55);
+    ctx.lineWidth = lineWidth * 4.4;
+    ctx.stroke();
+
     ctx.strokeStyle = rgba(rgb, glowAlpha * 0.9);
     ctx.lineWidth = lineWidth * 2.2;
     ctx.stroke();
 
-    ctx.beginPath();
-    for (let i = 0; i < segments.length; i += 1) drawSegment(ctx, segments[i]);
-    ctx.shadowBlur = 0;
     ctx.strokeStyle = rgba(rgb, strokeAlpha);
     ctx.lineWidth = lineWidth;
     ctx.stroke();
@@ -339,6 +380,8 @@ export function drawCubeMoirePosterize({
   let min = Number.POSITIVE_INFINITY;
   let max = Number.NEGATIVE_INFINITY;
 
+  const bandFrame = getBandFrame(bands, timeSeconds);
+
   for (let row = 0; row < rows; row += 1) {
     const py = row * step;
     for (let col = 0; col < cols; col += 1) {
@@ -346,7 +389,7 @@ export function drawCubeMoirePosterize({
       let value = 0;
 
       for (let i = 0; i < bands.length; i += 1) {
-        value += sampleBandValue(bands[i], px, py, timeSeconds);
+        value += sampleBandValueCached(bands[i], bandFrame, i * BAND_FRAME_STRIDE, px, py, timeSeconds);
       }
 
       const sweep =
@@ -401,17 +444,17 @@ export function drawCubeMoirePosterize({
       const strokeAlpha = 0.08 + levelIndex * 0.02;
       const lineWidth = 0.45 + levelIndex * 0.1;
 
+      // Shadow-free glow: layered wider strokes on one shared path.
       ctx.beginPath();
       for (let i = 0; i < segments.length; i += 1) drawSegment(ctx, segments[i]);
-      ctx.strokeStyle = rgba(rgb, strokeAlpha);
-      ctx.lineWidth = lineWidth * 1.9;
-      ctx.shadowColor = rgba(rgb, strokeAlpha * 0.8);
-      ctx.shadowBlur = 3 + levelIndex;
+      ctx.strokeStyle = rgba(rgb, strokeAlpha * 0.45);
+      ctx.lineWidth = lineWidth * 3.6;
       ctx.stroke();
 
-      ctx.beginPath();
-      for (let i = 0; i < segments.length; i += 1) drawSegment(ctx, segments[i]);
-      ctx.shadowBlur = 0;
+      ctx.strokeStyle = rgba(rgb, strokeAlpha);
+      ctx.lineWidth = lineWidth * 1.9;
+      ctx.stroke();
+
       ctx.strokeStyle = rgba(palette.soft, 0.04 + levelIndex * 0.01);
       ctx.lineWidth = lineWidth;
       ctx.stroke();
