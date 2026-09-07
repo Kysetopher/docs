@@ -5,6 +5,7 @@ import { aiSupportGroupSpace } from "@/lib/records/spaces/ai-support-group";
 import { miningSpace } from "@/lib/records/spaces/mining";
 import { talentAgencySpace } from "@/lib/records/spaces/talent-agency";
 import { salesSpace } from "@/lib/records/spaces/sales";
+import { harnessEngineeringSpace } from "@/lib/records/spaces/harness-engineering";
 
 export const DOC_SPACES: DocSpace[] = [
   aiDiscoverabilitySpace,
@@ -13,6 +14,7 @@ export const DOC_SPACES: DocSpace[] = [
   talentAgencySpace,
   aiSupportGroupSpace,
   salesSpace,
+  harnessEngineeringSpace,
 ];
 
 export const DOC_RECORDS: Record<string, DocRecord> = Object.fromEntries(

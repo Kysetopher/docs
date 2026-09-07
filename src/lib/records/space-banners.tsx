@@ -1,5 +1,6 @@
 import { AtlasDriftSplash } from "@/components/splash/atlas-drift-splash";
 import { AbyssBloomSplash } from "@/components/splash/abyss-bloom-splash";
+import { CubeMoireTextureSplash } from "@/components/splash/cube-moire-texture-splash";
 import { FloatstarSplash } from "@/components/splash/floatstar-splash";
 import { HexCurrentSplash } from "@/components/splash/hex-current-splash";
 import { HexLatticeSplash } from "@/components/splash/hex-lattice-splash";
@@ -21,6 +22,8 @@ export function getSpaceBanner(spaceId: string | undefined) {
       return <AtlasDriftSplash color="#e11d48" />;
     case "mining":
       return <StrataSplash color="#f97316" />;
+    case "harness-engineering":
+      return <CubeMoireTextureSplash color="#0ea5e9" />;
     case "home":
       return <AbyssBloomSplash color="#14b8a6" />;
     default:

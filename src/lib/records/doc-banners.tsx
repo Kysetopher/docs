@@ -53,6 +53,11 @@ const DOC_BANNERS: Record<string, DocBannerConfig> = {
   "sales-playbook": { component: LappetsVolumeSplash, color: "#f59e0b" },
   "target-Sectors": { component: LappetsFieldSplash, color: "#a3e635" },
   "scraping-methods": { component: HexLatticeSplash, color: "#22c55e" },
+  overview: { component: HexCurrentSplash, color: "#f59e0b" },
+  "core-principles": { component: LappetsVolumeSplash, color: "#22c55e" },
+  "request-lifecycle": { component: TideglassSplash, color: "#e11d48" },
+  components: { component: BathymetrySplash, color: "#8b5cf6" },
+  "related-concepts": { component: UndertowSplash, color: "#14b8a6" },
 };
 
 export function getDocBanner(docId: string | undefined): ReactNode {
