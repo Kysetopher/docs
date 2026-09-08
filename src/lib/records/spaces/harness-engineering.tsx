@@ -7,6 +7,8 @@ import {
   RequestLifecycleDiagram,
   ComponentsArchitectureDiagram,
   GuardrailsVsGatesDiagram,
+  SubagentIsolationDiagram,
+  BacklogOrchestrationDiagram,
 } from "@/components/docs/harness-engineering";
 
 const spaceId = "harness-engineering";
@@ -190,7 +192,7 @@ const corePrinciplesSections: DocRecord["sections"] = [
     title: "Least-Privilege Agents",
     summary: "Narrow scope is a reliability property, not just a security one.",
     content: (
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="rounded-2xl border border-border/60 bg-background/60 p-5 shadow-sm">
           <p className="text-sm leading-6 text-muted-foreground">
             Rather than one generalist agent with access to everything, a harness tends to be organized as a library
@@ -206,7 +208,47 @@ const corePrinciplesSections: DocRecord["sections"] = [
             into a prompt by hand.
           </p>
         </div>
+
         <LeastPrivilegeDiagram />
+
+        {/* Subagent Workspace Isolation Models */}
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            Subagent Workspace Isolation Modes
+          </h4>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="rounded-2xl border border-border/60 bg-background/60 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                1. Read-Only Sandbox
+              </p>
+              <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                Equipped strictly with inspection tools (<code className="rounded bg-muted px-1 py-0.5 font-mono text-[11px]">view_file</code>,{" "}
+                <code className="rounded bg-muted px-1 py-0.5 font-mono text-[11px]">grep_search</code>, web queries).
+                Write tools and modifying shell execution are stripped at spawn time.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-border/60 bg-background/60 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                2. Isolated Scratch / Branch
+              </p>
+              <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                Spawns into an ephemeral scratch workdir or detached git branch. Mutations, temp artifacts, and test logs
+                remain isolated until explicitly approved and merged back by the orchestrator.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-border/60 bg-background/60 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                3. Bounded Spawn & Depth Limits
+              </p>
+              <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                Hard caps prevent uncontrolled recursive subagent spawning (e.g., max spawn depth = 1, max concurrent subagents = 3).
+                Subagents communicate strictly via structured message envelopes back to the parent.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <SubagentIsolationDiagram />
       </div>
     ),
   },
@@ -386,6 +428,58 @@ const componentsSections: DocRecord["sections"] = [
     ),
   },
   {
+    id: "policy-manifests-and-gates",
+    title: "Policy Manifests & Hard Gate Rules",
+    summary: "How deterministic tool permissions, path allowances, and command blocklists are codified.",
+    content: (
+      <div className="space-y-4">
+        <div className="rounded-2xl border border-border/60 bg-background/60 p-5 shadow-sm">
+          <p className="text-sm leading-6 text-muted-foreground">
+            Hard restrictions cannot rely on natural language instructions. Instead, they are defined in version-controlled
+            policy manifests evaluated by the harness middleware prior to every tool execution.
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-border/60 bg-muted/30 p-5 font-mono text-xs">
+          <p className="font-sans text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Example: Specialist Subagent Security Policy (<code className="text-foreground">security-auditor-policy.yaml</code>)
+          </p>
+          <pre className="mt-3 overflow-x-auto text-[11px] leading-5 text-foreground/90">
+{`agent:
+  name: "codebase-researcher"
+  workspace_mode: "isolated_scratch"   # cannot pollute main git tree
+  spawn_depth_limit: 1                 # cannot recursively spawn new subagents
+
+tool_permissions:
+  allow_tools:
+    - "view_file"
+    - "grep_search"
+    - "find_by_name"
+  deny_tools:                          # hard-blocked at harness gate
+    - "write_to_file"
+    - "run_command"
+    - "replace_file_content"
+
+path_boundaries:
+  allowed_roots:
+    - "./src"
+    - "./docs"
+  blocked_patterns:                   # immediate deny if matched in args
+    - "**/.env*"
+    - "**/secrets/**"
+    - "**/*.pem"
+
+circuit_breakers:
+  max_turns: 15                       # hard kill on step 16
+  max_wall_clock_seconds: 120         # hard timeout
+  max_token_budget: 80000             # hard spend cap
+  loop_detection_window: 4            # kills if 4 repetitive tool calls observed`}
+          </pre>
+        </div>
+      </div>
+    ),
+  },
+  {
     id: "how-they-combine",
     title: "How They Combine",
     summary: "No single component makes a harness reliable — the combination does.",
@@ -442,9 +536,75 @@ const relatedConcepts: RelatedConcept[] = [
 const relatedConceptsSections: DocRecord["sections"] = [
   {
     id: "guardrails-vs-gates",
-    title: "Guardrails vs. Gates",
+    title: "Guardrails vs. Gates vs. Sandboxes",
     summary: "The distinction most often collapsed by mistake — and the one that matters most.",
-    content: <GuardrailsVsGatesDiagram />,
+    content: (
+      <div className="space-y-6">
+        <GuardrailsVsGatesDiagram />
+
+        {/* Comparison Table */}
+        <div className="overflow-x-auto rounded-2xl border border-border/60 bg-background/60 p-5 shadow-sm">
+          <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-4">
+            Mechanism Comparison Matrix
+          </h4>
+          <table className="w-full text-left text-xs leading-5">
+            <thead>
+              <tr className="border-b border-border/60 text-foreground font-semibold">
+                <th className="pb-2 pr-4">Mechanism</th>
+                <th className="pb-2 pr-4">Location</th>
+                <th className="pb-2 pr-4">Enforcement Type</th>
+                <th className="pb-2 pr-4">Bypassability</th>
+                <th className="pb-2">Failure Mode</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/40 text-muted-foreground">
+              <tr>
+                <td className="py-2.5 pr-4 font-medium text-amber-600 dark:text-amber-400">Prompted Guardrail</td>
+                <td className="py-2.5 pr-4">Inside model context</td>
+                <td className="py-2.5 pr-4">Probabilistic (advisory)</td>
+                <td className="py-2.5 pr-4 text-rose-500 font-medium">Bypassable (prompt injection, forgetting)</td>
+                <td className="py-2.5">Action executes unchecked</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 pr-4 font-medium text-emerald-600 dark:text-emerald-400">Enforcement Gate</td>
+                <td className="py-2.5 pr-4">External harness middleware</td>
+                <td className="py-2.5 pr-4">Deterministic (hard chokepoint)</td>
+                <td className="py-2.5 pr-4 text-emerald-600 dark:text-emerald-400 font-medium">Non-bypassable (first deny wins)</td>
+                <td className="py-2.5">Call aborted before execution</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 pr-4 font-medium text-sky-600 dark:text-sky-400">Execution Sandbox</td>
+                <td className="py-2.5 pr-4">OS / filesystem boundary</td>
+                <td className="py-2.5 pr-4">Deterministic containment</td>
+                <td className="py-2.5 pr-4 text-emerald-600 dark:text-emerald-400 font-medium">Contained environment</td>
+                <td className="py-2.5">Blast radius limited to scratch branch</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Human-in-the-Loop Escalation Rules */}
+        <div className="rounded-2xl border border-border/60 bg-muted/20 p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            Human-in-the-Loop (HITL) Escalation Tiers
+          </p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-3 text-xs leading-5">
+            <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3">
+              <p className="font-semibold text-emerald-600 dark:text-emerald-400">Auto-Allow</p>
+              <p className="mt-1 text-muted-foreground">Idempotent reads, local scratch edits, unit test execution within timeout bounds.</p>
+            </div>
+            <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3">
+              <p className="font-semibold text-amber-600 dark:text-amber-400">Interactive Prompt (HITL)</p>
+              <p className="mt-1 text-muted-foreground">Package installation, file deletions outside scratch, git push to remote, schema migrations.</p>
+            </div>
+            <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-3">
+              <p className="font-semibold text-rose-600 dark:text-rose-400">Hard Deny (Immediate Abort)</p>
+              <p className="mt-1 text-muted-foreground">Production credentials access, raw shell destruction (`rm -rf /`), out-of-bounds network exfiltration.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    ),
   },
   {
     id: "vocabulary",
@@ -458,6 +618,94 @@ const relatedConceptsSections: DocRecord["sections"] = [
             <p className="mt-2 text-sm leading-6 text-muted-foreground">{concept.body}</p>
           </div>
         ))}
+      </div>
+    ),
+  },
+];
+
+/* ---------------------------------------------------------------------- */
+/* Multi-Developer Collaboration (Backlog-Driven Orchestration)           */
+/* ---------------------------------------------------------------------- */
+
+const collaborationSections: DocRecord["sections"] = [
+  {
+    id: "the-coordination-friction",
+    title: "The Concurrent Working Problem",
+    summary: "Why multiple developers struggle to work on the same codebase simultaneously through prompts.",
+    content: (
+      <div className="grid gap-4 lg:grid-cols-2">
+        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/5 p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-rose-600 dark:text-rose-400">
+            The Anti-Pattern: Conflicting Chat Prompts
+          </p>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-muted-foreground">
+            <li>Two engineers running uncoordinated chat assistants on the same repo create immediate merge collisions and dirty working trees.</li>
+            <li>Context is trapped in private chat transcripts — neither developer (nor their agent) knows what the other just instructed or changed.</li>
+            <li>Constraints given by one developer in turn A are overwritten or violated by the other developer's prompt in turn B.</li>
+          </ul>
+        </div>
+        <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400">
+            The Solution: Backlog as the Control Plane
+          </p>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-muted-foreground">
+            <li>Instead of micro-managing and prompting code changes turn-by-turn, both developers interact with a shared project management system / issue tracker.</li>
+            <li>The backlog serves as the single source of truth for features, bug reports, and acceptance criteria.</li>
+            <li>The harness autonomously pulls tasks from the queue, implements them in isolated branches, and submits PRs with verification receipts.</li>
+          </ul>
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "orchestration-flow",
+    title: "Backlog-Driven Orchestration Architecture",
+    summary: "How team members define the project together while the harness builds in the background.",
+    content: (
+      <div className="space-y-4">
+        <BacklogOrchestrationDiagram />
+      </div>
+    ),
+  },
+  {
+    id: "autonomous-lifecycle",
+    title: "The Autonomous Background Execution Loop",
+    summary: "From ticket intake to PR review, test receipts, and documentation synchronization.",
+    content: (
+      <div className="space-y-4">
+        <div className="rounded-2xl border border-border/60 bg-background/60 p-5 shadow-sm">
+          <p className="text-sm leading-6 text-muted-foreground">
+            When teams adopt a harness-driven workflow, their role shifts from <span className="font-medium text-foreground">writing and prompting</span> to{" "}
+            <span className="font-medium text-foreground">defining specifications and reviewing verifiable proofs</span>.
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl border border-border/60 bg-background/60 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+              1. Task Triage & Locking
+            </p>
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">
+              The harness continuously evaluates the issue tracker, ranks dependencies, and acquires a task lock. It spawns a scoped specialist agent on a clean, isolated scratch branch.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-border/60 bg-background/60 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+              2. CI/CD & Receipt Generation
+            </p>
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">
+              The agent builds the change, runs automated test suites, and collects deterministic receipts. A pull request is generated containing the code diff and verification log.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-border/60 bg-background/60 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+              3. Continuous Reconciliation
+            </p>
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">
+              Once human collaborators approve and merge the PR, the harness closes the bug ticket, updates the documentation, and adjusts overarching project goals.
+            </p>
+          </div>
+        </div>
       </div>
     ),
   },
@@ -507,6 +755,16 @@ const componentsDoc = createDoc(
   componentsSections,
 );
 
+const collaborationDoc = createDoc(
+  "multi-developer-collaboration",
+  "Multi-Developer Collaboration",
+  "How teams define projects in a shared backlog while the harness autonomously builds in the background.",
+  "Backlog-Driven Multi-Developer Orchestration",
+  "Instead of conflicting chat prompts, collaborators define tasks and bugs in a shared backlog — the harness continuously triages, builds, verifies, and syncs.",
+  "mdi:account-multiple-outline",
+  collaborationSections,
+);
+
 const relatedConceptsDoc = createDoc(
   "related-concepts",
   "Related Concepts & Vocabulary",
@@ -524,5 +782,13 @@ export const harnessEngineeringSpace: DocSpace = {
     "A reference guide to harness engineering: the discipline of engineering reliability into AI agent systems through routing, scoped agents, enforcement gates, and verification — rather than relying on prompting alone.",
   href: `/spaces/${spaceId}`,
   cardIcon: "mdi:shield-check-outline",
-  docs: [overviewDoc, corePrinciplesDoc, requestLifecycleDoc, componentsDoc, relatedConceptsDoc],
+  docs: [
+    overviewDoc,
+    corePrinciplesDoc,
+    requestLifecycleDoc,
+    componentsDoc,
+    collaborationDoc,
+    relatedConceptsDoc,
+  ],
 };
+
