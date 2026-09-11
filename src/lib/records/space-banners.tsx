@@ -24,6 +24,8 @@ export function getSpaceBanner(spaceId: string | undefined) {
       return <StrataSplash color="#f97316" />;
     case "harness-engineering":
       return <CubeMoireTextureSplash color="#0ea5e9" />;
+    case "local-models":
+      return <HexCurrentSplash color="#10b981" />;
     case "home":
       return <AbyssBloomSplash color="#14b8a6" />;
     default:

@@ -6,6 +6,7 @@ import { CubeMoireTextureSplash } from "@/components/splash/cube-moire-texture-s
 import { FloatstarSplash } from "@/components/splash/floatstar-splash";
 import { HexCurrentSplash } from "@/components/splash/hex-current-splash";
 import { HexLatticeSplash } from "@/components/splash/hex-lattice-splash";
+import { HexMoireGridSplash } from "@/components/splash/hex-moire-grid-splash";
 import { LappetsSplash } from "@/components/splash/lappets-splash";
 import { LappetsVolumeSplash } from "@/components/splash/lappets-volume-splash";
 import { LappetsFieldSplash } from "@/components/splash/lappets-volume-study-splash";
@@ -58,6 +59,10 @@ const DOC_BANNERS: Record<string, DocBannerConfig> = {
   "request-lifecycle": { component: TideglassSplash, color: "#e11d48" },
   components: { component: BathymetrySplash, color: "#8b5cf6" },
   "related-concepts": { component: UndertowSplash, color: "#14b8a6" },
+  "models-catalog": { component: HexMoireGridSplash, color: "#a855f7" },
+  "linux-installation": { component: WaveformSilkSplash, color: "#10b981" },
+  "hardware-optimization": { component: CubeMoireTextureSplash, color: "#f59e0b" },
+  "remote-access-integration": { component: FloatstarSplash, color: "#06b6d4" },
 };
 
 export function getDocBanner(docId: string | undefined): ReactNode {

@@ -6,10 +6,12 @@ import { miningSpace } from "@/lib/records/spaces/mining";
 import { talentAgencySpace } from "@/lib/records/spaces/talent-agency";
 import { salesSpace } from "@/lib/records/spaces/sales";
 import { harnessEngineeringSpace } from "@/lib/records/spaces/harness-engineering";
+import { localModelsSpace } from "@/lib/records/spaces/local-models";
 
 export const DOC_SPACES: DocSpace[] = [
   aiDiscoverabilitySpace,
   autoBuildPipelineSpace,
+  localModelsSpace,
   miningSpace,
   talentAgencySpace,
   aiSupportGroupSpace,
