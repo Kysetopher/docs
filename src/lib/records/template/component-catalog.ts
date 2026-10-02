@@ -1,17 +1,27 @@
 /**
- * Typed catalog of every UI component in the template's `src/components/ui`
- * folder, grouped the same way as the template's component gallery.
+ * Typed catalog of every reusable component in the template's
+ * `src/components/ui`, `src/components/calendar` and `src/components/billing`
+ * folders, grouped the same way as the template's component gallery.
  *
  * Exports, props and usage snippets are taken from the component source files;
  * keep this in sync when components are added, removed or renamed.
  */
 
-export type CatalogGroupId = "actions" | "forms" | "overlays" | "data-display" | "navigation" | "layout" | "motion";
+export type CatalogGroupId =
+  | "actions"
+  | "forms"
+  | "overlays"
+  | "data-display"
+  | "navigation"
+  | "layout"
+  | "motion"
+  | "calendar"
+  | "billing";
 
 export type CatalogEntry = {
   /** Display name, e.g. "Dropdown menu". */
   name: string;
-  /** File name inside `src/components/ui`, e.g. "dropdown-menu.tsx". */
+  /** File name inside its `src/components/*` folder, e.g. "dropdown-menu.tsx". */
   file: string;
   /** Import specifier, e.g. "@/components/ui/dropdown-menu". */
   importPath: string;
@@ -2014,6 +2024,377 @@ const filtered = items.filter((i) => i.toLowerCase().includes(query.toLowerCase(
         usage: `import { SmoothReplace } from "@/components/ui/scramble-wrappers";
 
 <SmoothReplace messages={["Reusable components", "Consistent tokens", "Accessible defaults"]} averageDelayMs={2500} />`,
+      },
+    ],
+  },
+
+  /* ------------------------------------------------------------------ */
+  /* Calendar                                                          */
+  /* ------------------------------------------------------------------ */
+  {
+    id: "calendar",
+    title: "Calendar",
+    description:
+      "A props-driven month / week / day event calendar in src/components/calendar, built on the CalendarEvent type in src/lib/calendar/types.ts. Use CalendarView for the full experience, or the individual views to compose your own.",
+    entries: [
+      {
+        name: "Calendar view",
+        file: "calendar-view.tsx",
+        importPath: "@/components/calendar/calendar-view",
+        exports: ["CalendarView", "CalendarViewProps"],
+        description:
+          "The complete calendar: a toolbar (title, view switcher, previous / today / next, upcoming toggle), the month, week or day view, an upcoming sidebar (a column from md up, a drawer on mobile) and an event details dialog. Date and view can be controlled or uncontrolled. Give the root a definite height; the views fill it.",
+        props: [
+          { name: "events", type: "readonly CalendarEvent<TMeta>[]", description: "The events to show. Times are placed on the viewer's local calendar day." },
+          { name: "date / defaultDate / onDateChange", type: "Date / Date / (date: Date) => void", description: "Controlled or initial anchor date. Without either, it opens on today once mounted." },
+          { name: "view / defaultView / onViewChange", type: '"month" | "week" | "day"', description: 'Controlled or initial view. defaultView defaults to "month".' },
+          { name: "views", type: "CalendarViewMode[]", description: "Views offered in the switcher (hidden when only one). Defaults to all three." },
+          { name: "selectedDate", type: "Date | null", description: "Highlighted day. Purely presentational; you own the state." },
+          { name: "onSelectDate", type: "(date: Date, view: CalendarViewMode) => void", description: "A day cell (month) or 30-minute slot (week/day) was clicked." },
+          { name: "onSelectEvent", type: "(event: CalendarEvent<TMeta>) => void", description: "An event was clicked." },
+          { name: "showEventDialog", type: "boolean", description: "Open the built-in details dialog on event click. Defaults to true." },
+          { name: "renderEventDetails", type: "(event: CalendarEvent<TMeta>) => ReactNode", description: "Replaces EventCard inside the details dialog." },
+          { name: "renderEvent", type: "RenderCalendarEvent<TMeta>", description: "Replaces the default chip content in every view and the upcoming list." },
+          { name: "categories", type: "CalendarCategories", description: "Map of category key to { label, color?, className? }." },
+          { name: "labels", type: "Partial<CalendarLabels>", description: "Override any user-visible string (translation or rewording)." },
+          { name: "weekStartsOn", type: "0 | 1 | 2 | 3 | 4 | 5 | 6", description: "0 = Sunday (default) to 6 = Saturday." },
+          { name: "today", type: "Date | null", description: '"Now" for highlights, the now-line and the upcoming list. Omitted: a live clock started after hydration. Pass a fixed date for demos and tests.' },
+          { name: "showUpcoming / defaultUpcomingOpen", type: "boolean", description: "Offer the upcoming sidebar (default true) and its initial state (defaults to open from md up)." },
+          { name: "toolbarExtra", type: "ReactNode", description: "Extra content at the end of the toolbar." },
+          { name: "slotHeight / scrollToHour / maxEventsPerDay", type: "number", description: "Passed through to the time grid and the month view." },
+          { name: "className", type: "string", description: 'Root classes. Set a definite height, e.g. "h-[44rem]" (default "h-[40rem]").' },
+        ],
+        client: true,
+        dependsOn: ["date-fns", "@iconify/react", "simplebar-react"],
+        usage: `"use client";
+
+import { useState } from "react";
+import { CalendarView } from "@/components/calendar/calendar-view";
+import type { CalendarCategories, CalendarEvent } from "@/lib/calendar/types";
+
+const categories: CalendarCategories = {
+  meeting: { label: "Meeting", color: "primary" },
+  deadline: { label: "Deadline", color: "destructive" },
+};
+
+const events: CalendarEvent[] = [
+  { id: 1, title: "Team standup", start: new Date(2026, 9, 5, 9, 30), end: new Date(2026, 9, 5, 9, 45), category: "meeting" },
+  { id: 2, title: "Report due", start: new Date(2026, 9, 9), allDay: true, category: "deadline" },
+];
+
+export function TeamCalendar() {
+  const [selected, setSelected] = useState<Date | null>(null);
+  return (
+    <CalendarView
+      events={events}
+      categories={categories}
+      selectedDate={selected}
+      onSelectDate={(date) => setSelected(date)}
+      onSelectEvent={(event) => console.log(event.title)}
+      weekStartsOn={1}
+      className="h-[44rem]"
+    />
+  );
+}`,
+      },
+      {
+        name: "Calendar view (client only)",
+        file: "calendar-view-client.tsx",
+        importPath: "@/components/calendar/calendar-view-client",
+        exports: ["CalendarViewClient"],
+        description:
+          "CalendarView loaded with next/dynamic and ssr: false, with a pulsing placeholder while it loads. Use it when events carry absolute instants (ISO strings with an offset) and the server's timezone may differ from the viewer's, which would otherwise mismatch day placement on hydration. Events built from local wall-clock dates don't need it.",
+        props: [{ name: "...props", type: "CalendarViewProps", description: "Same props as CalendarView." }],
+        client: true,
+        usage: `import { CalendarViewClient } from "@/components/calendar/calendar-view-client";
+
+<CalendarViewClient
+  events={[{ id: "launch", title: "Launch", start: "2026-10-20T17:00:00Z", end: "2026-10-20T18:00:00Z" }]}
+  defaultView="week"
+/>`,
+      },
+      {
+        name: "Month calendar",
+        file: "month-calendar.tsx",
+        importPath: "@/components/calendar/month-calendar",
+        exports: ["MonthCalendar", "MonthCalendarProps"],
+        description:
+          'A vertically scrolling month grid that loads months endlessly in both directions and reports the month at the center of the viewport through onDateChange. Each day shows up to maxEventsPerDay chips and a "+N more" link. Needs a parent with a definite height.',
+        props: [
+          { name: "events", type: "readonly CalendarEvent<TMeta>[]", description: "The events to show." },
+          { name: "date", type: "Date", description: "Required. The active month (any date inside it)." },
+          { name: "onDateChange", type: "(date: Date) => void", description: "Required. Fired with the 1st of whichever month scrolls to the center." },
+          { name: "onSelectDate", type: "(date: Date) => void", description: "Fired when a day cell is clicked." },
+          { name: "onSelectEvent", type: "(event: CalendarEvent<TMeta>) => void", description: "Fired when an event chip is clicked." },
+          { name: "onShowMore", type: "(date: Date) => void", description: 'Fired by a day\'s "+N more" link. Defaults to onSelectDate.' },
+          { name: "now", type: "Date | null", description: "Current time, for the today highlight. Omitted: none." },
+          { name: "maxEventsPerDay", type: "number", description: 'Chips per day before "+N more". Defaults to 3.' },
+          { name: "renderEvent / categories / labels / weekStartsOn / selectedDate", type: "-", description: "As on CalendarView." },
+        ],
+        client: true,
+        dependsOn: ["date-fns", "simplebar-react"],
+        usage: `"use client";
+
+import { useState } from "react";
+import { MonthCalendar } from "@/components/calendar/month-calendar";
+
+const [date, setDate] = useState(() => new Date());
+
+<div className="h-[36rem] overflow-hidden rounded-md border border-border">
+  <MonthCalendar events={events} date={date} onDateChange={setDate} now={new Date()} />
+</div>`,
+      },
+      {
+        name: "Week calendar",
+        file: "week-calendar.tsx",
+        importPath: "@/components/calendar/week-calendar",
+        exports: ["WeekCalendar", "WeekCalendarProps"],
+        description:
+          "WeekView with touch-swipe paging: the previous and next weeks are pre-rendered either side, and a swipe calls onDateChange with the date a week earlier or later.",
+        props: [
+          { name: "date", type: "Date", description: "Required. Any date inside the week to show." },
+          { name: "onDateChange", type: "(date: Date) => void", description: "Required. Called with the new anchor date after a swipe." },
+          { name: "...props", type: "WeekViewProps<TMeta>", description: "Everything WeekView accepts." },
+        ],
+        client: true,
+        dependsOn: ["date-fns", "simplebar-react"],
+        usage: `"use client";
+
+import { useState } from "react";
+import { WeekCalendar } from "@/components/calendar/week-calendar";
+
+const [date, setDate] = useState(() => new Date());
+
+<div className="h-[36rem] overflow-hidden rounded-md border border-border">
+  <WeekCalendar events={events} date={date} onDateChange={setDate} weekStartsOn={1} />
+</div>`,
+      },
+      {
+        name: "Week view",
+        file: "week-view.tsx",
+        importPath: "@/components/calendar/week-view",
+        exports: ["WeekView", "WeekViewProps"],
+        description:
+          "One week as a 7-column, 30-minute time grid with an all-day row, a now-line and overlapping events laid out side by side. It has no paging of its own; use WeekCalendar for swipe navigation.",
+        props: [
+          { name: "date", type: "Date", description: "Required. Any date inside the week to show." },
+          { name: "weekStartsOn", type: "0 | 1 | 2 | 3 | 4 | 5 | 6", description: "Defaults to 0 (Sunday)." },
+          { name: "events", type: "readonly CalendarEvent<TMeta>[]", description: "The events to show." },
+          { name: "now", type: "Date | null", description: "Current time. Omitted: no now-line or today highlight." },
+          { name: "onSelectDate", type: "(date: Date) => void", description: "Fired with the clicked 30-minute slot's start time." },
+          { name: "onSelectEvent", type: "(event: CalendarEvent<TMeta>) => void", description: "Fired when an event is clicked." },
+          { name: "slotHeight", type: "number", description: "Pixel height of one 30-minute slot. Defaults to 24." },
+          { name: "scrollToHour", type: "number", description: "Hour scrolled to on mount. Defaults to 8." },
+          { name: "renderEvent / categories / labels / selectedDate", type: "-", description: "As on CalendarView." },
+        ],
+        client: true,
+        dependsOn: ["date-fns", "simplebar-react"],
+        usage: `import { WeekView } from "@/components/calendar/week-view";
+
+<div className="h-[36rem] overflow-hidden rounded-md border border-border">
+  <WeekView events={events} date={new Date()} now={new Date()} onSelectDate={(slot) => console.log(slot)} />
+</div>`,
+      },
+      {
+        name: "Day calendar",
+        file: "day-calendar.tsx",
+        importPath: "@/components/calendar/day-calendar",
+        exports: ["DayCalendar", "DayCalendarProps"],
+        description:
+          "DayView with touch-swipe paging: the neighbouring days are pre-rendered either side, and a swipe calls onDateChange with the next or previous day.",
+        props: [
+          { name: "date", type: "Date", description: "Required. The day to show." },
+          { name: "onDateChange", type: "(date: Date) => void", description: "Required. Called with the new date after a swipe." },
+          { name: "...props", type: "DayViewProps<TMeta>", description: "Everything DayView accepts." },
+        ],
+        client: true,
+        dependsOn: ["date-fns", "simplebar-react"],
+        usage: `"use client";
+
+import { useState } from "react";
+import { DayCalendar } from "@/components/calendar/day-calendar";
+
+const [date, setDate] = useState(() => new Date());
+
+<div className="h-[36rem] overflow-hidden rounded-md border border-border">
+  <DayCalendar events={events} date={date} onDateChange={setDate} now={new Date()} />
+</div>`,
+      },
+      {
+        name: "Day view",
+        file: "day-view.tsx",
+        importPath: "@/components/calendar/day-view",
+        exports: ["DayView", "DayViewProps"],
+        description:
+          "A single day as a 30-minute time grid with an all-day row and a now-line. It takes the same props as WeekView except weekStartsOn, and has no paging of its own; use DayCalendar for swipe navigation.",
+        props: [
+          { name: "date", type: "Date", description: "Required. The day to show." },
+          { name: "events", type: "readonly CalendarEvent<TMeta>[]", description: "The events to show." },
+          { name: "now", type: "Date | null", description: "Current time. Omitted: no now-line." },
+          { name: "onSelectDate", type: "(date: Date) => void", description: "Fired with the clicked 30-minute slot's start time." },
+          { name: "slotHeight / scrollToHour", type: "number", description: "Default to 24 (px per 30 minutes) and 8 (08:00)." },
+        ],
+        client: true,
+        dependsOn: ["date-fns", "simplebar-react"],
+        usage: `import { DayView } from "@/components/calendar/day-view";
+
+<div className="h-[36rem] overflow-hidden rounded-md border border-border">
+  <DayView events={events} date={new Date()} now={new Date()} scrollToHour={9} />
+</div>`,
+      },
+      {
+        name: "Event card",
+        file: "event-card.tsx",
+        importPath: "@/components/calendar/event-card",
+        exports: ["EventCard", "EventCardProps"],
+        description:
+          "Read-only event details: optional image banner, when, title, category, location, description and a link (internal paths use next/link; absolute URLs open in a new tab). CalendarView shows it in its details dialog; use it alone for an event page or list.",
+        props: [
+          { name: "event", type: "CalendarEvent<TMeta>", description: "Required. The event to show." },
+          { name: "categories", type: "CalendarCategories", description: "Resolves the event's category label and color." },
+          { name: "labels", type: "Partial<CalendarLabels>", description: "Overrides, e.g. learnMore (the link text when the event has no urlLabel)." },
+          { name: "showMedia", type: "boolean", description: "Show the image banner (an icon placeholder without imageUrl). Defaults to true when the event has an image." },
+        ],
+        client: false,
+        dependsOn: ["@iconify/react"],
+        usage: `import { EventCard } from "@/components/calendar/event-card";
+
+<EventCard
+  event={{
+    id: "review",
+    title: "Design review",
+    start: new Date(2026, 9, 5, 10),
+    end: new Date(2026, 9, 5, 11, 30),
+    category: "meeting",
+    description: "Walk through the new onboarding flow.",
+    url: "/dashboard",
+    urlLabel: "Open dashboard",
+  }}
+  categories={{ meeting: { label: "Meeting", color: "primary" } }}
+  showMedia
+/>`,
+      },
+      {
+        name: "Upcoming sidebar",
+        file: "upcoming-sidebar.tsx",
+        importPath: "@/components/calendar/upcoming-sidebar",
+        exports: ["UpcomingSidebar", "UpcomingSidebarProps"],
+        description:
+          "A chronological list of events ending today or later, with one toggle chip per category to filter it when categories are given. CalendarView renders it beside the calendar; use it alone for a dashboard widget.",
+        props: [
+          { name: "events", type: "readonly CalendarEvent<TMeta>[]", description: "The events to choose from." },
+          { name: "now", type: "Date | null", description: "Required. Events ending on or after the start of this day are listed; null lists nothing." },
+          { name: "onSelectEvent", type: "(event: CalendarEvent<TMeta>) => void", description: "Fired when an item is clicked." },
+          { name: "onClose", type: "() => void", description: "Renders a close button when provided." },
+          { name: "categories", type: "CalendarCategories", description: "Adds the category filter chips." },
+          { name: "limit", type: "number", description: "Cap on listed events. Defaults to 50." },
+          { name: "renderEvent / labels", type: "-", description: "As on CalendarView." },
+        ],
+        client: true,
+        dependsOn: ["date-fns", "@iconify/react", "simplebar-react"],
+        usage: `import { UpcomingSidebar } from "@/components/calendar/upcoming-sidebar";
+
+<UpcomingSidebar
+  events={events}
+  now={new Date()}
+  categories={categories}
+  limit={6}
+  onSelectEvent={(event) => console.log(event.title)}
+  className="h-80"
+/>`,
+      },
+    ],
+  },
+
+  /* ------------------------------------------------------------------ */
+  /* Billing                                                             */
+  /* ------------------------------------------------------------------ */
+  {
+    id: "billing",
+    title: "Billing",
+    description:
+      "Optional Stripe billing UI in src/components/billing. Billing is off unless all three STRIPE_* env vars are set; check isBillingEnabled() from @/lib/env before rendering these.",
+    entries: [
+      {
+        name: "Checkout form",
+        file: "checkout-form.tsx",
+        importPath: "@/components/billing/checkout-form",
+        exports: ["CheckoutForm"],
+        description:
+          "Stripe's embedded Payment Element, themed from the app's CSS tokens, for a subscription's first invoice or a one-time PaymentIntent. The /checkout page renders it after creating the client secret on the server; confirming here records nothing, the webhook does. Only used when billing is enabled (isBillingEnabled()).",
+        props: [
+          { name: "clientSecret", type: "string", description: "Required. From the subscription's first invoice or the PaymentIntent, created on the server." },
+          { name: "returnUrl", type: "string", description: "Required. Absolute URL Stripe returns to after payment, e.g. /checkout/success." },
+          { name: "publishableKey", type: "string", description: "Required. env.STRIPE_PUBLISHABLE_KEY, passed from the server at request time (not NEXT_PUBLIC_)." },
+          { name: "submitLabel", type: "string", description: 'Pay button text. Defaults to "Pay now".' },
+        ],
+        client: true,
+        dependsOn: ["@stripe/stripe-js", "@stripe/react-stripe-js"],
+        usage: `// In a Server Component, as src/app/(protected)/checkout/page.tsx does
+import { CheckoutForm } from "@/components/billing/checkout-form";
+import { env } from "@/lib/env";
+
+<CheckoutForm
+  clientSecret={clientSecret}
+  returnUrl={\`\${env.SITE_URL}/checkout/success?product=\${encodeURIComponent(product.key)}\`}
+  publishableKey={env.STRIPE_PUBLISHABLE_KEY}
+/>`,
+      },
+      {
+        name: "Payment method card",
+        file: "payment-method-card.tsx",
+        importPath: "@/components/billing/payment-method-card",
+        exports: ["PaymentMethodCard"],
+        description:
+          'Display-only saved card: brand icon and name, last four digits and expiry (marked "Expired" once past). Pass null for the "No saved card" state. The account page reads the summary live from Stripe on the server (src/lib/billing/customers.ts); full card numbers never reach the app. Shown only when billing is enabled (isBillingEnabled()).',
+        props: [
+          { name: "value", type: "PaymentMethodSummary | null", description: "Required. { brand, last4, expMonth, expYear } (each nullable), or null for the empty state." },
+          { name: "className", type: "string", description: "Extra classes for the card." },
+        ],
+        client: false,
+        dependsOn: ["@iconify/react"],
+        usage: `import { PaymentMethodCard } from "@/components/billing/payment-method-card";
+
+<PaymentMethodCard value={{ brand: "visa", last4: "4242", expMonth: 12, expYear: 2034 }} />
+<PaymentMethodCard value={null} />`,
+      },
+      {
+        name: "Manage billing button",
+        file: "manage-billing-button.tsx",
+        importPath: "@/components/billing/manage-billing-button",
+        exports: ["ManageBillingButton"],
+        description:
+          "A form that posts to the manageBilling Server Action (src/lib/actions/billing.ts), which opens Stripe's Customer Portal (card, invoices, cancellation) and returns to /account. Works without client JavaScript and shows a pending state. With billing off (isBillingEnabled() false) the action returns to /account with a notice.",
+        props: [
+          { name: "variant", type: "ButtonVariant", description: 'Defaults to "secondary".' },
+          { name: "children", type: "ReactNode", description: 'Button text. Defaults to "Manage billing".' },
+          { name: "className", type: "string", description: "Classes for the button." },
+        ],
+        client: false,
+        dependsOn: ["@iconify/react"],
+        usage: `import { ManageBillingButton } from "@/components/billing/manage-billing-button";
+
+<ManageBillingButton className="self-start" />`,
+      },
+      {
+        name: "Pay with saved card button",
+        file: "pay-with-saved-card-button.tsx",
+        importPath: "@/components/billing/pay-with-saved-card-button",
+        exports: ["PayWithSavedCardButton"],
+        description:
+          "One-click purchase of a one-time product with the customer's saved card, via the payWithSavedCard Server Action (src/lib/actions/billing.ts). With no saved card, or one that needs the customer (3-D Secure, a decline), it sends them to /checkout for that product. Render it from a Server Component: each render mints a fresh nonce used as the Stripe idempotency key. Only works when billing is enabled (isBillingEnabled()).",
+        props: [
+          { name: "productKey", type: "ProductKey", description: 'Required. A mode: "payment" product key from src/lib/billing/products.ts; the price comes from the catalog.' },
+          { name: "children", type: "ReactNode", description: "Required. Button text." },
+          { name: "variant", type: "ButtonVariant", description: 'Defaults to "primary".' },
+          { name: "className", type: "string", description: "Classes for the button." },
+        ],
+        client: false,
+        usage: `// In a Server Component (a page), with "lifetime" listed in src/lib/billing/products.ts
+import { PayWithSavedCardButton } from "@/components/billing/pay-with-saved-card-button";
+import { isBillingEnabled } from "@/lib/env";
+
+{isBillingEnabled() ? <PayWithSavedCardButton productKey="lifetime">Buy again</PayWithSavedCardButton> : null}`,
       },
     ],
   },

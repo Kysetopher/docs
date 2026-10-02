@@ -48,17 +48,19 @@ const gettingStartedSections: DocRecord["sections"] = [
   {
     id: "overview",
     title: "What You Get",
-    summary: "An unbranded Next.js + Supabase starting point with auth, an app shell, and a shared component library.",
+    summary: "An unbranded Next.js + Supabase starting point with auth, an app shell, optional Stripe billing, and a shared component library.",
     content: (
       <div className="grid gap-4 lg:grid-cols-3">
         <Panel eyebrow="Stack" title="Next.js 16 + Supabase">
           <p>App Router, React 19, TypeScript strict, Tailwind v4. Supabase Auth runs entirely server-side through <InlineCode>@supabase/ssr</InlineCode> — there is no browser Supabase client.</p>
+          <p>Optional Stripe billing — subscriptions and one-time purchases with an embedded checkout — stays off until its env vars are set.</p>
         </Panel>
         <Panel eyebrow="Auth" title="Complete flows">
           <p>Sign up with email confirmation, log in, forgot/reset password by 6-digit code, change email, change password, delete account, log out. Per-email rate limits live in Postgres and fail closed.</p>
         </Panel>
-        <Panel eyebrow="UI" title="66 components">
+        <Panel eyebrow="UI" title="66 UI components, plus calendar and billing">
           <p>Forms, overlays, menus, tables, date pickers, navigation, layout and motion components, all styled from semantic color tokens.</p>
+          <p>A month / week / day event calendar with an upcoming list, and the card, checkout and portal pieces that billing uses.</p>
         </Panel>
         <DocLink spaceId={spaceId} docId="component-library" className="lg:col-span-3" />
       </div>
@@ -150,6 +152,10 @@ cd <your-repository-name>`} />
                   ]}
                 />
                 <p>None are <InlineCode>NEXT_PUBLIC_</InlineCode>: nothing reads them in the browser. The server checks all four at startup and refuses to start with a plain list of anything missing or malformed.</p>
+                <p>
+                  <InlineCode>.env.example</InlineCode> also lists an optional Stripe group (<InlineCode>STRIPE_*</InlineCode>). Leave it empty to run without billing; to turn billing on, see{" "}
+                  <DocLink spaceId={spaceId} docId="getting-started" sectionId="payments" label="Payments (Optional)" variant="inline" />.
+                </p>
               </>
             ),
           },
@@ -168,6 +174,7 @@ cd <your-repository-name>`} />
           rows={[
             [<InlineCode>*_auth_limits.sql</InlineCode>, "Per-email counters for auth emails, reset-code guesses and password logins, plus nightly pruning with pg_cron."],
             [<InlineCode>*_profiles_and_avatars.sql</InlineCode>, "A profiles table created on signup, with RLS and narrow grants, and a private per-user avatars storage bucket. The pattern to copy for every new table."],
+            [<InlineCode>*_billing.sql</InlineCode>, "billing_customers, subscriptions and payments for optional Stripe billing. Users read their own rows; only the service role (the webhook) writes. Harmless with billing off."],
           ]}
         />
 
@@ -232,6 +239,124 @@ cd <your-repository-name>`} />
     ),
   },
   {
+    id: "payments",
+    title: "Payments (Optional)",
+    summary: "Stripe subscriptions and one-time purchases. Skip this section to run without billing.",
+    content: (
+      <div className="space-y-5">
+        <p className="text-sm leading-6 text-muted-foreground">
+          Billing is off unless all three of <InlineCode>STRIPE_SECRET_KEY</InlineCode>, <InlineCode>STRIPE_PUBLISHABLE_KEY</InlineCode> and <InlineCode>STRIPE_WEBHOOK_SECRET</InlineCode> are set. With none set the app runs normally: <InlineCode>/checkout</InlineCode> 404s, the account page has no Billing section and the webhook answers 503. Code checks <InlineCode>isBillingEnabled()</InlineCode> from <InlineCode>src/lib/env.ts</InlineCode>. Use Stripe test mode until launch.
+        </p>
+        <Steps
+          steps={[
+            {
+              title: "Define your products",
+              body: (
+                <>
+                  <p>
+                    In the Stripe Dashboard, create each product and its price under <strong className="text-foreground">Product catalog</strong>: a recurring price for a subscription, a one-time price for a single purchase. Then list them in <InlineCode>src/lib/billing/products.ts</InlineCode>, which ships empty:
+                  </p>
+                  <CodeBlock
+                    language="ts"
+                    title="src/lib/billing/products.ts"
+                    code={`const CATALOG = {
+  pro: { name: "Pro", description: "Billed monthly.", mode: "subscription", priceEnvVar: "STRIPE_PRICE_PRO" },
+  lifetime: { name: "Lifetime", description: "One payment.", mode: "payment", priceEnvVar: "STRIPE_PRICE_LIFETIME" },
+} satisfies Record<string, ProductConfig>;`}
+                  />
+                  <p>
+                    The key (<InlineCode>pro</InlineCode>) is what URLs use (<InlineCode>/checkout?product=pro</InlineCode>) and is stored on rows, so keep it stable. Each product names its own <InlineCode>STRIPE_PRICE_&lt;NAME&gt;</InlineCode> env var; the amount always comes from the Stripe Price.
+                  </p>
+                </>
+              ),
+            },
+            {
+              title: "Set the Stripe env vars",
+              body: (
+                <>
+                  <KeyValueTable
+                    head={["Variable", "Where to find it"]}
+                    rows={[
+                      [<InlineCode>STRIPE_SECRET_KEY</InlineCode>, <>Developers → API keys → Secret key (<InlineCode>sk_test_…</InlineCode>). Server only.</>],
+                      [<InlineCode>STRIPE_PUBLISHABLE_KEY</InlineCode>, <>Same page (<InlineCode>pk_test_…</InlineCode>), same mode as the secret key. Passed to the checkout form at request time, not through <InlineCode>NEXT_PUBLIC_</InlineCode>.</>],
+                      [<InlineCode>STRIPE_WEBHOOK_SECRET</InlineCode>, <>The webhook endpoint's signing secret (<InlineCode>whsec_…</InlineCode>), from the steps below.</>],
+                      [<InlineCode>STRIPE_PRICE_&lt;NAME&gt;</InlineCode>, <>One per product in the catalog (<InlineCode>price_…</InlineCode>).</>],
+                    ]}
+                  />
+                  <p>Set all three keys or none. A partial set, a wrong prefix, mixed test and live keys, or a missing product price stops the server at startup with a list of what's wrong.</p>
+                </>
+              ),
+            },
+            {
+              title: "Apply the billing migration",
+              body: (
+                <>
+                  <p>
+                    <InlineCode>*_billing.sql</InlineCode> creates <InlineCode>billing_customers</InlineCode>, <InlineCode>subscriptions</InlineCode> and <InlineCode>payments</InlineCode>. It's applied with the other migrations; if your project was pushed before it existed, push again:
+                  </p>
+                  <CodeBlock code="npm run db:push" />
+                </>
+              ),
+            },
+            {
+              title: "Developers → Webhooks → Add endpoint",
+              body: (
+                <>
+                  <p>
+                    Set the endpoint URL to <InlineCode>&lt;SITE_URL&gt;/api/webhooks/stripe</InlineCode> and subscribe it to exactly these events. Copy its signing secret into <InlineCode>STRIPE_WEBHOOK_SECRET</InlineCode> for that deployment.
+                  </p>
+                  <CodeBlock
+                    language="text"
+                    title="events"
+                    code={`customer.subscription.created
+customer.subscription.updated
+customer.subscription.deleted
+payment_intent.succeeded
+charge.refunded
+charge.dispute.created
+charge.dispute.closed`}
+                  />
+                  <p>The webhook is the only writer of subscription and payment rows; the browser's payment confirmation and the success page record nothing.</p>
+                </>
+              ),
+            },
+            {
+              title: "Forward webhooks locally",
+              body: (
+                <>
+                  <p>
+                    Install the{" "}
+                    <a className="text-primary underline-offset-2 hover:underline" href="https://docs.stripe.com/stripe-cli" target="_blank" rel="noreferrer">
+                      Stripe CLI
+                    </a>
+                    , then sign in:
+                  </p>
+                  <CodeBlock code="stripe login" />
+                  <p>Forward events to the dev server:</p>
+                  <CodeBlock code="stripe listen --forward-to localhost:3000/api/webhooks/stripe" />
+                  <p>
+                    It prints a <InlineCode>whsec_…</InlineCode> secret. Put it in <InlineCode>STRIPE_WEBHOOK_SECRET</InlineCode> in <InlineCode>.env.local</InlineCode> and restart <InlineCode>npm run dev</InlineCode>.
+                  </p>
+                </>
+              ),
+            },
+            {
+              title: "Settings → Billing → Customer portal",
+              body: (
+                <p>
+                  Turn on updating payment methods, invoice history and cancellation (and plan switching, if you want it). <strong className="text-foreground">Manage billing</strong> on <InlineCode>/account</InlineCode> opens the portal.
+                </p>
+              ),
+            },
+          ]}
+        />
+        <p className="text-sm leading-6 text-muted-foreground">
+          To try it, sign in, open <InlineCode>/checkout?product=&lt;key&gt;</InlineCode> and pay with Stripe's test card <InlineCode>4242 4242 4242 4242</InlineCode> (any future expiry, any CVC). The template's <InlineCode>docs/STRIPE.md</InlineCode> covers the flows, safety rules and fulfilment hooks.
+        </p>
+      </div>
+    ),
+  },
+  {
     id: "run-and-check",
     title: "Run And Check",
     summary: "Start the dev server, then run the same checks CI runs.",
@@ -248,7 +373,7 @@ cd <your-repository-name>`} />
             [<InlineCode>npm run typecheck</InlineCode>, "TypeScript, strict."],
             [<InlineCode>npm run lint</InlineCode>, "ESLint with the Next.js rules."],
             [<InlineCode>npm run build</InlineCode>, "Production build."],
-            [<InlineCode>npm run test:e2e</InlineCode>, "Playwright smoke tests — pages render, protected routes redirect, URL error codes are safe, security headers are sent. No Supabase needed. First run: npx playwright install chromium."],
+            [<InlineCode>npm run test:e2e</InlineCode>, "Playwright smoke tests — pages render, protected routes redirect, URL error codes are safe, security headers are sent, and billing stays gated when disabled. No Supabase or Stripe needed. First run: npx playwright install chromium."],
           ]}
         />
         <p className="text-sm leading-6 text-muted-foreground">
@@ -282,7 +407,7 @@ cd <your-repository-name>`} />
     content: (
       <div className="grid gap-4 lg:grid-cols-2">
         <Panel eyebrow="Vercel" title="Import the repository">
-          <p>Add the four env vars in Project Settings → Environment Variables, with <InlineCode>SITE_URL</InlineCode> set to the production origin, then add that origin's two <InlineCode>/auth/*</InlineCode> URLs to Supabase's Redirect URLs. Commercial projects need a paid Vercel plan.</p>
+          <p>Add the four env vars in Project Settings → Environment Variables, with <InlineCode>SITE_URL</InlineCode> set to the production origin, then add that origin's two <InlineCode>/auth/*</InlineCode> URLs to Supabase's Redirect URLs. Using billing? Add the Stripe vars too, with a webhook endpoint on the production origin. Commercial projects need a paid Vercel plan.</p>
           <p>Using Cloudflare for DNS? Keep the records <strong className="text-foreground">DNS only</strong> (grey cloud). Proxying through Cloudflare in front of Vercel stacks two CDNs and firewalls.</p>
         </Panel>
         <Panel eyebrow="Cloudflare Workers" title="Via OpenNext">
@@ -306,21 +431,32 @@ cd <your-repository-name>`} />
   proxy.ts                 session refresh + optimistic redirects
   instrumentation.ts       env check at startup
   app/(auth)/              login, signup, check-email, forgot/reset password
-  app/(protected)/         dashboard, account, components gallery
+  app/(protected)/         dashboard, account, components gallery, checkout
   app/auth/                PKCE callback routes
+  app/api/webhooks/        Stripe webhook
   components/ui/           the component library
+  components/calendar/     month / week / day event calendar
+  components/billing/      checkout form, payment method card, billing buttons
+  components/gallery/      the /components gallery
   components/core/         app chrome (sidebar, header, footer, error state)
-  lib/actions/             server actions (auth, account)
+  hooks/                   client hooks
+  lib/actions/             server actions (auth, account, billing)
   lib/auth/                email limits, fresh-sign-in check
-  lib/supabase/            server/service clients, dal, db, types
+  lib/billing/             Stripe client, customers, subscriptions, payments, products
+  lib/calendar/            calendar event type and helpers
+  lib/supabase/            server/service clients, dal, db, generated types
   lib/rate-limit/          burst limiter, client IP
-  lib/env.ts               typed env access
+  lib/env.ts               typed env access, checked at startup
+  lib/site.ts              the app's name and description
+  lib/url-messages.ts      fixed ?error= / ?message= codes
 supabase/
-  migrations/              versioned schema
+  migrations/              versioned schema (auth limits, profiles + avatars, billing)
   templates/               auth email templates
-  config.toml              local Supabase stack
+  config.toml              local Supabase stack, preconfigured for the auth flows
 e2e/                       Playwright smoke tests
-docs/AUTH.md               how auth works and why`}
+docs/                      all documentation — start at DOCS.md
+.claude/skills/            agent skills — SKILLS.md
+.github/workflows/ci.yml   typecheck, lint, build, smoke tests`}
       />
     ),
   },
@@ -333,13 +469,14 @@ docs/AUTH.md               how auth works and why`}
 const GROUP_SHOT_NOTES: Partial<Record<string, string>> = {
   motion: "These components animate continuously, so the capture shows a single frame — run the gallery to see them move.",
   overlays: "Overlays are shown closed — open them in the live gallery.",
+  billing: "The checkout form and one-click button need a live Stripe session, so only the card and portal button are shown.",
 };
 
 const componentLibrarySections: DocRecord["sections"] = [
   {
     id: "using-the-library",
     title: "Using The Library",
-    summary: "Every component lives in src/components/ui as plain source you own and edit — not an installed package.",
+    summary: "Every component lives in src/components (ui, calendar, billing) as plain source you own and edit — not an installed package.",
     content: (
       <div className="grid gap-4 lg:grid-cols-2">
         <Panel eyebrow="Import" title="One file per component">
@@ -393,7 +530,7 @@ const gettingStartedDoc = createDoc(
 const componentLibraryDoc = createDoc(
   "component-library",
   "Component Library",
-  `All ${componentCount} components in src/components/ui, with screenshots, exports, props and usage.`,
+  `All ${componentCount} components in src/components, with screenshots, exports, props and usage.`,
   "Component Library",
   `The ${componentCount} reusable components that ship with the template, grouped by purpose.`,
   "mdi:shape-outline",
