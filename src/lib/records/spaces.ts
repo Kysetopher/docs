@@ -7,6 +7,7 @@ import { talentAgencySpace } from "@/lib/records/spaces/talent-agency";
 import { salesSpace } from "@/lib/records/spaces/sales";
 import { harnessEngineeringSpace } from "@/lib/records/spaces/harness-engineering";
 import { localModelsSpace } from "@/lib/records/spaces/local-models";
+import { nextSupabaseTemplateSpace } from "@/lib/records/spaces/next-supabase-template";
 
 export const DOC_SPACES: DocSpace[] = [
   aiDiscoverabilitySpace,
@@ -17,6 +18,7 @@ export const DOC_SPACES: DocSpace[] = [
   aiSupportGroupSpace,
   salesSpace,
   harnessEngineeringSpace,
+  nextSupabaseTemplateSpace,
 ];
 
 export const DOC_RECORDS: Record<string, DocRecord> = Object.fromEntries(

@@ -16,6 +16,9 @@ export function DocRecordPage() {
 
   return (
     <DocumentationPage
+      // Keyed per doc so moving between docs remounts the page: its scroll
+      // position, selected section and #hash handling start fresh.
+      key={`${resolvedSpace.id}/${doc.id}`}
       header={doc.header}
       banner={getDocBanner(doc.id) ?? null}
       sections={doc.sections}

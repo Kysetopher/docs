@@ -26,7 +26,7 @@ export function SpacePage() {
                   {space.cardIcon ? <Icon icon={space.cardIcon} className="h-8 w-8 text-primary" /> : null}
                   <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{space.title}</h1>
                 </div>
-                <p className="max-w-3xl text-base text-muted-foreground">{space.description}</p>
+                <p className="max-w-3xl text-base z-10 ">{space.description}</p>
               </header>
             </div>
           </section>
@@ -51,7 +51,7 @@ export function SpacePage() {
                 <h2 className="relative z-10 text-lg font-semibold transition group-hover:text-primary">
                   {doc.cardTitle}
                 </h2>
-                <p className="relative mt-2 text-sm text-muted-foreground">{doc.cardDescription}</p>
+                <p className="relative z-10 mt-2 text-sm">{doc.cardDescription}</p>
               </Link>
             ))}
           </section>

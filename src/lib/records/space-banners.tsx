@@ -26,6 +26,8 @@ export function getSpaceBanner(spaceId: string | undefined) {
       return <CubeMoireTextureSplash color="#0ea5e9" />;
     case "local-models":
       return <HexCurrentSplash color="#10b981" />;
+    case "next-supabase-template":
+      return <HexLatticeSplash color="#5b6cf0" />;
     case "home":
       return <AbyssBloomSplash color="#14b8a6" />;
     default:
