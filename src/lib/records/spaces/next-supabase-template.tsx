@@ -285,7 +285,7 @@ const gettingStartedSections: DocRecord["sections"] = [
                   <li>Create a Supabase project, then type its keys into the project's <InlineCode>.env.local</InlineCode> file with a text editor (Notepad or TextEdit). <strong className="text-foreground">Never paste keys into the chat</strong> — the agent checks the file without reading them out.</li>
                   <li>Sign in to Supabase and connect the project (three commands it gives you, which ask for your database password).</li>
                   <li>Change four settings in the Supabase dashboard.</li>
-                  <li>Connect your agent's tools — Supabase, Cloudflare, GitHub and Chrome — by signing in when it asks.</li>
+                  <li>Connect your agent's tools: approve them, restart the app when it says so, and sign in to Supabase and Cloudflare. GitHub (with a token you create for this repository only) and Chrome are optional. See <InlineCode>docs/MCP.md</InlineCode>.</li>
                   <li>Answer a few questions: your app's name, its description and its brand color, and whether to turn on payments now.</li>
                   <li>Sign up in the running app to try it.</li>
                 </ul>
