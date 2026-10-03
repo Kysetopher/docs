@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Icon } from "@iconify/react";
+import { Collapsible } from "@/components/ui/collapsible";
 
 export function CodeBlock({ code, language = "bash", title }: { code: string; language?: string; title?: string }) {
   const [copied, setCopied] = useState(false);
@@ -102,5 +103,82 @@ export function GalleryShot({ id, title, note }: { id: string; title: string; no
         {note ?? "Captured from the template's /components gallery."} Click to open full size.
       </figcaption>
     </figure>
+  );
+}
+
+/** A tool to install, with its icon(s). Several icons = any of these works. */
+export type ToolRow = { icons: string[]; tool: ReactNode; notes: ReactNode };
+
+export function ToolTable({ rows }: { rows: ToolRow[] }) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-border/60">
+      <table className="w-full border-collapse text-sm">
+        <thead className="bg-muted/30 text-left text-muted-foreground">
+          <tr>
+            <th className="px-4 py-3 font-medium">Tool</th>
+            <th className="px-4 py-3 font-medium">Notes</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-border/60 bg-background">
+          {rows.map((row, index) => (
+            <tr key={index}>
+              <td className="px-4 py-3 align-top font-medium text-foreground">
+                <div className="flex items-center gap-3">
+                  <span className="flex shrink-0 items-center gap-1 text-foreground">
+                    {row.icons.map((icon) => (
+                      <Icon key={icon} icon={icon} className="h-5 w-5" aria-hidden />
+                    ))}
+                  </span>
+                  <span className="whitespace-nowrap">{row.tool}</span>
+                </div>
+              </td>
+              <td className="px-4 py-3 text-muted-foreground">{row.notes}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export type TechStackGroup = {
+  title: string;
+  icon: string;
+  items: { name: string; version: string; use: string }[];
+};
+
+/** The template's stack, in one collapsible: grouped tables of package, version and what it's used for. */
+export function TechStack({ groups }: { groups: TechStackGroup[] }) {
+  return (
+    <Collapsible
+      className="overflow-hidden rounded-2xl border border-border/60 bg-background/60"
+      triggerClassName="flex h-auto w-full items-center justify-start gap-2 rounded-none px-4 py-3 text-left text-sm font-semibold text-foreground"
+      label="Detailed tech stack"
+      triggerLabel="Toggle tech stack"
+    >
+      <div className="space-y-5 border-t border-border/60 p-4">
+        {groups.map((group) => (
+          <div key={group.title} className="space-y-2">
+            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              <Icon icon={group.icon} className="h-4 w-4" aria-hidden />
+              {group.title}
+            </p>
+            <div className="overflow-hidden rounded-xl border border-border/60">
+              <table className="w-full border-collapse text-sm">
+                <tbody className="divide-y divide-border/60 bg-background">
+                  {group.items.map((item) => (
+                    <tr key={item.name}>
+                      <td className="w-1/4 px-3 py-2 align-top font-medium text-foreground">{item.name}</td>
+                      <td className="w-24 whitespace-nowrap px-3 py-2 align-top font-mono text-xs text-muted-foreground">{item.version}</td>
+                      <td className="px-3 py-2 align-top text-muted-foreground">{item.use}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Collapsible>
   );
 }

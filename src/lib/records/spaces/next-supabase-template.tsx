@@ -6,6 +6,9 @@ import {
   KeyValueTable,
   Panel,
   Steps,
+  TechStack,
+  type TechStackGroup,
+  ToolTable,
 } from "@/components/docs/next-supabase-template/TemplateBlocks";
 import { DocLink } from "@/components/docs/DocLink";
 
@@ -42,41 +45,126 @@ function createDoc(
 /* Getting started                                                        */
 /* ====================================================================== */
 
+const TECH_STACK: TechStackGroup[] = [
+  {
+    title: "Framework",
+    icon: "simple-icons:nextdotjs",
+    items: [
+      { name: "Next.js", version: "16.3", use: "App Router, Server Components and Server Actions; src/proxy.ts refreshes the session on every request; instrumentation.ts checks env vars at startup." },
+      { name: "React", version: "19.2", use: "UI library; ref-as-prop components, useFormStatus for pending buttons." },
+      { name: "TypeScript", version: "5.9", use: "Strict mode everywhere; generated database types in src/lib/supabase/types.ts." },
+      { name: "Node.js", version: "24", use: "Runtime, pinned in .nvmrc." },
+    ],
+  },
+  {
+    title: "Styling And UI",
+    icon: "simple-icons:tailwindcss",
+    items: [
+      { name: "Tailwind CSS", version: "4.3", use: "Utility styling through @tailwindcss/postcss; one dark theme defined as semantic tokens in globals.css." },
+      { name: "tw-animate-css", version: "1.4", use: "Enter/exit animations for menus, dialogs and popovers." },
+      { name: "Radix UI primitives", version: "1.x–2.x", use: "Accessible building blocks: dialog, dropdown, context menu, popover, select, tabs, tooltip, hover card, accordion, collapsible, radio group, slider, checkbox, navigation menu, scroll area, separator, slot." },
+      { name: "Own component library", version: "—", use: "src/components/ui plus calendar and billing modules, shadcn-inspired but owned in the repo." },
+      { name: "class-variance-authority, clsx, tailwind-merge", version: "0.7 / 2.1 / 3.7", use: "Variant classes and the cn() helper." },
+      { name: "@iconify/react", version: "6.0", use: "Icons." },
+      { name: "simplebar-react", version: "3.3", use: "Consistent custom scrollbars." },
+      { name: "framer-motion", version: "14.0", use: "Scroll reveals and motion components." },
+    ],
+  },
+  {
+    title: "Component Dependencies",
+    icon: "mdi:puzzle-outline",
+    items: [
+      { name: "react-day-picker", version: "10.0", use: "Calendar and date pickers." },
+      { name: "date-fns", version: "4.4", use: "Date math and formatting for pickers and the event calendar." },
+      { name: "@tanstack/react-table", version: "9.2", use: "Data table: sorting and spreadsheet-style cell selection." },
+      { name: "cmdk", version: "1.1", use: "Command palette." },
+      { name: "country-flag-icons", version: "1.6", use: "Flags in the phone input." },
+    ],
+  },
+  {
+    title: "Data And Auth",
+    icon: "simple-icons:supabase",
+    items: [
+      { name: "Supabase (hosted)", version: "—", use: "Postgres, Auth and Storage. Separate development and production projects; no local database." },
+      { name: "@supabase/ssr", version: "0.12", use: "Server-side, cookie-based sessions. There is no browser Supabase client." },
+      { name: "@supabase/supabase-js", version: "2.117", use: "Request-scoped client (publishable key + RLS) and a narrow service client." },
+      { name: "Supabase CLI", version: "2.119", use: "Versioned migrations in supabase/migrations, db push, generated types." },
+      { name: "Postgres Row Level Security", version: "—", use: "Every table: one policy per allowed operation on auth.uid(), narrow grants, cascade from auth.users." },
+      { name: "pg_cron", version: "—", use: "Nightly pruning of the auth rate-limit tables." },
+    ],
+  },
+  {
+    title: "Payments (Optional)",
+    icon: "simple-icons:stripe",
+    items: [
+      { name: "stripe", version: "23.0", use: "Server SDK: customers, subscriptions, PaymentIntents, Customer Portal, webhook signature checks." },
+      { name: "@stripe/stripe-js + @stripe/react-stripe-js", version: "10.0 / 7.0", use: "Embedded checkout form (Payment Element) themed from the app's tokens." },
+    ],
+  },
+  {
+    title: "Quality And Delivery",
+    icon: "simple-icons:githubactions",
+    items: [
+      { name: "ESLint", version: "9.39", use: "eslint-config-next rules." },
+      { name: "Playwright", version: "1.63", use: "Smoke tests against a production build, with no database behind them." },
+      { name: "GitHub Actions", version: "—", use: "CI on every push and pull request: typecheck, lint, build, smoke tests." },
+      { name: "Security headers", version: "—", use: "Frame-blocking, nosniff, referrer policy and HSTS set in next.config.ts." },
+      { name: "Hosting", version: "—", use: "Any Node host for Next.js 16; Vercel works as-is, Cloudflare Workers via OpenNext." },
+    ],
+  },
+];
+
 const gettingStartedSections: DocRecord["sections"] = [
   {
     id: "overview",
-    title: "What You Get",
-    summary: "An unbranded Next.js + Supabase starting point with auth, an app shell, optional Stripe billing, and a shared component library.",
-    content: (
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Panel eyebrow="Stack" title="Next.js 16 + Supabase">
-          <p>App Router, React 19, TypeScript strict, Tailwind v4. Supabase Auth runs entirely server-side through <InlineCode>@supabase/ssr</InlineCode> — there is no browser Supabase client.</p>
-          <p>Optional Stripe billing — subscriptions and one-time purchases with an embedded checkout — stays off until its env vars are set.</p>
-        </Panel>
-        <Panel eyebrow="Auth" title="Complete flows">
-          <p>Sign up with email confirmation, log in, forgot/reset password by 6-digit code, change email, change password, delete account, log out. Per-email rate limits live in Postgres and fail closed.</p>
-        </Panel>
-        <Panel eyebrow="UI" title="66 UI components, plus calendar and billing">
-          <p>Forms, overlays, menus, tables, date pickers, navigation, layout and motion components, all styled from semantic color tokens.</p>
-          <p>A month / week / day event calendar with an upcoming list, and the card, checkout and portal pieces that billing uses.</p>
-        </Panel>
-        <DocLink spaceId={spaceId} docId="component-library" className="lg:col-span-3" />
-      </div>
-    ),
+    title: "Tech Stack",
+    summary: "Everything the template is built on, with the versions it ships with.",
+    content: <TechStack groups={TECH_STACK} />,
   },
   {
     id: "prerequisites",
     title: "Prerequisites",
     summary: "What to install before you start.",
     content: (
-      <KeyValueTable
-        head={["Tool", "Notes"]}
+      <ToolTable
         rows={[
-          ["A GitHub account", <>Sign up at <a className="text-primary underline-offset-2 hover:underline" href="https://github.com/signup" target="_blank" rel="noreferrer">github.com</a>.</>],
-          ["GitHub Desktop", <>Download from <a className="text-primary underline-offset-2 hover:underline" href="https://desktop.github.com" target="_blank" rel="noreferrer">desktop.github.com</a> and sign in with your GitHub account. It clones the project and handles commits and pushes.</>],
-          ["Visual Studio Code", <>Download from <a className="text-primary underline-offset-2 hover:underline" href="https://code.visualstudio.com" target="_blank" rel="noreferrer">code.visualstudio.com</a>. You edit the project and run every command in this guide from its built-in terminal.</>],
-          ["Node.js 24", <>Download the version 24 installer from <a className="text-primary underline-offset-2 hover:underline" href="https://nodejs.org" target="_blank" rel="noreferrer">nodejs.org</a>. Restart VS Code after installing so its terminal finds it.</>],
-          ["A Supabase project", <>Free tier is fine for development. Create one at <a className="text-primary underline-offset-2 hover:underline" href="https://supabase.com/dashboard" target="_blank" rel="noreferrer">supabase.com/dashboard</a>.</>],
+          {
+            icons: ["mdi:account-circle-outline"],
+            tool: "A GitHub account",
+            notes: <>Sign up at <a className="text-primary underline-offset-2 hover:underline" href="https://github.com/signup" target="_blank" rel="noreferrer">github.com</a>.</>,
+          },
+          {
+            icons: ["simple-icons:github"],
+            tool: "GitHub Desktop",
+            notes: <>Download from <a className="text-primary underline-offset-2 hover:underline" href="https://desktop.github.com" target="_blank" rel="noreferrer">desktop.github.com</a> and sign in with your GitHub account. It clones the project and handles commits and pushes.</>,
+          },
+          {
+            icons: ["mdi:microsoft-visual-studio-code"],
+            tool: "Visual Studio Code",
+            notes: <>Download from <a className="text-primary underline-offset-2 hover:underline" href="https://code.visualstudio.com" target="_blank" rel="noreferrer">code.visualstudio.com</a>. You edit the project and run every command in this guide from its built-in terminal.</>,
+          },
+          {
+            icons: ["simple-icons:claude", "simple-icons:openai"],
+            tool: "An AI coding agent",
+            notes: (
+              <>
+                <a className="text-primary underline-offset-2 hover:underline" href="https://claude.com/claude-code" target="_blank" rel="noreferrer">Claude Code</a>, <a className="text-primary underline-offset-2 hover:underline" href="https://github.com/openai/codex" target="_blank" rel="noreferrer">OpenAI Codex</a>, or another coding agent. Run it from VS Code's
+                terminal in the project folder. The template is set up for agents: they read <InlineCode>AGENTS.md</InlineCode> / 
+                <InlineCode>CLAUDE.md</InlineCode>, the docs in <InlineCode>docs/</InlineCode>, and the skills in 
+                <InlineCode>.claude/skills/</InlineCode>, so they follow the project's conventions.
+              </>
+            ),
+          },
+          {
+            icons: ["simple-icons:nodedotjs"],
+            tool: "Node.js 24",
+            notes: <>Download the version 24 installer from <a className="text-primary underline-offset-2 hover:underline" href="https://nodejs.org" target="_blank" rel="noreferrer">nodejs.org</a>. Restart VS Code after installing so its terminal finds it.</>,
+          },
+          {
+            icons: ["simple-icons:supabase"],
+            tool: "A Supabase project",
+            notes: <>Free tier is fine for development. Create one at <a className="text-primary underline-offset-2 hover:underline" href="https://supabase.com/dashboard" target="_blank" rel="noreferrer">supabase.com/dashboard</a>.</>,
+          },
         ]}
       />
     ),
