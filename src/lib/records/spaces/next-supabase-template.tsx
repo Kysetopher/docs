@@ -186,7 +186,7 @@ const gettingStartedSections: DocRecord["sections"] = [
             notes: (
               <>
                 The <a className="text-primary underline-offset-2 hover:underline" href="https://claude.com/download" target="_blank" rel="noreferrer">Claude desktop app</a> (its <strong className="text-foreground">Code</strong> tab is Claude Code) or the 
-                <a className="text-primary underline-offset-2 hover:underline" href="https://developers.openai.com/codex/app" target="_blank" rel="noreferrer">ChatGPT desktop app with Codex</a>. Sign in with your Claude or ChatGPT account. The template is set
+                <a className="text-primary underline-offset-2 hover:underline" href="https://learn.chatgpt.com/docs/app" target="_blank" rel="noreferrer">ChatGPT desktop app with Codex</a>. Sign in with your Claude or ChatGPT account. The template is set
                 up for agents: they read <InlineCode>AGENTS.md</InlineCode> / <InlineCode>CLAUDE.md</InlineCode>, the docs in 
                 <InlineCode>docs/</InlineCode> and the project's skills, so they follow its conventions.
               </>
@@ -291,7 +291,7 @@ const gettingStartedSections: DocRecord["sections"] = [
                 <p>A few things only you can do. The agent stops and tells you exactly what to click or run:</p>
                 <ul className="list-disc space-y-1 pl-5">
                   <li>Create a Supabase project, then type its keys into the project's <InlineCode>.env.local</InlineCode> file with a text editor (Notepad or TextEdit). <strong className="text-foreground">Never paste keys into the chat</strong> — the agent checks the file without reading them out.</li>
-                  <li>Sign in to Supabase and connect the project (three commands it gives you, which ask for your database password).</li>
+                  <li>Sign in to Supabase and connect the project (three commands it gives you; the last one asks you to confirm with Y).</li>
                   <li>Change three settings in the Supabase dashboard.</li>
                   <li>Connect your agent's tools: approve them, restart the app when it says so, and sign in to Supabase and Cloudflare. GitHub (with a token you create for this repository only) and Chrome are optional. See <InlineCode>docs/MCP.md</InlineCode>.</li>
                   <li>Answer a few questions: your app's name, its description and its brand color, and whether to turn on payments now.</li>
@@ -317,7 +317,7 @@ const gettingStartedSections: DocRecord["sections"] = [
           <li><strong className="text-foreground">No reset email:</strong> Supabase's built-in email only reaches your own Supabase account's address and sends a couple an hour. Check spam, use that address, and wait a bit.</li>
           <li><strong className="text-foreground">"Opened in a different browser":</strong> emailed links only work in the browser that asked for them. Request a new one from that browser.</li>
           <li><strong className="text-foreground">Supabase project paused:</strong> free projects pause when unused. Open the Supabase dashboard and click <strong className="text-foreground">Restore</strong>.</li>
-          <li><strong className="text-foreground">Password rejected when connecting the database:</strong> it wants the database password you chose when creating the Supabase project, not your account password.</li>
+          <li><strong className="text-foreground">Connecting the database fails with a login error:</strong> sign in to Supabase again (the agent gives you the command), then retry.</li>
           <li><strong className="text-foreground">The agent's tools stopped working:</strong> approve or sign in to them again when it asks.</li>
         </ul>
       </div>
@@ -348,14 +348,14 @@ const gettingStartedSections: DocRecord["sections"] = [
   {
     id: "payments",
     title: "Turn On Payments (Optional)",
-    summary: "Stripe subscriptions and one-time purchases, in test mode, with one prompt.",
+    summary: "Stripe subscriptions and one-time purchases, in a Stripe sandbox, with one prompt.",
     content: (
       <div className="space-y-4">
         <p>Payments ship turned off. When you want them, paste this into your agent; it follows the runbook in <InlineCode>docs/STRIPE.md</InlineCode>.</p>
         <CodeBlock code={PAYMENTS_PROMPT} language="text" title="prompt" />
         <p>The agent stops for the steps only you can do:</p>
         <ul className="list-disc space-y-1 pl-5">
-          <li>Create a Stripe account and switch it to test mode.</li>
+          <li>Create a Stripe account and open a sandbox (Stripe's test environment).</li>
           <li>Create your products and prices in Stripe, and type their ids and your keys into <InlineCode>.env.local</InlineCode>. <strong className="text-foreground">Never paste keys into the chat.</strong></li>
           <li>Install the Stripe CLI and keep its webhook listener running while you test.</li>
           <li>Turn on the Customer Portal, then buy something with Stripe's test card.</li>
@@ -390,7 +390,7 @@ const gettingStartedSections: DocRecord["sections"] = [
         <p>The agent stops and tells you exactly what to do for the steps only you can do:</p>
         <ul className="list-disc space-y-1 pl-5">
           <li>Create a Cloudflare account.</li>
-          <li>Connect your repository in Workers Builds (Workers &amp; Pages → Import a repository).</li>
+          <li>Connect your repository in Workers Builds (Workers &amp; Pages → Create application → Import a repository).</li>
           <li>Add the secret keys as encrypted Secrets in the Cloudflare dashboard. <strong className="text-foreground">Never paste keys into the chat.</strong></li>
           <li>Attach your custom domain.</li>
           <li>Add the domain's redirect URLs in Supabase.</li>
