@@ -3,7 +3,6 @@ import {
   CodeBlock,
   GalleryShot,
   InlineCode,
-  Panel,
   Steps,
   TechStack,
   type TechStackGroup,
@@ -48,7 +47,7 @@ const TECH_STACK: TechStackGroup[] = [
     title: "Framework",
     icon: "simple-icons:nextdotjs",
     items: [
-      { name: "Next.js", version: "16.3", use: "App Router, Server Components and Server Actions; src/proxy.ts refreshes the session on every request; instrumentation.ts checks env vars at startup." },
+      { name: "Next.js", version: "16.3", use: "App Router, Server Components and Server Actions; src/middleware.ts refreshes the session on every request; instrumentation.ts checks env vars at startup." },
       { name: "React", version: "19.2", use: "UI library; ref-as-prop components, useFormStatus for pending buttons." },
       { name: "TypeScript", version: "5.9", use: "Strict mode everywhere; generated database types in src/lib/supabase/types.ts." },
       { name: "Node.js", version: "24", use: "Runtime, pinned in .nvmrc." },
@@ -105,9 +104,18 @@ const TECH_STACK: TechStackGroup[] = [
     items: [
       { name: "ESLint", version: "9.39", use: "eslint-config-next rules." },
       { name: "Playwright", version: "1.63", use: "Smoke tests against a production build, with no database behind them." },
-      { name: "GitHub Actions", version: "—", use: "CI on every push and pull request: typecheck, lint, build, smoke tests." },
-      { name: "Security headers", version: "—", use: "Frame-blocking, nosniff, referrer policy and HSTS set in next.config.ts." },
-      { name: "Hosting", version: "—", use: "Any Node host for Next.js 16; Vercel works as-is, Cloudflare Workers via OpenNext." },
+      { name: "GitHub Actions", version: "—", use: "CI on every push and pull request: typecheck, lint, build, smoke tests, and the Cloudflare Workers build." },
+      { name: "Security headers", version: "—", use: "Frame-blocking, nosniff, referrer policy and HSTS, set in next.config.ts and repeated for static files in public/_headers." },
+    ],
+  },
+  {
+    title: "Hosting",
+    icon: "simple-icons:cloudflare",
+    items: [
+      { name: "Hosting", version: "—", use: "Cloudflare Workers via OpenNext; deploys with Workers Builds." },
+      { name: "@opennextjs/cloudflare", version: "1.20", use: "Turns the Next.js build into a Worker; initOpenNextCloudflareForDev gives next dev the Cloudflare bindings." },
+      { name: "Wrangler", version: "4.147", use: "Cloudflare's CLI: deploys from wrangler.jsonc in Workers Builds, and lets agents read logs, deployments and secret names." },
+      { name: "Workers rate limiting", version: "—", use: "Burst limits for auth and billing as rate-limit bindings in wrangler.jsonc." },
     ],
   },
 ];
@@ -115,6 +123,10 @@ const TECH_STACK: TechStackGroup[] = [
 /** What the user pastes into their AI agent; it must match the prompt quoted in the template's docs/SETUP.md. */
 const SETUP_PROMPT =
   "Set up this project for me: read docs/SETUP.md and follow it step by step. Stop and wait for me at every USER STEP.";
+
+/** What the user pastes to deploy; it must match the prompt quoted in the template's docs/CLOUDFLARE.md. */
+const DEPLOY_PROMPT =
+  "Deploy this project to Cloudflare: read docs/CLOUDFLARE.md and follow the Deploy runbook step by step. Stop and wait for me at every USER STEP.";
 
 const gettingStartedSections: DocRecord["sections"] = [
   {
@@ -166,6 +178,11 @@ const gettingStartedSections: DocRecord["sections"] = [
             icons: ["simple-icons:supabase"],
             tool: "A Supabase project",
             notes: <>Free tier is fine for development. Create one at <a className="text-primary underline-offset-2 hover:underline" href="https://supabase.com/dashboard" target="_blank" rel="noreferrer">supabase.com/dashboard</a>.</>,
+          },
+          {
+            icons: ["simple-icons:cloudflare"],
+            tool: "A Cloudflare account",
+            notes: <>Only when you deploy. Sign up at <a className="text-primary underline-offset-2 hover:underline" href="https://dash.cloudflare.com/sign-up" target="_blank" rel="noreferrer">dash.cloudflare.com</a>; the free Workers plan is enough to start.</>,
           },
         ]}
       />
@@ -267,19 +284,20 @@ const gettingStartedSections: DocRecord["sections"] = [
   {
     id: "deploy",
     title: "Deploy",
-    summary: "Any Node host that runs Next.js 16 works. Notes for the common ones.",
+    summary: "Deploy to Cloudflare Workers with one prompt.",
     content: (
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Panel eyebrow="Vercel" title="Import the repository">
-          <p>Add the four env vars in Project Settings → Environment Variables, with <InlineCode>SITE_URL</InlineCode> set to the production origin, then add that origin's two <InlineCode>/auth/*</InlineCode> URLs to Supabase's Redirect URLs. Using billing? Add the Stripe vars too, with a webhook endpoint on the production origin. Commercial projects need a paid Vercel plan.</p>
-          <p>Using Cloudflare for DNS? Keep the records <strong className="text-foreground">DNS only</strong> (grey cloud). Proxying through Cloudflare in front of Vercel stacks two CDNs and firewalls.</p>
-        </Panel>
-        <Panel eyebrow="Cloudflare Workers" title="Via OpenNext">
-          <p>
-            <InlineCode>@opennextjs/cloudflare</InlineCode> doesn't support Next 16's <InlineCode>proxy.ts</InlineCode> yet: rename <InlineCode>src/proxy.ts</InlineCode> to <InlineCode>src/middleware.ts</InlineCode> and the exported function to <InlineCode>middleware</InlineCode>. Keep it inside <InlineCode>src/</InlineCode>, next to <InlineCode>app/</InlineCode>.
-          </p>
-          <p>Use separate Supabase projects for development and production, and apply migrations to production only with <InlineCode>npm run db:push</InlineCode>.</p>
-        </Panel>
+      <div className="space-y-4">
+        <p>When you're ready to go live, paste this into your agent; it follows the deploy runbook in <InlineCode>docs/CLOUDFLARE.md</InlineCode> and Cloudflare builds and deploys the app from your GitHub repository.</p>
+        <CodeBlock code={DEPLOY_PROMPT} language="text" title="prompt" />
+        <p>The agent stops and tells you exactly what to do for the steps only you can do:</p>
+        <ul className="list-disc space-y-1 pl-5">
+          <li>Create a Cloudflare account.</li>
+          <li>Connect your repository in Workers Builds (Workers &amp; Pages → Import a repository).</li>
+          <li>Add the secret keys as encrypted Secrets in the Cloudflare dashboard. <strong className="text-foreground">Never paste keys into the chat.</strong></li>
+          <li>Attach your custom domain.</li>
+          <li>Add the domain's redirect URLs in Supabase.</li>
+          <li>With payments on, add a Stripe webhook for the domain.</li>
+        </ul>
       </div>
     ),
   },
@@ -292,7 +310,7 @@ const gettingStartedSections: DocRecord["sections"] = [
         language="text"
         title="repository"
         code={`src/
-  proxy.ts                 session refresh + optimistic redirects
+  middleware.ts            session refresh + optimistic redirects
   instrumentation.ts       env check at startup
   app/(auth)/              login, signup, check-email, forgot/reset password
   app/(protected)/         dashboard, account, components gallery, checkout
@@ -309,19 +327,25 @@ const gettingStartedSections: DocRecord["sections"] = [
   lib/billing/             Stripe client, customers, subscriptions, payments, products
   lib/calendar/            calendar event type and helpers
   lib/supabase/            server/service clients, dal, db, generated types
-  lib/rate-limit/          burst limiter, client IP
+  lib/rate-limit/          burst limiter (Workers rate-limit bindings), client IP
   lib/env.ts               typed env access, checked at startup
   lib/site.ts              the app's name and description
   lib/url-messages.ts      fixed ?error= / ?message= codes
+public/_headers            security + cache headers for static files on Workers
 supabase/
   migrations/              versioned schema (auth limits, profiles + avatars, billing)
   templates/               auth email templates
   config.toml              Supabase CLI config (no local database); records the auth settings
 scripts/check-env.mjs      npm run check:env — validates .env.local without printing it
 e2e/                       Playwright smoke tests
+wrangler.jsonc             Cloudflare Workers config: name, vars, rate limits, env.dev — CLOUDFLARE.md
+open-next.config.ts        OpenNext build config (defaults)
+cloudflare-bindings.d.ts   types for the bindings in wrangler.jsonc
 docs/                      all documentation — start at DOCS.md
-.claude/skills/            agent skills — SKILLS.md
-.github/workflows/ci.yml   typecheck, lint, build, smoke tests`}
+.claude/skills/            agent skills for Claude Code — SKILLS.md
+.agents/skills/            the same skills for Codex and other agents (npm run skills:sync)
+skills-lock.json           pinned versions of installed skill sets (Supabase, Cloudflare)
+.github/workflows/ci.yml   typecheck, lint, build, smoke tests, Cloudflare Workers build`}
       />
     ),
   },
