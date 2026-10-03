@@ -292,10 +292,10 @@ const gettingStartedSections: DocRecord["sections"] = [
                 <ul className="list-disc space-y-1 pl-5">
                   <li>Create a Supabase project, then type its keys into the project's <InlineCode>.env.local</InlineCode> file with a text editor (Notepad or TextEdit). <strong className="text-foreground">Never paste keys into the chat</strong> — the agent checks the file without reading them out.</li>
                   <li>Sign in to Supabase and connect the project (three commands it gives you, which ask for your database password).</li>
-                  <li>Change four settings in the Supabase dashboard.</li>
+                  <li>Change three settings in the Supabase dashboard.</li>
                   <li>Connect your agent's tools: approve them, restart the app when it says so, and sign in to Supabase and Cloudflare. GitHub (with a token you create for this repository only) and Chrome are optional. See <InlineCode>docs/MCP.md</InlineCode>.</li>
                   <li>Answer a few questions: your app's name, its description and its brand color, and whether to turn on payments now.</li>
-                  <li>Sign up in the running app to try it.</li>
+                  <li>Sign up in the running app with your Supabase account's email, and try a password reset.</li>
                 </ul>
               </>
             ),
@@ -314,8 +314,8 @@ const gettingStartedSections: DocRecord["sections"] = [
         <CodeBlock code={RESUME_PROMPT} language="text" title="prompt" />
         <p>Common problems, and what to do:</p>
         <ul className="list-disc space-y-1 pl-5">
-          <li><strong className="text-foreground">No confirmation email:</strong> check spam. Supabase's built-in email only sends a few an hour; for real users, set up real email sending.</li>
-          <li><strong className="text-foreground">"Opened in a different browser":</strong> open the confirmation link in the browser you signed up in. Your email is confirmed anyway, so you can just log in.</li>
+          <li><strong className="text-foreground">No reset email:</strong> Supabase's built-in email only reaches your own Supabase account's address and sends a couple an hour. Check spam, use that address, and wait a bit.</li>
+          <li><strong className="text-foreground">"Opened in a different browser":</strong> emailed links only work in the browser that asked for them. Request a new one from that browser.</li>
           <li><strong className="text-foreground">Supabase project paused:</strong> free projects pause when unused. Open the Supabase dashboard and click <strong className="text-foreground">Restore</strong>.</li>
           <li><strong className="text-foreground">Password rejected when connecting the database:</strong> it wants the database password you chose when creating the Supabase project, not your account password.</li>
           <li><strong className="text-foreground">The agent's tools stopped working:</strong> approve or sign in to them again when it asks.</li>
@@ -326,12 +326,12 @@ const gettingStartedSections: DocRecord["sections"] = [
   {
     id: "email",
     title: "Send Real Email",
-    summary: "Needed before anyone but you signs up. One prompt connects an email provider to Supabase.",
+    summary: "Everything works on the free plan without it. Do it before launch, so emails reach your users.",
     content: (
       <div className="space-y-4">
         <p>
-          Supabase's built-in email is only for testing: it sends a couple of emails an hour, only to your own team. Before you invite anyone,
-          paste this into your agent; it follows the runbook in <InlineCode>docs/EMAIL.md</InlineCode> and connects Resend (free for small apps).
+          The template works on Supabase's free plan with its built-in email, which sends a couple of emails an hour and only to your own
+          Supabase team — fine while you build. Before you launch, paste this into your agent; it follows the runbook in <InlineCode>docs/EMAIL.md</InlineCode> and connects Resend (free for small apps).
         </p>
         <CodeBlock code={EMAIL_PROMPT} language="text" title="prompt" />
         <p>The agent stops for the steps only you can do:</p>
