@@ -128,6 +128,26 @@ const SETUP_PROMPT =
 const DEPLOY_PROMPT =
   "Deploy this project to Cloudflare: read docs/CLOUDFLARE.md and follow the Deploy runbook step by step. Stop and wait for me at every USER STEP.";
 
+/** What the user pastes to turn on payments; it must match the prompt quoted in the template's docs/STRIPE.md. */
+const PAYMENTS_PROMPT =
+  'Turn on Stripe payments for this project: read docs/STRIPE.md and follow the "Turn on payments" runbook step by step. Stop and wait for me at every USER STEP.';
+
+/** Everyday building prompts. Each names the project skill that does the work; edit the part in angle brackets. */
+const BUILD_PROMPTS = [
+  {
+    title: "Add a page",
+    prompt: "Use the new-page skill to add a signed-in page called <name> that <what it shows or does>.",
+  },
+  {
+    title: "Store new data",
+    prompt: "Use the new-table skill to add a database table for <what you want to store>, then show it on <which page>.",
+  },
+  {
+    title: "Add or change a component",
+    prompt: "Use the new-component skill to <add / change> a component that <what it does>, and add it to the /components gallery.",
+  },
+];
+
 const gettingStartedSections: DocRecord["sections"] = [
   {
     id: "overview",
@@ -153,26 +173,26 @@ const gettingStartedSections: DocRecord["sections"] = [
             notes: <>Download from <a className="text-primary underline-offset-2 hover:underline" href="https://desktop.github.com" target="_blank" rel="noreferrer">desktop.github.com</a> and sign in with your GitHub account. It clones the project and handles commits and pushes.</>,
           },
           {
-            icons: ["mdi:microsoft-visual-studio-code"],
-            tool: "Visual Studio Code",
-            notes: <>Download from <a className="text-primary underline-offset-2 hover:underline" href="https://code.visualstudio.com" target="_blank" rel="noreferrer">code.visualstudio.com</a>. You edit the project and run every command in this guide from its built-in terminal.</>,
-          },
-          {
             icons: ["simple-icons:claude", "simple-icons:openai"],
-            tool: "An AI coding agent",
+            tool: "An AI agent app",
             notes: (
               <>
-                <a className="text-primary underline-offset-2 hover:underline" href="https://claude.com/claude-code" target="_blank" rel="noreferrer">Claude Code</a>, <a className="text-primary underline-offset-2 hover:underline" href="https://github.com/openai/codex" target="_blank" rel="noreferrer">OpenAI Codex</a>, or another coding agent. Run it from VS Code's
-                terminal in the project folder. The template is set up for agents: they read <InlineCode>AGENTS.md</InlineCode> / 
-                <InlineCode>CLAUDE.md</InlineCode>, the docs in <InlineCode>docs/</InlineCode>, and the skills in 
-                <InlineCode>.claude/skills/</InlineCode>, so they follow the project's conventions.
+                The <a className="text-primary underline-offset-2 hover:underline" href="https://claude.com/download" target="_blank" rel="noreferrer">Claude desktop app</a> (its <strong className="text-foreground">Code</strong> tab is Claude Code) or the 
+                <a className="text-primary underline-offset-2 hover:underline" href="https://developers.openai.com/codex/app" target="_blank" rel="noreferrer">ChatGPT desktop app with Codex</a>. Sign in with your Claude or ChatGPT account. The template is set
+                up for agents: they read <InlineCode>AGENTS.md</InlineCode> / <InlineCode>CLAUDE.md</InlineCode>, the docs in 
+                <InlineCode>docs/</InlineCode> and the project's skills, so they follow its conventions.
               </>
             ),
           },
           {
             icons: ["simple-icons:nodedotjs"],
             tool: "Node.js 24",
-            notes: <>Download the version 24 installer from <a className="text-primary underline-offset-2 hover:underline" href="https://nodejs.org" target="_blank" rel="noreferrer">nodejs.org</a>. Restart VS Code after installing so its terminal finds it.</>,
+            notes: <>Download the version 24 installer from <a className="text-primary underline-offset-2 hover:underline" href="https://nodejs.org" target="_blank" rel="noreferrer">nodejs.org</a>. Quit and reopen your agent app after installing so it finds Node.</>,
+          },
+          {
+            icons: ["simple-icons:googlechrome"],
+            tool: "Google Chrome",
+            notes: <>From <a className="text-primary underline-offset-2 hover:underline" href="https://www.google.com/chrome" target="_blank" rel="noreferrer">google.com/chrome</a>. Your agent can use it to open and check the running app.</>,
           },
           {
             icons: ["simple-icons:supabase"],
@@ -191,7 +211,7 @@ const gettingStartedSections: DocRecord["sections"] = [
   {
     id: "get-the-code",
     title: "Get The Code",
-    summary: "Create your own copy of the template on GitHub, clone it with GitHub Desktop, and open it in VS Code.",
+    summary: "Create your own copy of the template on GitHub, clone it with GitHub Desktop, and open it in your agent app.",
     content: (
       <Steps
         steps={[
@@ -218,13 +238,18 @@ const gettingStartedSections: DocRecord["sections"] = [
             ),
           },
           {
-            title: "Open it in Visual Studio Code",
+            title: "Open it as a project in your agent app",
             body: (
-              <p>
-                In GitHub Desktop, choose <strong className="text-foreground">Repository → Open in Visual Studio Code</strong>. Then open
-                VS Code's terminal with <strong className="text-foreground">Terminal → New Terminal</strong>. That's where you'll start your AI
-                agent next; it already starts in the project folder.
-              </p>
+              <ul className="list-disc space-y-1 pl-5">
+                <li>
+                  <strong className="text-foreground">Claude:</strong> open the <strong className="text-foreground">Code</strong> tab, start a new
+                  session and choose the folder you just cloned.
+                </li>
+                <li>
+                  <strong className="text-foreground">Codex:</strong> in the ChatGPT desktop app, open Codex and add the folder you just cloned as a
+                  project.
+                </li>
+              </ul>
             ),
           },
         ]}
@@ -239,18 +264,7 @@ const gettingStartedSections: DocRecord["sections"] = [
       <Steps
         steps={[
           {
-            title: "Start your AI agent in the project",
-            body: (
-              <>
-                <p>In VS Code's terminal (it's already in the project folder), start your agent — for Claude Code:</p>
-                <CodeBlock code="claude" title="Claude Code" />
-                <p>or for OpenAI Codex:</p>
-                <CodeBlock code="codex" title="OpenAI Codex" />
-              </>
-            ),
-          },
-          {
-            title: "Paste this prompt",
+            title: "Paste this prompt into your project",
             body: (
               <>
                 <CodeBlock code={SETUP_PROMPT} language="text" title="prompt" />
@@ -268,9 +282,10 @@ const gettingStartedSections: DocRecord["sections"] = [
               <>
                 <p>A few things only you can do. The agent stops and tells you exactly what to click or run:</p>
                 <ul className="list-disc space-y-1 pl-5">
-                  <li>Create a Supabase project, then type its keys into the <InlineCode>.env.local</InlineCode> file in VS Code. <strong className="text-foreground">Never paste keys into the chat</strong> — the agent checks the file without reading them out.</li>
+                  <li>Create a Supabase project, then type its keys into the project's <InlineCode>.env.local</InlineCode> file with a text editor (Notepad or TextEdit). <strong className="text-foreground">Never paste keys into the chat</strong> — the agent checks the file without reading them out.</li>
                   <li>Sign in to Supabase and connect the project (three commands it gives you, which ask for your database password).</li>
                   <li>Change four settings in the Supabase dashboard.</li>
+                  <li>Connect your agent's tools — Supabase, Cloudflare, GitHub and Chrome — by signing in when it asks.</li>
                   <li>Answer a few questions: your app's name, its description and its brand color, and whether to turn on payments now.</li>
                   <li>Sign up in the running app to try it.</li>
                 </ul>
@@ -279,6 +294,40 @@ const gettingStartedSections: DocRecord["sections"] = [
           },
         ]}
       />
+    ),
+  },
+  {
+    id: "payments",
+    title: "Turn On Payments (Optional)",
+    summary: "Stripe subscriptions and one-time purchases, in test mode, with one prompt.",
+    content: (
+      <div className="space-y-4">
+        <p>Payments ship turned off. When you want them, paste this into your agent; it follows the runbook in <InlineCode>docs/STRIPE.md</InlineCode>.</p>
+        <CodeBlock code={PAYMENTS_PROMPT} language="text" title="prompt" />
+        <p>The agent stops for the steps only you can do:</p>
+        <ul className="list-disc space-y-1 pl-5">
+          <li>Create a Stripe account and switch it to test mode.</li>
+          <li>Create your products and prices in Stripe, and type their ids and your keys into <InlineCode>.env.local</InlineCode>. <strong className="text-foreground">Never paste keys into the chat.</strong></li>
+          <li>Install the Stripe CLI and keep its webhook listener running while you test.</li>
+          <li>Turn on the Customer Portal, then buy something with Stripe's test card.</li>
+        </ul>
+      </div>
+    ),
+  },
+  {
+    id: "build",
+    title: "Build With Your Agent",
+    summary: "Everyday changes are one prompt each. Edit the part in angle brackets.",
+    content: (
+      <div className="space-y-2">
+        {BUILD_PROMPTS.map((item) => (
+          <CodeBlock key={item.title} code={item.prompt} language="text" title={item.title} />
+        ))}
+        <p className="text-sm leading-6 text-muted-foreground">
+          The skills hold the project's rules — security for new tables, sign-in checks for new pages, theme tokens for components —
+          so the agent follows them without you spelling them out.
+        </p>
+      </div>
     ),
   },
   {
