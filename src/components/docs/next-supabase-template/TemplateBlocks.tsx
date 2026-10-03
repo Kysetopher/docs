@@ -1,6 +1,5 @@
 import { useState, type ReactNode } from "react";
 import { Icon } from "@iconify/react";
-import type { CatalogEntry } from "@/lib/records/template/component-catalog";
 
 export function CodeBlock({ code, language = "bash", title }: { code: string; language?: string; title?: string }) {
   const [copied, setCopied] = useState(false);
@@ -103,59 +102,5 @@ export function GalleryShot({ id, title, note }: { id: string; title: string; no
         {note ?? "Captured from the template's /components gallery."} Click to open full size.
       </figcaption>
     </figure>
-  );
-}
-
-export function ComponentEntry({ entry }: { entry: CatalogEntry }) {
-  return (
-    <div className="space-y-4 rounded-2xl border border-border/60 bg-background/60 p-5 shadow-sm">
-      <div className="flex flex-wrap items-center gap-2 text-xs">
-        <InlineCode>{entry.importPath}</InlineCode>
-        <span className="rounded-md border border-border/60 px-2 py-0.5 text-muted-foreground">
-          {entry.client ? "Client component" : "Server-safe"}
-        </span>
-        {entry.dependsOn?.map((dep) => (
-          <span key={dep} className="rounded-md border border-border/60 px-2 py-0.5 font-mono text-muted-foreground">
-            {dep}
-          </span>
-        ))}
-      </div>
-
-      <p className="text-sm leading-6 text-muted-foreground">{entry.description}</p>
-
-      <div className="text-sm">
-        <p className="mb-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Exports</p>
-        <div className="flex flex-wrap gap-1.5">
-          {entry.exports.map((name) => (
-            <InlineCode key={name}>{name}</InlineCode>
-          ))}
-        </div>
-      </div>
-
-      {entry.props?.length ? (
-        <div className="overflow-hidden rounded-xl border border-border/60">
-          <table className="w-full border-collapse text-xs">
-            <thead className="bg-muted/30 text-left text-muted-foreground">
-              <tr>
-                <th className="px-3 py-2 font-medium">Prop</th>
-                <th className="px-3 py-2 font-medium">Type</th>
-                <th className="px-3 py-2 font-medium">Description</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/60 bg-background">
-              {entry.props.map((prop) => (
-                <tr key={prop.name}>
-                  <td className="px-3 py-2 align-top font-mono text-foreground">{prop.name}</td>
-                  <td className="px-3 py-2 align-top font-mono text-muted-foreground">{prop.type}</td>
-                  <td className="px-3 py-2 align-top text-muted-foreground">{prop.description}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : null}
-
-      <CodeBlock code={entry.usage} language="tsx" title={entry.file} />
-    </div>
   );
 }

@@ -1,8 +1,6 @@
 import type { DocRecord, DocSpace } from "@/lib/records/doc-types";
-import { COMPONENT_CATALOG } from "@/lib/records/template/component-catalog";
 import {
   CodeBlock,
-  ComponentEntry,
   GalleryShot,
   InlineCode,
   KeyValueTable,
@@ -74,10 +72,11 @@ const gettingStartedSections: DocRecord["sections"] = [
       <KeyValueTable
         head={["Tool", "Notes"]}
         rows={[
-          ["Node.js 24", <>The repo pins it in <InlineCode>.nvmrc</InlineCode>. With nvm: <InlineCode>nvm use</InlineCode>.</>],
-          ["Git", "To clone the repository."],
+          ["A GitHub account", <>Sign up at <a className="text-primary underline-offset-2 hover:underline" href="https://github.com/signup" target="_blank" rel="noreferrer">github.com</a>.</>],
+          ["GitHub Desktop", <>Download from <a className="text-primary underline-offset-2 hover:underline" href="https://desktop.github.com" target="_blank" rel="noreferrer">desktop.github.com</a> and sign in with your GitHub account. It clones the project and handles commits and pushes.</>],
+          ["Visual Studio Code", <>Download from <a className="text-primary underline-offset-2 hover:underline" href="https://code.visualstudio.com" target="_blank" rel="noreferrer">code.visualstudio.com</a>. You edit the project and run every command in this guide from its built-in terminal.</>],
+          ["Node.js 24", <>Download the version 24 installer from <a className="text-primary underline-offset-2 hover:underline" href="https://nodejs.org" target="_blank" rel="noreferrer">nodejs.org</a>. Restart VS Code after installing so its terminal finds it.</>],
           ["A Supabase project", <>Free tier is fine for development. Create one at <a className="text-primary underline-offset-2 hover:underline" href="https://supabase.com/dashboard" target="_blank" rel="noreferrer">supabase.com/dashboard</a>.</>],
-          ["Docker (optional)", <>Only for running Supabase locally with <InlineCode>npm run db:start</InlineCode>.</>],
         ]}
       />
     ),
@@ -85,7 +84,7 @@ const gettingStartedSections: DocRecord["sections"] = [
   {
     id: "get-the-code",
     title: "Get The Code",
-    summary: "Create your own copy of the template on GitHub, then clone it.",
+    summary: "Create your own copy of the template on GitHub, clone it with GitHub Desktop, and open it in VS Code.",
     content: (
       <Steps
         steps={[
@@ -103,15 +102,22 @@ const gettingStartedSections: DocRecord["sections"] = [
             ),
           },
           {
-            title: "Clone it",
+            title: "Clone it with GitHub Desktop",
             body: (
-              <>
-                <p>
-                  On your new repository's page, click <strong className="text-foreground">Code</strong> and copy the URL. Then:
-                </p>
-                <CodeBlock code={`git clone <your-repository-url>
-cd <your-repository-name>`} />
-              </>
+              <p>
+                On your new repository's page, click <strong className="text-foreground">Code → Open with GitHub Desktop</strong>.
+                GitHub Desktop opens; choose where to keep the project on your computer and click <strong className="text-foreground">Clone</strong>.
+              </p>
+            ),
+          },
+          {
+            title: "Open it in Visual Studio Code",
+            body: (
+              <p>
+                In GitHub Desktop, choose <strong className="text-foreground">Repository → Open in Visual Studio Code</strong>. Then open
+                VS Code's terminal with <strong className="text-foreground">Terminal → New Terminal</strong>. Run every command in the rest
+                of this guide there; it already starts in the project folder.
+              </p>
             ),
           },
         ]}
@@ -183,19 +189,11 @@ cd <your-repository-name>`} />
           <CodeBlock code={`npx supabase login\nnpx supabase link --project-ref <ref>\nnpm run db:push`} />
         </Panel>
 
-        <Panel eyebrow="Local (needs Docker)" title="Run Supabase on your machine">
-          <p>
-            Boots Postgres, Auth, Storage and a test inbox, applies every migration, and uses <InlineCode>supabase/config.toml</InlineCode>, which is already set up for these auth flows. Copy the printed URL and keys into <InlineCode>.env.local</InlineCode>.
-          </p>
-          <CodeBlock code="npm run db:start" />
-        </Panel>
-
         <KeyValueTable
           head={["Script", "Does"]}
           rows={[
             [<InlineCode>npm run db:new &lt;name&gt;</InlineCode>, "Creates a new empty migration file."],
-            [<InlineCode>npm run db:reset</InlineCode>, "Rebuilds the local database from all migrations and supabase/seed.sql."],
-            [<InlineCode>npm run db:types</InlineCode>, "Regenerates src/lib/supabase/types.ts from the local schema."],
+            [<InlineCode>npm run db:types</InlineCode>, "Regenerates src/lib/supabase/types.ts from your linked Supabase project. Run it after db:push."],
             [<InlineCode>npm run db:push</InlineCode>, "Applies pending migrations to the linked hosted project."],
           ]}
         />
@@ -365,7 +363,7 @@ charge.dispute.closed`}
         <CodeBlock code="npm run dev" />
         <p className="text-sm leading-6 text-muted-foreground">
           Open <InlineCode>http://localhost:3000</InlineCode>, create an account, confirm the email, and you land on <InlineCode>/dashboard</InlineCode>. The <InlineCode>/components</InlineCode> page (signed in) shows every UI component live — the{" "}
-          <DocLink spaceId={spaceId} docId="component-library" variant="inline" /> doc documents each one.
+          <DocLink spaceId={spaceId} docId="component-library" variant="inline" /> doc has screenshots of it.
         </p>
         <KeyValueTable
           head={["Command", "Checks"]}
@@ -472,50 +470,23 @@ const GROUP_SHOT_NOTES: Partial<Record<string, string>> = {
   billing: "The checkout form and one-click button need a live Stripe session, so only the card and portal button are shown.",
 };
 
-const componentLibrarySections: DocRecord["sections"] = [
-  {
-    id: "using-the-library",
-    title: "Using The Library",
-    summary: "Every component lives in src/components (ui, calendar, billing) as plain source you own and edit — not an installed package.",
-    content: (
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Panel eyebrow="Import" title="One file per component">
-          <p>Import from the file's path. Files are kebab-case and export named components.</p>
-          <CodeBlock language="tsx" code={`import { Button } from "@/components/ui/button";\nimport { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";`} />
-        </Panel>
-        <Panel eyebrow="Theme" title="Semantic tokens only">
-          <p>
-            Components use utilities like <InlineCode>bg-primary</InlineCode>, <InlineCode>text-muted-foreground</InlineCode> and <InlineCode>border-border</InlineCode>, never raw colors. Rebrand by editing the tokens in <InlineCode>src/app/globals.css</InlineCode>.
-          </p>
-          <p>
-            To see everything live, run the app, sign in, and open <InlineCode>/components</InlineCode>.
-          </p>
-        </Panel>
-        <DocLink
-          spaceId={spaceId}
-          docId="getting-started"
-          sectionId="run-and-check"
-          description="Haven't set the template up yet? Get it running first, then open the live gallery."
-          className="lg:col-span-2"
-        />
-      </div>
-    ),
-  },
-  ...COMPONENT_CATALOG.map((group) => ({
-    id: group.id,
-    title: group.title,
-    summary: group.description,
-    content: <GalleryShot id={group.id} title={group.title} note={GROUP_SHOT_NOTES[group.id]} />,
-    children: group.entries.map((entry) => ({
-      id: `${group.id}-${entry.file.replace(/\.tsx$/, "")}`,
-      title: entry.name,
-      summary: entry.description,
-      content: <ComponentEntry entry={entry} />,
-    })),
-  })),
+/** The groups of the template's /components gallery, in its order. Each shows one screenshot. */
+const GALLERY_GROUPS = [
+  { id: "actions", title: "Actions", summary: "Buttons and compact action menus." },
+  { id: "forms", title: "Forms", summary: "Text fields, choice controls, pickers and multi-step form helpers." },
+  { id: "overlays", title: "Overlays", summary: "Dialogs, menus, popovers, tooltips and toasts." },
+  { id: "data-display", title: "Data Display", summary: "Surfaces, tables, lists, status indicators and embeds." },
+  { id: "navigation", title: "Navigation", summary: "Menus, links, tabs and disclosure controls." },
+  { id: "layout", title: "Layout", summary: "Headings, dividers, scroll containers and scrolling cards." },
+  { id: "motion", title: "Motion", summary: "Scroll-triggered reveals and animated text effects." },
+  { id: "calendar", title: "Calendar", summary: "Month, week and day event calendar with an upcoming-events sidebar." },
+  { id: "billing", title: "Billing", summary: "Stripe payment method card and billing buttons." },
 ];
 
-const componentCount = COMPONENT_CATALOG.reduce((sum, group) => sum + group.entries.length, 0);
+const componentLibrarySections: DocRecord["sections"] = GALLERY_GROUPS.map((group) => ({
+  ...group,
+  content: <GalleryShot id={group.id} title={group.title} note={GROUP_SHOT_NOTES[group.id]} />,
+}));
 
 const gettingStartedDoc = createDoc(
   "getting-started",
@@ -530,9 +501,9 @@ const gettingStartedDoc = createDoc(
 const componentLibraryDoc = createDoc(
   "component-library",
   "Component Library",
-  `All ${componentCount} components in src/components, with screenshots, exports, props and usage.`,
+  "A gallery of every component that ships with the template, by group.",
   "Component Library",
-  `The ${componentCount} reusable components that ship with the template, grouped by purpose.`,
+  "Screenshots of the template's /components gallery, one per group.",
   "mdi:shape-outline",
   componentLibrarySections,
 );
