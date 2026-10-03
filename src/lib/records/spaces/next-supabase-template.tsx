@@ -128,6 +128,14 @@ const SETUP_PROMPT =
 const DEPLOY_PROMPT =
   "Deploy this project to Cloudflare: read docs/CLOUDFLARE.md and follow the Deploy runbook step by step. Stop and wait for me at every USER STEP.";
 
+/** What the user pastes when setup stopped partway; it must match the resume prompt quoted in the template's docs/SETUP.md. */
+const RESUME_PROMPT =
+  "Continue setting up this project: read docs/SETUP.md, work out from the project's current state which step we're on, tell me, and continue from there. Stop and wait for me at every USER STEP.";
+
+/** What the user pastes to send real email; it must match the prompt quoted in the template's docs/EMAIL.md. */
+const EMAIL_PROMPT =
+  "Set up real email sending for this project: read docs/EMAIL.md and follow the runbook step by step. Stop and wait for me at every USER STEP.";
+
 /** What the user pastes to turn on payments; it must match the prompt quoted in the template's docs/STRIPE.md. */
 const PAYMENTS_PROMPT =
   'Turn on Stripe payments for this project: read docs/STRIPE.md and follow the "Turn on payments" runbook step by step. Stop and wait for me at every USER STEP.';
@@ -294,6 +302,47 @@ const gettingStartedSections: DocRecord["sections"] = [
           },
         ]}
       />
+    ),
+  },
+  {
+    id: "if-stuck",
+    title: "If You Get Stuck",
+    summary: "Closed the chat, restarted the app, or something failed? Pick up where you left off with one prompt.",
+    content: (
+      <div className="space-y-4">
+        <p>Open the project in your agent app again, start a new chat and paste this. The agent checks what's already done and carries on from the first unfinished step.</p>
+        <CodeBlock code={RESUME_PROMPT} language="text" title="prompt" />
+        <p>Common problems, and what to do:</p>
+        <ul className="list-disc space-y-1 pl-5">
+          <li><strong className="text-foreground">No confirmation email:</strong> check spam. Supabase's built-in email only sends a few an hour; for real users, set up real email sending.</li>
+          <li><strong className="text-foreground">"Opened in a different browser":</strong> open the confirmation link in the browser you signed up in. Your email is confirmed anyway, so you can just log in.</li>
+          <li><strong className="text-foreground">Supabase project paused:</strong> free projects pause when unused. Open the Supabase dashboard and click <strong className="text-foreground">Restore</strong>.</li>
+          <li><strong className="text-foreground">Password rejected when connecting the database:</strong> it wants the database password you chose when creating the Supabase project, not your account password.</li>
+          <li><strong className="text-foreground">The agent's tools stopped working:</strong> approve or sign in to them again when it asks.</li>
+        </ul>
+      </div>
+    ),
+  },
+  {
+    id: "email",
+    title: "Send Real Email",
+    summary: "Needed before anyone but you signs up. One prompt connects an email provider to Supabase.",
+    content: (
+      <div className="space-y-4">
+        <p>
+          Supabase's built-in email is only for testing: it sends a couple of emails an hour, only to your own team. Before you invite anyone,
+          paste this into your agent; it follows the runbook in <InlineCode>docs/EMAIL.md</InlineCode> and connects Resend (free for small apps).
+        </p>
+        <CodeBlock code={EMAIL_PROMPT} language="text" title="prompt" />
+        <p>The agent stops for the steps only you can do:</p>
+        <ul className="list-disc space-y-1 pl-5">
+          <li>Have a domain you own, with its DNS on Cloudflare.</li>
+          <li>Create a Resend account and add a sending address on your domain.</li>
+          <li>Add the verification records in Cloudflare DNS.</li>
+          <li>Paste Resend's key into Supabase's email settings. <strong className="text-foreground">Never paste keys into the chat.</strong></li>
+          <li>Send yourself a test password reset.</li>
+        </ul>
+      </div>
     ),
   },
   {
