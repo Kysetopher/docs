@@ -3,6 +3,7 @@ import {
   CodeBlock,
   GalleryShot,
   InlineCode,
+  KeyValueTable,
   Steps,
   TechStack,
   type TechStackGroup,
@@ -165,8 +166,8 @@ const gettingStartedSections: DocRecord["sections"] = [
   },
   {
     id: "prerequisites",
-    title: "Prerequisites",
-    summary: "What to install before you start.",
+    title: "Tools",
+    summary: "The accounts and apps the steps use. Step 1 has you set them up.",
     content: (
       <ToolTable
         rows={[
@@ -217,85 +218,117 @@ const gettingStartedSections: DocRecord["sections"] = [
     ),
   },
   {
-    id: "get-the-code",
-    title: "Get The Code",
-    summary: "Create your own copy of the template on GitHub, clone it with GitHub Desktop, and open it in your agent app.",
+    id: "steps",
+    title: "Steps",
+    summary: "Everything from an empty computer to a live app, in order. Your AI agent does the work; each prompt step stops for the parts only you can do.",
     content: (
       <Steps
         steps={[
           {
+            title: "Create your accounts and install the apps",
+            body: (
+              <ul className="list-disc space-y-1 pl-5">
+                <li>Everything in <strong className="text-foreground">Tools</strong> above: GitHub, GitHub Desktop, an AI agent app, Node.js 24, Chrome, Supabase.</li>
+                <li>Create a Supabase project (the free plan is fine) and save its database password in a password manager.</li>
+                <li>Cloudflare and Stripe can wait until their steps below.</li>
+              </ul>
+            ),
+          },
+          {
             title: "Create your repository from the template",
             body: (
-              <p>
-                Open{" "}
-                <a className="text-primary underline-offset-2 hover:underline" href={REPO_URL} target="_blank" rel="noreferrer">
-                  {REPO}
-                </a>{" "}
-                and click <strong className="text-foreground">Use this template → Create a new repository</strong>. Give it your
-                project's name. It starts with a clean history and is yours.
-              </p>
+              <ul className="list-disc space-y-1 pl-5">
+                <li>Open <a className="text-primary underline-offset-2 hover:underline" href={REPO_URL} target="_blank" rel="noreferrer">{REPO}</a> and click <strong className="text-foreground">Use this template → Create a new repository</strong>.</li>
+                <li>Give it your project's name. It starts with a clean history and is yours.</li>
+              </ul>
             ),
           },
           {
             title: "Clone it with GitHub Desktop",
             body: (
-              <p>
-                On your new repository's page, click <strong className="text-foreground">Code → Open with GitHub Desktop</strong>.
-                GitHub Desktop opens; choose where to keep the project on your computer and click <strong className="text-foreground">Clone</strong>.
-              </p>
+              <ul className="list-disc space-y-1 pl-5">
+                <li>On your new repository's page, click <strong className="text-foreground">Code → Open with GitHub Desktop</strong>.</li>
+                <li>Choose where to keep it on your computer and click <strong className="text-foreground">Clone</strong>.</li>
+              </ul>
             ),
           },
           {
             title: "Open it as a project in your agent app",
             body: (
               <ul className="list-disc space-y-1 pl-5">
-                <li>
-                  <strong className="text-foreground">Claude:</strong> open the <strong className="text-foreground">Code</strong> tab, start a new
-                  session and choose the folder you just cloned.
-                </li>
-                <li>
-                  <strong className="text-foreground">Codex:</strong> in the ChatGPT desktop app, open Codex and add the folder you just cloned as a
-                  project.
-                </li>
+                <li><strong className="text-foreground">Claude:</strong> open the <strong className="text-foreground">Code</strong> tab, start a new session and choose the cloned folder.</li>
+                <li><strong className="text-foreground">Codex:</strong> in the ChatGPT desktop app, open Codex and add the cloned folder as a project.</li>
               </ul>
             ),
           },
-        ]}
-      />
-    ),
-  },
-  {
-    id: "set-up-with-ai",
-    title: "Set Up With Your AI Agent",
-    summary: "One prompt sets the whole project up. Your agent does the work and stops whenever it needs you.",
-    content: (
-      <Steps
-        steps={[
           {
-            title: "Paste this prompt into your project",
+            title: "Set it up — paste this prompt",
             body: (
               <>
                 <CodeBlock code={SETUP_PROMPT} language="text" title="prompt" />
-                <p>
-                  The agent follows <InlineCode>docs/SETUP.md</InlineCode> in the repository: it installs everything, connects your Supabase
-                  project, creates the database tables, applies your app's name and brand color, checks that everything passes,
-                  and walks you through your first sign-up.
-                </p>
+                <ul className="list-disc space-y-1 pl-5">
+                  <li>The agent installs everything, loads the project's skills, connects Supabase, creates the database tables, applies your app's name and brand color, and checks that everything passes.</li>
+                  <li>You type your Supabase keys into the project's <InlineCode>.env.local</InlineCode> file with a text editor (Notepad or TextEdit). <strong className="text-foreground">Never paste keys into the chat.</strong></li>
+                  <li>You sign in to Supabase and connect the project (three commands it gives you; the last asks you to confirm with Y).</li>
+                  <li>You approve the agent's tools, restart the app when it says so, and sign in to Supabase and Cloudflare. GitHub (with a token for this repository only) and Chrome are optional.</li>
+                  <li>You change three settings in the Supabase dashboard and answer a few questions: name, description, brand color.</li>
+                  <li>You sign up in the running app with your Supabase account's email and try a password reset.</li>
+                </ul>
               </>
             ),
           },
           {
-            title: "Do the steps it hands you",
+            title: "Turn on payments (optional) — paste this prompt",
             body: (
               <>
-                <p>A few things only you can do. The agent stops and tells you exactly what to click or run:</p>
+                <CodeBlock code={PAYMENTS_PROMPT} language="text" title="prompt" />
                 <ul className="list-disc space-y-1 pl-5">
-                  <li>Create a Supabase project, then type its keys into the project's <InlineCode>.env.local</InlineCode> file with a text editor (Notepad or TextEdit). <strong className="text-foreground">Never paste keys into the chat</strong> — the agent checks the file without reading them out.</li>
-                  <li>Sign in to Supabase and connect the project (three commands it gives you; the last one asks you to confirm with Y).</li>
-                  <li>Change three settings in the Supabase dashboard.</li>
-                  <li>Connect your agent's tools: approve them, restart the app when it says so, and sign in to Supabase and Cloudflare. GitHub (with a token you create for this repository only) and Chrome are optional. See <InlineCode>docs/MCP.md</InlineCode>.</li>
-                  <li>Answer a few questions: your app's name, its description and its brand color, and whether to turn on payments now.</li>
-                  <li>Sign up in the running app with your Supabase account's email, and try a password reset.</li>
+                  <li>You create a Stripe account and open a sandbox (Stripe's test environment).</li>
+                  <li>You create your products and prices in Stripe, and type their ids and your keys into <InlineCode>.env.local</InlineCode>.</li>
+                  <li>You install the Stripe CLI and keep its webhook listener running while you test.</li>
+                  <li>You turn on the Customer Portal, then buy something with Stripe's test card.</li>
+                </ul>
+              </>
+            ),
+          },
+          {
+            title: "Send real email (before launch) — paste this prompt",
+            body: (
+              <>
+                <CodeBlock code={EMAIL_PROMPT} language="text" title="prompt" />
+                <ul className="list-disc space-y-1 pl-5">
+                  <li>Everything works without this on Supabase's free plan, but its built-in email only reaches your own Supabase team. Do it before real users sign up.</li>
+                  <li>You need a domain you own, with its DNS on Cloudflare.</li>
+                  <li>You create a Resend account, add a sending address on your domain, add its verification records in Cloudflare DNS, and paste Resend's key into Supabase's email settings.</li>
+                  <li>You send yourself a test password reset.</li>
+                </ul>
+              </>
+            ),
+          },
+          {
+            title: "Deploy to Cloudflare — paste this prompt",
+            body: (
+              <>
+                <CodeBlock code={DEPLOY_PROMPT} language="text" title="prompt" />
+                <ul className="list-disc space-y-1 pl-5">
+                  <li>You create a Cloudflare account (the free Workers plan is enough to start).</li>
+                  <li>You connect your repository in Workers Builds (Workers &amp; Pages → Create application → Import a repository); Cloudflare builds and deploys from GitHub.</li>
+                  <li>You add the secret keys as encrypted Secrets in the Cloudflare dashboard, attach your custom domain, and add the domain's redirect URLs in Supabase.</li>
+                  <li>With payments on, you add a Stripe webhook for the domain.</li>
+                </ul>
+              </>
+            ),
+          },
+          {
+            title: "Keep building — one prompt per change",
+            body: (
+              <>
+                {BUILD_PROMPTS.map((item) => (
+                  <CodeBlock key={item.title} code={item.prompt} language="text" title={item.title} />
+                ))}
+                <ul className="list-disc space-y-1 pl-5">
+                  <li>Edit the part in angle brackets. The skills hold the project's rules, so the agent follows them without you spelling them out.</li>
+                  <li>Save and publish your work in GitHub Desktop: <strong className="text-foreground">Commit</strong>, then <strong className="text-foreground">Push origin</strong>.</li>
                 </ul>
               </>
             ),
@@ -305,8 +338,29 @@ const gettingStartedSections: DocRecord["sections"] = [
     ),
   },
   {
-    id: "if-stuck",
-    title: "If You Get Stuck",
+    id: "commands",
+    title: "Common Commands",
+    summary: "What your agent runs, for reference. Run them in a terminal in the project folder if you ever want to yourself.",
+    content: (
+      <KeyValueTable
+        head={["Command", "Does"]}
+        rows={[
+          [<InlineCode>npm run dev</InlineCode>, "Runs the app at http://localhost:3000."],
+          [<InlineCode>npm run check:env</InlineCode>, "Checks .env.local the way the app does at startup, without showing any keys."],
+          [<InlineCode>npm run typecheck</InlineCode>, "Checks the code's types."],
+          [<InlineCode>npm run lint</InlineCode>, "Checks code style and common mistakes."],
+          [<InlineCode>npm run test:e2e</InlineCode>, "Builds the app and runs the smoke tests (no database needed)."],
+          [<InlineCode>npm run db:new &lt;name&gt;</InlineCode>, "Creates a new database migration file."],
+          [<InlineCode>npm run db:push</InlineCode>, "Applies new migrations to the linked Supabase project."],
+          [<InlineCode>npm run db:types</InlineCode>, "Regenerates the database types from the linked project."],
+          [<InlineCode>npm run skills:sync</InlineCode>, "Copies the project's skills to the folder Codex reads."],
+        ]}
+      />
+    ),
+  },
+  {
+    id: "pick-back-up",
+    title: "Pick Back Up",
     summary: "Closed the chat, restarted the app, or something failed? Pick up where you left off with one prompt.",
     content: (
       <div className="space-y-4">
@@ -324,84 +378,8 @@ const gettingStartedSections: DocRecord["sections"] = [
     ),
   },
   {
-    id: "email",
-    title: "Send Real Email",
-    summary: "Everything works on the free plan without it. Do it before launch, so emails reach your users.",
-    content: (
-      <div className="space-y-4">
-        <p>
-          The template works on Supabase's free plan with its built-in email, which sends a couple of emails an hour and only to your own
-          Supabase team — fine while you build. Before you launch, paste this into your agent; it follows the runbook in <InlineCode>docs/EMAIL.md</InlineCode> and connects Resend (free for small apps).
-        </p>
-        <CodeBlock code={EMAIL_PROMPT} language="text" title="prompt" />
-        <p>The agent stops for the steps only you can do:</p>
-        <ul className="list-disc space-y-1 pl-5">
-          <li>Have a domain you own, with its DNS on Cloudflare.</li>
-          <li>Create a Resend account and add a sending address on your domain.</li>
-          <li>Add the verification records in Cloudflare DNS.</li>
-          <li>Paste Resend's key into Supabase's email settings. <strong className="text-foreground">Never paste keys into the chat.</strong></li>
-          <li>Send yourself a test password reset.</li>
-        </ul>
-      </div>
-    ),
-  },
-  {
-    id: "payments",
-    title: "Turn On Payments (Optional)",
-    summary: "Stripe subscriptions and one-time purchases, in a Stripe sandbox, with one prompt.",
-    content: (
-      <div className="space-y-4">
-        <p>Payments ship turned off. When you want them, paste this into your agent; it follows the runbook in <InlineCode>docs/STRIPE.md</InlineCode>.</p>
-        <CodeBlock code={PAYMENTS_PROMPT} language="text" title="prompt" />
-        <p>The agent stops for the steps only you can do:</p>
-        <ul className="list-disc space-y-1 pl-5">
-          <li>Create a Stripe account and open a sandbox (Stripe's test environment).</li>
-          <li>Create your products and prices in Stripe, and type their ids and your keys into <InlineCode>.env.local</InlineCode>. <strong className="text-foreground">Never paste keys into the chat.</strong></li>
-          <li>Install the Stripe CLI and keep its webhook listener running while you test.</li>
-          <li>Turn on the Customer Portal, then buy something with Stripe's test card.</li>
-        </ul>
-      </div>
-    ),
-  },
-  {
-    id: "build",
-    title: "Build With Your Agent",
-    summary: "Everyday changes are one prompt each. Edit the part in angle brackets.",
-    content: (
-      <div className="space-y-2">
-        {BUILD_PROMPTS.map((item) => (
-          <CodeBlock key={item.title} code={item.prompt} language="text" title={item.title} />
-        ))}
-        <p className="text-sm leading-6 text-muted-foreground">
-          The skills hold the project's rules — security for new tables, sign-in checks for new pages, theme tokens for components —
-          so the agent follows them without you spelling them out.
-        </p>
-      </div>
-    ),
-  },
-  {
-    id: "deploy",
-    title: "Deploy",
-    summary: "Deploy to Cloudflare Workers with one prompt.",
-    content: (
-      <div className="space-y-4">
-        <p>When you're ready to go live, paste this into your agent; it follows the deploy runbook in <InlineCode>docs/CLOUDFLARE.md</InlineCode> and Cloudflare builds and deploys the app from your GitHub repository.</p>
-        <CodeBlock code={DEPLOY_PROMPT} language="text" title="prompt" />
-        <p>The agent stops and tells you exactly what to do for the steps only you can do:</p>
-        <ul className="list-disc space-y-1 pl-5">
-          <li>Create a Cloudflare account.</li>
-          <li>Connect your repository in Workers Builds (Workers &amp; Pages → Create application → Import a repository).</li>
-          <li>Add the secret keys as encrypted Secrets in the Cloudflare dashboard. <strong className="text-foreground">Never paste keys into the chat.</strong></li>
-          <li>Attach your custom domain.</li>
-          <li>Add the domain's redirect URLs in Supabase.</li>
-          <li>With payments on, add a Stripe webhook for the domain.</li>
-        </ul>
-      </div>
-    ),
-  },
-  {
     id: "project-layout",
-    title: "Project Layout",
+    title: "Project Structure",
     summary: "Where things live.",
     content: (
       <CodeBlock
