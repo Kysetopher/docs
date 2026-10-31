@@ -27,7 +27,7 @@ const SETUP_STEPS: { title: string; you?: string }[] = [
   { title: "Agent skills" },
   { title: "Environment variables", you: "You type your Supabase keys into .env.local — never into the chat." },
   { title: "Connect Supabase and create the database tables", you: "You run three commands the agent gives you." },
-  { title: "Connect the agent's tools (MCP)", you: "You restart the app, approve the tools and sign in." },
+  { title: "Connect the agent's tools (MCP)", you: "Claude: restart, approve the tools and sign in. Codex: install the Supabase and Cloudflare plugins." },
   { title: "Supabase dashboard settings", you: "You change three settings in the Supabase dashboard." },
   { title: "Make it yours", you: "You pick the app's name, description and brand color." },
   { title: "Payments (optional)", you: "You choose whether to turn on Stripe now." },
@@ -36,8 +36,10 @@ const SETUP_STEPS: { title: string; you?: string }[] = [
   { title: "Save the work", you: "You choose whether to commit." },
 ];
 
+type Chip = { key: string; label: string; icon?: string; optional?: boolean };
+
 /** What the setup script reports as installed; keys must match installed() in the template's checks.mjs. */
-const INSTALLED: { key: string; label: string; optional?: boolean }[] = [
+const INSTALLED: Chip[] = [
   { key: "node", label: "Node.js 24+" },
   { key: "deps", label: "npm packages" },
   { key: "supabase-cli", label: "Supabase CLI" },
@@ -46,8 +48,17 @@ const INSTALLED: { key: string; label: string; optional?: boolean }[] = [
   { key: "skills", label: "Agent skills" },
   { key: "env", label: ".env.local" },
   { key: "linked", label: "Supabase linked" },
-  { key: "mcp", label: "Agent tools (MCP)" },
-  { key: "stripe", label: "Stripe billing", optional: true },
+];
+
+/** Every integration setup and the runbooks connect; keys must match INTEGRATIONS in the template's checks.mjs. */
+const INTEGRATIONS: Chip[] = [
+  { key: "supabase-mcp", label: "Supabase tools", icon: "simple-icons:supabase" },
+  { key: "cloudflare-mcp", label: "Cloudflare tools", icon: "simple-icons:cloudflare" },
+  { key: "browser", label: "Browser", icon: "mdi:web" },
+  { key: "github", label: "GitHub", icon: "simple-icons:github", optional: true },
+  { key: "stripe", label: "Stripe payments", icon: "simple-icons:stripe", optional: true },
+  { key: "email", label: "Email (Resend)", icon: "simple-icons:resend", optional: true },
+  { key: "deploy", label: "Deployed", icon: "mdi:rocket-launch-outline", optional: true },
 ];
 
 function parseSetupHash(hash: string): SetupProgress | null {
@@ -129,26 +140,34 @@ function ProgressCard({ progress }: { progress: SetupProgress }) {
           <span>{progress.doing}</span>
         </p>
       ) : null}
-      <div>
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Installed</p>
-        <div className="flex flex-wrap gap-2">
-          {INSTALLED.map((item) => {
-            const ok = progress.have.has(item.key);
-            return (
-              <span
-                key={item.key}
-                className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs",
-                  ok ? "border-emerald-600/30 bg-emerald-600/10 text-foreground" : "border-border text-muted-foreground",
-                )}
-              >
-                <Dot state={ok ? "done" : "todo"} size="sm" />
-                {item.label}
-                {item.optional && !ok ? <span className="opacity-70">(optional)</span> : null}
-              </span>
-            );
-          })}
-        </div>
+      <ChipGroup title="Installed" chips={INSTALLED} have={progress.have} />
+      <ChipGroup title="Integrations" chips={INTEGRATIONS} have={progress.have} />
+    </div>
+  );
+}
+
+function ChipGroup({ title, chips, have }: { title: string; chips: Chip[]; have: Set<string> }) {
+  return (
+    <div>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{title}</p>
+      <div className="flex flex-wrap gap-2">
+        {chips.map((item) => {
+          const ok = have.has(item.key);
+          return (
+            <span
+              key={item.key}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs",
+                ok ? "border-emerald-600/30 bg-emerald-600/10 text-foreground" : "border-border text-muted-foreground",
+              )}
+            >
+              <Dot state={ok ? "done" : "todo"} size="sm" />
+              {item.icon ? <Icon icon={item.icon} className="h-3.5 w-3.5" aria-hidden /> : null}
+              {item.label}
+              {item.optional && !ok ? <span className="opacity-70">(optional)</span> : null}
+            </span>
+          );
+        })}
       </div>
     </div>
   );

@@ -271,7 +271,7 @@ const gettingStartedSections: DocRecord["sections"] = [
                   <li>The agent installs everything, loads the project's skills, connects Supabase, creates the database tables, applies your app's name and brand color, and checks that everything passes.</li>
                   <li>You type your Supabase keys into the project's <InlineCode>.env.local</InlineCode> file with a text editor (Notepad or TextEdit). <strong className="text-foreground">Never paste keys into the chat.</strong></li>
                   <li>You sign in to Supabase and connect the project (three commands it gives you; the last asks you to confirm with Y).</li>
-                  <li>You approve the agent's tools, restart the app when it says so, and sign in to Supabase and Cloudflare. GitHub (with a token for this repository only) and Chrome are optional.</li>
+                  <li>You connect the agent's tools and sign in to Supabase and Cloudflare in your browser. <strong className="text-foreground">Claude:</strong> restart when it says so and approve the project's tools. <strong className="text-foreground">Codex:</strong> install the Supabase and Cloudflare plugins under <strong className="text-foreground">Plugins</strong>. GitHub is optional: the GitHub CLI for Claude (it signs in through your browser, no token), or the GitHub plugin for Codex.</li>
                   <li>You change three settings in the Supabase dashboard and answer a few questions: name, description, brand color.</li>
                   <li>You sign up in the running app with your Supabase account's email and try a password reset.</li>
                 </ul>
