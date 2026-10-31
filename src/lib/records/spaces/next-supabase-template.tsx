@@ -4,11 +4,11 @@ import {
   GalleryShot,
   InlineCode,
   KeyValueTable,
-  Steps,
   TechStack,
   type TechStackGroup,
   ToolTable,
 } from "@/components/docs/next-supabase-template/TemplateBlocks";
+import { GuidedSteps } from "@/components/docs/next-supabase-template/SetupProgress";
 
 const spaceId = "next-supabase-template";
 const REPO = "Kysetopher/next-supabase-template";
@@ -220,9 +220,10 @@ const gettingStartedSections: DocRecord["sections"] = [
   {
     id: "steps",
     title: "Steps",
-    summary: "Everything from an empty computer to a live app, in order. Your AI agent does the work; each prompt step stops for the parts only you can do.",
+    summary: "Everything from an empty computer to a live app, in order. Your AI agent does the work; each prompt step stops for the parts only you can do. While it sets the project up, the agent opens this page beside the chat and ticks steps off as it goes.",
     content: (
-      <Steps
+      <GuidedSteps
+        setupIndex={4}
         steps={[
           {
             title: "Create your accounts and install the apps",
@@ -354,6 +355,7 @@ const gettingStartedSections: DocRecord["sections"] = [
           [<InlineCode>npm run db:push</InlineCode>, "Applies new migrations to the linked Supabase project."],
           [<InlineCode>npm run db:types</InlineCode>, "Regenerates the database types from the linked project."],
           [<InlineCode>npm run skills:sync</InlineCode>, "Copies the project's skills to the folder Codex reads."],
+          [<InlineCode>npm run setup:status</InlineCode>, "Shows how far setup has got, with a link to this page showing your progress."],
         ]}
       />
     ),

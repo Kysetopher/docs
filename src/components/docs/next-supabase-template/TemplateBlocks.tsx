@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Icon } from "@iconify/react";
 import { Collapsible } from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
 
 export function CodeBlock({ code, language = "bash", title }: { code: string; language?: string; title?: string }) {
   const [copied, setCopied] = useState(false);
@@ -50,16 +51,35 @@ export function Panel({ eyebrow, title, children }: { eyebrow?: string; title?: 
   );
 }
 
-export function Steps({ steps }: { steps: { title: string; body: ReactNode }[] }) {
+export type StepState = "done" | "current";
+
+export function Steps({ steps }: { steps: { title: string; body: ReactNode; state?: StepState }[] }) {
   return (
     <ol className="space-y-4">
       {steps.map((step, index) => (
-        <li key={step.title} className="flex gap-4">
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border/60 bg-muted/40 text-xs font-semibold text-foreground">
-            {index + 1}
+        <li
+          key={step.title}
+          className={cn(
+            "flex gap-4",
+            step.state === "current" && "-mx-3 rounded-2xl border border-primary/30 bg-primary/[0.03] px-3 py-3",
+          )}
+        >
+          <span
+            className={cn(
+              "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border/60 bg-muted/40 text-xs font-semibold text-foreground",
+              step.state === "done" && "border-emerald-600 bg-emerald-600 text-white",
+              step.state === "current" && "border-primary bg-primary text-primary-foreground",
+            )}
+          >
+            {step.state === "done" ? <Icon icon="mdi:check-bold" className="h-4 w-4" aria-label="Done" /> : index + 1}
           </span>
           <div className="min-w-0 flex-1 space-y-2 text-sm leading-6 text-muted-foreground">
-            <p className="font-medium text-foreground">{step.title}</p>
+            <p className={cn("font-medium text-foreground", step.state === "done" && "text-muted-foreground")}>
+              {step.title}
+              {step.state === "current" ? (
+                <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 align-middle text-[11px] font-medium text-primary">You are here</span>
+              ) : null}
+            </p>
             {step.body}
           </div>
         </li>
