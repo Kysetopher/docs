@@ -9,10 +9,18 @@ import {
   ToolTable,
 } from "@/components/docs/next-supabase-template/TemplateBlocks";
 import { GuidedSteps } from "@/components/docs/next-supabase-template/SetupProgress";
+import {
+  ForOs,
+  GitHubDesktopDownload,
+  LinkButton,
+  NodeDownload,
+  OsSwitch,
+  UseTemplateButton,
+} from "@/components/docs/next-supabase-template/InstallLinks";
 
 const spaceId = "next-supabase-template";
-const REPO = "Kysetopher/next-supabase-template";
-const REPO_URL = `https://github.com/${REPO}`;
+const REPO_OWNER = "Kysetopher";
+const REPO_NAME = "next-supabase-template";
 
 function createDoc(
   id: string,
@@ -169,52 +177,95 @@ const gettingStartedSections: DocRecord["sections"] = [
     title: "Tools",
     summary: "The accounts and apps the steps use. Step 1 has you set them up.",
     content: (
-      <ToolTable
-        rows={[
-          {
-            icons: ["mdi:account-circle-outline"],
-            tool: "A GitHub account",
-            notes: <>Sign up at <a className="text-primary underline-offset-2 hover:underline" href="https://github.com/signup" target="_blank" rel="noreferrer">github.com</a>.</>,
-          },
-          {
-            icons: ["simple-icons:github"],
-            tool: "GitHub Desktop",
-            notes: <>Download from <a className="text-primary underline-offset-2 hover:underline" href="https://desktop.github.com" target="_blank" rel="noreferrer">desktop.github.com</a> and sign in with your GitHub account. It clones the project and handles commits and pushes.</>,
-          },
-          {
-            icons: ["simple-icons:claude", "simple-icons:openai"],
-            tool: "An AI agent app",
-            notes: (
-              <>
-                The <a className="text-primary underline-offset-2 hover:underline" href="https://claude.com/download" target="_blank" rel="noreferrer">Claude desktop app</a> (its <strong className="text-foreground">Code</strong> tab is Claude Code) or the 
-                <a className="text-primary underline-offset-2 hover:underline" href="https://learn.chatgpt.com/docs/app" target="_blank" rel="noreferrer">ChatGPT desktop app with Codex</a>. Sign in with your Claude or ChatGPT account. The template is set
-                up for agents: they read <InlineCode>AGENTS.md</InlineCode> / <InlineCode>CLAUDE.md</InlineCode>, the docs in 
-                <InlineCode>docs/</InlineCode> and the project's skills, so they follow its conventions.
-              </>
-            ),
-          },
-          {
-            icons: ["simple-icons:nodedotjs"],
-            tool: "Node.js 24",
-            notes: <>Download the version 24 installer from <a className="text-primary underline-offset-2 hover:underline" href="https://nodejs.org" target="_blank" rel="noreferrer">nodejs.org</a>. Quit and reopen your agent app after installing so it finds Node.</>,
-          },
-          {
-            icons: ["simple-icons:googlechrome"],
-            tool: "Google Chrome",
-            notes: <>From <a className="text-primary underline-offset-2 hover:underline" href="https://www.google.com/chrome" target="_blank" rel="noreferrer">google.com/chrome</a>. Your agent can use it to open and check the running app.</>,
-          },
-          {
-            icons: ["simple-icons:supabase"],
-            tool: "A Supabase project",
-            notes: <>Free tier is fine for development. Create one at <a className="text-primary underline-offset-2 hover:underline" href="https://supabase.com/dashboard" target="_blank" rel="noreferrer">supabase.com/dashboard</a>.</>,
-          },
-          {
-            icons: ["simple-icons:cloudflare"],
-            tool: "A Cloudflare account",
-            notes: <>Only when you deploy. Sign up at <a className="text-primary underline-offset-2 hover:underline" href="https://dash.cloudflare.com/sign-up" target="_blank" rel="noreferrer">dash.cloudflare.com</a>; the free Workers plan is enough to start.</>,
-          },
-        ]}
-      />
+      <div className="space-y-4">
+        <OsSwitch />
+        <ToolTable
+          rows={[
+            {
+              icons: ["mdi:account-circle-outline"],
+              tool: "A GitHub account",
+              notes: (
+                <span className="space-y-2">
+                  <span className="block">Where your copy of the project lives. Free.</span>
+                  <LinkButton primary icon="simple-icons:github" href="https://github.com/signup">Sign up at github.com</LinkButton>
+                </span>
+              ),
+            },
+            {
+              icons: ["simple-icons:github"],
+              tool: "GitHub Desktop",
+              notes: (
+                <span className="space-y-2">
+                  <span className="block">Copies the project to your computer and saves your changes back to GitHub. Sign in with your GitHub account when it opens.</span>
+                  <GitHubDesktopDownload />
+                  <span className="block text-xs">
+                    <ForOs
+                      windows="Run the installer; it opens by itself when done."
+                      mac="Open the downloaded .zip, then drag GitHub Desktop into Applications."
+                    />
+                  </span>
+                </span>
+              ),
+            },
+            {
+              icons: ["simple-icons:claude", "simple-icons:openai"],
+              tool: "An AI agent app",
+              notes: (
+                <span className="space-y-2">
+                  <span className="block">
+                    Either one. Claude's <strong className="text-foreground">Code</strong> tab is Claude Code; ChatGPT's is Codex. Sign in with your Claude or ChatGPT account. The template is set up for
+                    agents: they read <InlineCode>AGENTS.md</InlineCode> / <InlineCode>CLAUDE.md</InlineCode>, the docs in <InlineCode>docs/</InlineCode> and the project's skills.
+                  </span>
+                  <span className="flex flex-wrap gap-2">
+                    <LinkButton primary icon="simple-icons:claude" href="https://claude.com/download">Claude desktop app</LinkButton>
+                    <LinkButton icon="simple-icons:openai" href="https://chatgpt.com/download">ChatGPT desktop app (Codex)</LinkButton>
+                  </span>
+                </span>
+              ),
+            },
+            {
+              icons: ["simple-icons:nodedotjs"],
+              tool: "Node.js 24",
+              notes: (
+                <span className="space-y-2">
+                  <span className="block">Runs the app and its tools. Install with the default options, then <strong className="text-foreground">quit and reopen your agent app</strong> so it finds Node.</span>
+                  <NodeDownload />
+                </span>
+              ),
+            },
+            {
+              icons: ["simple-icons:googlechrome"],
+              tool: "Google Chrome",
+              notes: (
+                <span className="space-y-2">
+                  <span className="block">Optional: the Claude and ChatGPT apps have a browser built in. Useful for testing the app yourself.</span>
+                  <LinkButton icon="simple-icons:googlechrome" href="https://www.google.com/chrome/">Download Chrome</LinkButton>
+                </span>
+              ),
+            },
+            {
+              icons: ["simple-icons:supabase"],
+              tool: "A Supabase project",
+              notes: (
+                <span className="space-y-2">
+                  <span className="block">Your database and sign-in. The free plan is fine. Save the database password it asks for in a password manager.</span>
+                  <LinkButton primary icon="simple-icons:supabase" href="https://supabase.com/dashboard/new">Create a Supabase project</LinkButton>
+                </span>
+              ),
+            },
+            {
+              icons: ["simple-icons:cloudflare"],
+              tool: "A Cloudflare account",
+              notes: (
+                <span className="space-y-2">
+                  <span className="block">Only when you deploy. The free Workers plan is enough to start.</span>
+                  <LinkButton icon="simple-icons:cloudflare" href="https://dash.cloudflare.com/sign-up">Sign up at Cloudflare</LinkButton>
+                </span>
+              ),
+            },
+          ]}
+        />
+      </div>
     ),
   },
   {
@@ -229,7 +280,7 @@ const gettingStartedSections: DocRecord["sections"] = [
             title: "Create your accounts and install the apps",
             body: (
               <ul className="list-disc space-y-1 pl-5">
-                <li>Everything in <strong className="text-foreground">Tools</strong> above: GitHub, GitHub Desktop, an AI agent app, Node.js 24, Chrome, Supabase.</li>
+                <li>Everything in <strong className="text-foreground">Tools</strong> above, with the download buttons for your computer: GitHub, GitHub Desktop, an AI agent app, Node.js 24, Supabase.</li>
                 <li>Create a Supabase project (the free plan is fine) and save its database password in a password manager.</li>
                 <li>Cloudflare and Stripe can wait until their steps below.</li>
               </ul>
@@ -238,17 +289,22 @@ const gettingStartedSections: DocRecord["sections"] = [
           {
             title: "Create your repository from the template",
             body: (
-              <ul className="list-disc space-y-1 pl-5">
-                <li>Open <a className="text-primary underline-offset-2 hover:underline" href={REPO_URL} target="_blank" rel="noreferrer">{REPO}</a> and click <strong className="text-foreground">Use this template → Create a new repository</strong>.</li>
-                <li>Give it your project's name. It starts with a clean history and is yours.</li>
-              </ul>
+              <>
+                <UseTemplateButton owner={REPO_OWNER} repo={REPO_NAME} />
+                <ul className="list-disc space-y-1 pl-5">
+                  <li>The button opens GitHub's <strong className="text-foreground">Create a new repository</strong> page with this template already picked (sign in first if asked).</li>
+                  <li>Type your project's name, choose <strong className="text-foreground">Private</strong> or Public, and click <strong className="text-foreground">Create repository</strong>. It starts with a clean history and is yours.</li>
+                  <li>Don't fork it or download the ZIP: a fork stays tied to the template, and a ZIP has no GitHub connection.</li>
+                </ul>
+              </>
             ),
           },
           {
             title: "Clone it with GitHub Desktop",
             body: (
               <ul className="list-disc space-y-1 pl-5">
-                <li>On your new repository's page, click <strong className="text-foreground">Code → Open with GitHub Desktop</strong>.</li>
+                <li>On your new repository's page, click the green <strong className="text-foreground">Code</strong> button → <strong className="text-foreground">Open with GitHub Desktop</strong>.</li>
+                <li className="list-none -ml-5 py-1"><GitHubDesktopDownload /></li>
                 <li>Choose where to keep it on your computer and click <strong className="text-foreground">Clone</strong>.</li>
               </ul>
             ),
@@ -267,14 +323,10 @@ const gettingStartedSections: DocRecord["sections"] = [
             body: (
               <>
                 <CodeBlock code={SETUP_PROMPT} language="text" title="prompt" />
-                <ul className="list-disc space-y-1 pl-5">
-                  <li>The agent installs everything, loads the project's skills, connects Supabase, creates the database tables, applies your app's name and brand color, and checks that everything passes.</li>
-                  <li>You type your Supabase keys into the project's <InlineCode>.env.local</InlineCode> file with a text editor (Notepad or TextEdit). <strong className="text-foreground">Never paste keys into the chat.</strong></li>
-                  <li>You sign in to Supabase and connect the project (three commands it gives you; the last asks you to confirm with Y).</li>
-                  <li>You connect the agent's tools and sign in to Supabase and Cloudflare in your browser. <strong className="text-foreground">Claude:</strong> restart when it says so and approve the project's tools. <strong className="text-foreground">Codex:</strong> install the Supabase and Cloudflare plugins under <strong className="text-foreground">Plugins</strong>. GitHub is optional: the GitHub CLI for Claude (it signs in through your browser, no token), or the GitHub plugin for Codex.</li>
-                  <li>You change three settings in the Supabase dashboard and answer a few questions: name, description, brand color.</li>
-                  <li>You sign up in the running app with your Supabase account's email and try a password reset.</li>
-                </ul>
+                <p>
+                  The agent works through the 12 steps below and does most of it. About 30 minutes in all; it stops and tells you exactly what to do at the steps marked{" "}
+                  <strong className="text-foreground">You + agent</strong>. <strong className="text-foreground">Never paste keys into the chat.</strong>
+                </p>
               </>
             ),
           },

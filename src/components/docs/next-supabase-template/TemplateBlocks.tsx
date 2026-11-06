@@ -74,17 +74,42 @@ export function Steps({ steps }: { steps: { title: string; body: ReactNode; stat
             {step.state === "done" ? <Icon icon="mdi:check-bold" className="h-4 w-4" aria-label="Done" /> : index + 1}
           </span>
           <div className="min-w-0 flex-1 space-y-2 text-sm leading-6 text-muted-foreground">
-            <p className={cn("font-medium text-foreground", step.state === "done" && "text-muted-foreground")}>
-              {step.title}
-              {step.state === "current" ? (
-                <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 align-middle text-[11px] font-medium text-primary">You are here</span>
-              ) : null}
-            </p>
-            {step.body}
+            {step.state === "done" ? (
+              <DoneStep title={step.title}>{step.body}</DoneStep>
+            ) : (
+              <>
+                <p className="font-medium text-foreground">
+                  {step.title}
+                  {step.state === "current" ? (
+                    <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 align-middle text-[11px] font-medium text-primary">You are here</span>
+                  ) : null}
+                </p>
+                {step.body}
+              </>
+            )}
           </div>
         </li>
       ))}
     </ol>
+  );
+}
+
+/** A finished step folds down to its title; its details are one click away. */
+function DoneStep({ title, children }: { title: string; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center gap-2 text-left font-medium text-muted-foreground transition hover:text-foreground"
+      >
+        <span className="flex-1">{title}</span>
+        <Icon icon="mdi:chevron-down" className={cn("h-5 w-5 shrink-0 transition-transform", open && "rotate-180")} aria-hidden />
+      </button>
+      {open ? children : null}
+    </>
   );
 }
 

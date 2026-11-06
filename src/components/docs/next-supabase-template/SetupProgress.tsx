@@ -1,8 +1,9 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
 import { Steps, type StepState } from "@/components/docs/next-supabase-template/TemplateBlocks";
+import { SETUP_STEPS } from "@/components/docs/next-supabase-template/setup-steps";
 
 /**
  * Live setup progress. The template's setup script (scripts/setup-guide in
@@ -19,22 +20,6 @@ export type SetupProgress = {
   doing: string;
   complete: boolean;
 };
-
-/** The agent-run steps of the template's docs/SETUP.md, in order; titles must match its `## N.` headings. */
-const SETUP_STEPS: { title: string; you?: string }[] = [
-  { title: "Check the tools" },
-  { title: "Install dependencies" },
-  { title: "Agent skills" },
-  { title: "Environment variables", you: "You type your Supabase keys into .env.local — never into the chat." },
-  { title: "Connect Supabase and create the database tables", you: "You run three commands the agent gives you." },
-  { title: "Connect the agent's tools (MCP)", you: "Claude: restart, approve the tools and sign in. Codex: install the Supabase and Cloudflare plugins." },
-  { title: "Supabase dashboard settings", you: "You change three settings in the Supabase dashboard." },
-  { title: "Make it yours", you: "You pick the app's name, description and brand color." },
-  { title: "Payments (optional)", you: "You choose whether to turn on Stripe now." },
-  { title: "Check everything" },
-  { title: "Try it", you: "You sign up in the running app and try a password reset." },
-  { title: "Save the work", you: "You choose whether to commit." },
-];
 
 type Chip = { key: string; label: string; icon?: string; optional?: boolean };
 
@@ -173,64 +158,133 @@ function ChipGroup({ title, chips, have }: { title: string; chips: Chip[]; have:
   );
 }
 
-/** The agent's SETUP.md steps, ticked off as the project gets there. */
-function SetupChecklist({ progress }: { progress: SetupProgress }) {
+/**
+ * The agent's SETUP.md steps as a collapsible list. Each row opens to what the
+ * agent does, what you do and where things are. With live progress, done steps
+ * are ticked and the current one opens by itself (and closes as the agent
+ * moves on), staying in view.
+ */
+function SetupChecklist({ progress }: { progress: SetupProgress | null }) {
   const currentRef = useRef<HTMLLIElement>(null);
+  const now = progress?.now ?? null;
+  const [open, setOpen] = useState<Set<number>>(() => new Set(now ? [now] : []));
 
-  // Keep the step the agent is on in view as it moves along.
+  // Follow the agent: open the step it's on, close the rest, keep it in view.
   useEffect(() => {
-    currentRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [progress.now]);
+    if (!now) return;
+    setOpen(new Set([now]));
+    const id = window.setTimeout(() => currentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+    return () => window.clearTimeout(id);
+  }, [now]);
+
+  const toggle = (n: number) =>
+    setOpen((prev) => {
+      const next = new Set(prev);
+      if (next.has(n)) next.delete(n);
+      else next.add(n);
+      return next;
+    });
+  const allOpen = open.size === SETUP_STEPS.length;
 
   return (
-    <ol className="my-3 space-y-1 rounded-xl border border-border/60 bg-muted/20 p-3">
-      {SETUP_STEPS.map((step, index) => {
-        const n = index + 1;
-        const state: StepState | "todo" = progress.done.has(n) ? "done" : progress.now === n ? "current" : "todo";
-        return (
-          <li
-            key={step.title}
-            ref={state === "current" ? currentRef : undefined}
-            className={cn("flex gap-3 rounded-lg px-2 py-1.5", state === "current" && "bg-primary/5")}
-          >
-            <Dot state={state} />
-            <div className="min-w-0 flex-1">
-              <p className={cn("text-sm", state === "done" ? "text-muted-foreground" : "font-medium text-foreground")}>
-                <span className="mr-1.5 tabular-nums text-muted-foreground">{n}.</span>
-                {step.title}
-                {state === "current" && step.you ? (
-                  <span className="ml-2 rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-medium text-amber-700">Needs you</span>
-                ) : null}
-              </p>
-              {state === "current" && step.you ? <p className="text-xs text-muted-foreground">{step.you}</p> : null}
-            </div>
-          </li>
-        );
-      })}
-    </ol>
+    <div className="my-3 rounded-xl border border-border/60 bg-muted/20">
+      <div className="flex items-center justify-between gap-3 border-b border-border/60 px-3 py-2">
+        <p className="text-xs text-muted-foreground">
+          What happens after you paste the prompt. <span className="hidden sm:inline">Open a step for the details.</span>
+        </p>
+        <button
+          type="button"
+          onClick={() => setOpen(allOpen ? new Set() : new Set(SETUP_STEPS.map((_, i) => i + 1)))}
+          className="inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-foreground transition hover:bg-muted"
+        >
+          <Icon icon={allOpen ? "mdi:unfold-less-horizontal" : "mdi:unfold-more-horizontal"} className="h-4 w-4" aria-hidden />
+          {allOpen ? "Collapse all" : "Expand all"}
+        </button>
+      </div>
+      <ol className="divide-y divide-border/50">
+        {SETUP_STEPS.map((step, index) => {
+          const n = index + 1;
+          const state: StepState | "todo" = progress?.done.has(n) ? "done" : now === n ? "current" : "todo";
+          const isOpen = open.has(n);
+          const panelId = `setup-step-${n}`;
+          return (
+            <li
+              key={step.title}
+              ref={state === "current" ? currentRef : undefined}
+              className={cn("scroll-mt-24", state === "current" && "bg-primary/[0.04]")}
+            >
+              <button
+                type="button"
+                aria-expanded={isOpen}
+                aria-controls={panelId}
+                onClick={() => toggle(n)}
+                className="flex w-full items-start gap-3 px-3 py-2.5 text-left transition hover:bg-muted/50"
+              >
+                <span className="mt-0.5">
+                  <Dot state={state} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className={cn("block text-sm", state === "done" ? "text-muted-foreground" : "font-medium text-foreground")}>
+                    <span className="mr-1.5 tabular-nums text-muted-foreground">{n}.</span>
+                    {step.title}
+                    {state === "current" && step.you ? (
+                      <span className="ml-2 rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-medium text-amber-700">Needs you</span>
+                    ) : null}
+                  </span>
+                  {state === "current" && step.you ? <span className="block text-xs text-muted-foreground">{step.you}</span> : null}
+                </span>
+                <span className="mt-0.5 hidden shrink-0 items-center gap-2 text-[11px] text-muted-foreground sm:flex">
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-full border px-2 py-0.5",
+                      step.who === "you" ? "border-amber-500/40 text-amber-700" : "border-border",
+                    )}
+                  >
+                    <Icon icon={step.who === "you" ? "mdi:account-outline" : "mdi:robot-outline"} className="h-3 w-3" aria-hidden />
+                    {step.who === "you" ? "You + agent" : "Agent"}
+                  </span>
+                  {step.time ? <span className="w-16 text-right tabular-nums">{step.time}</span> : null}
+                </span>
+                <Icon
+                  icon="mdi:chevron-down"
+                  className={cn("mt-0.5 h-5 w-5 shrink-0 text-muted-foreground transition-transform", isOpen && "rotate-180")}
+                  aria-hidden
+                />
+              </button>
+              {isOpen ? (
+                <div id={panelId} className="space-y-4 px-3 pb-4 pl-11 pr-4">
+                  {step.details}
+                </div>
+              ) : null}
+            </li>
+          );
+        })}
+      </ol>
+    </div>
   );
 }
 
 /**
- * The Getting Started steps, following the user's setup when the page was
- * opened with progress in the URL: earlier steps ticked, the agent setup step
- * expanded into its own checklist, the next step highlighted once it's done.
- * Without progress in the URL it's the plain step list.
+ * The Getting Started steps. The agent setup step always carries its
+ * collapsible checklist. When the page was opened with progress in the URL,
+ * it also follows the user's setup: earlier steps ticked, the current setup
+ * step open, the next step highlighted once setup is done.
  */
 export function GuidedSteps({ steps, setupIndex }: { steps: { title: string; body: ReactNode }[]; setupIndex: number }) {
   const progress = useSetupProgress();
-  if (!progress) return <Steps steps={steps} />;
 
   const guided = steps.map((step, index) => {
     let state: StepState | undefined;
-    if (index < setupIndex) state = "done";
-    else if (index === setupIndex) state = progress.complete ? "done" : "current";
-    else if (index === setupIndex + 1 && progress.complete) state = "current";
+    if (progress) {
+      if (index < setupIndex) state = "done";
+      else if (index === setupIndex) state = progress.complete ? "done" : "current";
+      else if (index === setupIndex + 1 && progress.complete) state = "current";
+    }
     const body =
       index === setupIndex ? (
         <>
-          <SetupChecklist progress={progress} />
           {step.body}
+          <SetupChecklist progress={progress} />
         </>
       ) : (
         step.body
@@ -240,7 +294,7 @@ export function GuidedSteps({ steps, setupIndex }: { steps: { title: string; bod
 
   return (
     <>
-      <ProgressCard progress={progress} />
+      {progress ? <ProgressCard progress={progress} /> : null}
       <Steps steps={guided} />
     </>
   );
