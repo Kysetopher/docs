@@ -1,3 +1,4 @@
+import { Icon } from "@iconify/react";
 import type { DocRecord, DocSpace } from "@/lib/records/doc-types";
 import {
   CodeBlock,
@@ -14,8 +15,10 @@ import {
   GitHubDesktopDownload,
   LinkButton,
   NodeDownload,
+  OpenInClaude,
   OsSwitch,
   UseTemplateButton,
+  VsCodeDownload,
 } from "@/components/docs/next-supabase-template/InstallLinks";
 
 const spaceId = "next-supabase-template";
@@ -133,13 +136,16 @@ const TECH_STACK: TechStackGroup[] = [
 const SETUP_PROMPT =
   "Set up this project for me: read docs/SETUP.md and follow it step by step. Stop and wait for me at every USER STEP.";
 
+/** The same prompt for the Open in Claude button. A link can't open Claude's browser pane, so the agent opens this guide there first. */
+const CLAUDE_SETUP_PROMPT = `First open the live setup guide in the browser pane beside this chat (run npm run -s setup:url and open the link it prints). Then: ${SETUP_PROMPT}`;
+
 /** What the user pastes to deploy; it must match the prompt quoted in the template's docs/CLOUDFLARE.md. */
 const DEPLOY_PROMPT =
   "Deploy this project to Cloudflare: read docs/CLOUDFLARE.md and follow the Deploy runbook step by step. Stop and wait for me at every USER STEP.";
 
 /** What the user pastes when setup stopped partway; it must match the resume prompt quoted in the template's docs/SETUP.md. */
 const RESUME_PROMPT =
-  "Continue setting up this project: read docs/SETUP.md, work out from the project's current state which step we're on, tell me, and continue from there. Stop and wait for me at every USER STEP.";
+  "Continue setting up this project: read docs/SETUP.md, run npm run setup:status to see what's already done, and open the live setup guide beside this chat. Tell me which step we're on, then carry on from there. Stop and wait for me at every USER STEP.";
 
 /** What the user pastes to send real email; it must match the prompt quoted in the template's docs/EMAIL.md. */
 const EMAIL_PROMPT =
@@ -234,6 +240,16 @@ const gettingStartedSections: DocRecord["sections"] = [
               ),
             },
             {
+              icons: ["simple-icons:visualstudiocode"],
+              tool: "VS Code",
+              notes: (
+                <span className="space-y-2">
+                  <span className="block">Recommended: a free editor for typing your keys into <InlineCode>.env.local</InlineCode> and looking around the project. It shows hidden files, which Finder and Explorer don't.</span>
+                  <VsCodeDownload />
+                </span>
+              ),
+            },
+            {
               icons: ["simple-icons:googlechrome"],
               tool: "Google Chrome",
               notes: (
@@ -310,23 +326,44 @@ const gettingStartedSections: DocRecord["sections"] = [
             ),
           },
           {
-            title: "Open it as a project in your agent app",
+            title: "Open it in your agent app",
             body: (
-              <ul className="list-disc space-y-1 pl-5">
-                <li><strong className="text-foreground">Claude:</strong> open the <strong className="text-foreground">Code</strong> tab, start a new session and choose the cloned folder.</li>
-                <li><strong className="text-foreground">Codex:</strong> in the ChatGPT desktop app, open Codex and add the cloned folder as a project.</li>
-              </ul>
+              <>
+                <p>
+                  <strong className="text-foreground">Claude:</strong> one click opens the project in Claude's Code tab with the setup prompt ready. This guide then opens beside the chat and follows along.
+                </p>
+                <OpenInClaude prompt={CLAUDE_SETUP_PROMPT} />
+                <ul className="list-disc space-y-1 pl-5">
+                  <li><strong className="text-foreground">Claude, by hand:</strong> open the <strong className="text-foreground">Code</strong> tab, start a new session, choose the cloned folder and paste the prompt from the next step.</li>
+                  <li><strong className="text-foreground">Codex:</strong> in the ChatGPT desktop app, open Codex, add the cloned folder as a project and paste the prompt from the next step.</li>
+                </ul>
+              </>
             ),
           },
           {
             title: "Set it up — paste this prompt",
             body: (
               <>
+                <p className="text-xs">
+                  Used <strong className="text-foreground">Open in Claude</strong>? The prompt is already in the chat; just press Enter.
+                </p>
                 <CodeBlock code={SETUP_PROMPT} language="text" title="prompt" />
                 <p>
                   The agent works through the 12 steps below and does most of it. About 30 minutes in all; it stops and tells you exactly what to do at the steps marked{" "}
                   <strong className="text-foreground">You + agent</strong>. <strong className="text-foreground">Never paste keys into the chat.</strong>
                 </p>
+                <div className="space-y-2 rounded-xl border border-border/70 bg-muted/20 p-3">
+                  <p className="flex items-center gap-2 font-medium text-foreground">
+                    <Icon icon="mdi:restore" className="h-4 w-4 text-primary" aria-hidden />
+                    Picking up where you left off?
+                  </p>
+                  <p className="text-xs">
+                    Closed the chat, restarted your computer or coming back another day? Open the project in your agent app, start a <strong className="text-foreground">new</strong> chat and
+                    paste this instead. The agent checks what's already done, reopens this guide and carries on from the first unfinished step.
+                  </p>
+                  <CodeBlock code={RESUME_PROMPT} language="text" title="pick-up prompt" />
+                  <OpenInClaude compact prompt={RESUME_PROMPT} />
+                </div>
               </>
             ),
           },

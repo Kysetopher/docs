@@ -202,7 +202,7 @@ export function MockEnvFile({
         <div className="flex items-center gap-2 border-b border-zinc-800 px-3 py-1.5 text-[10px] text-zinc-400">
           <Icon icon="mdi:file-document-edit-outline" className="h-3.5 w-3.5" aria-hidden />
           <span className="font-mono">{name}</span>
-          <span className="ml-auto">Notepad / TextEdit</span>
+          <span className="ml-auto">VS Code / Notepad / TextEdit</span>
         </div>
         <div className="space-y-1 p-3 font-mono text-[11px]">
           {lines.map((line) => (

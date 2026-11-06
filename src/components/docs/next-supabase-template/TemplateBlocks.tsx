@@ -30,7 +30,7 @@ export function CodeBlock({ code, language = "bash", title }: { code: string; la
           {copied ? "Copied" : "Copy"}
         </button>
       </div>
-      <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed">{code}</pre>
+      <pre className={cn("overflow-x-auto p-4 font-mono text-xs leading-relaxed", language === "text" && "whitespace-pre-wrap break-words")}>{code}</pre>
     </div>
   );
 }

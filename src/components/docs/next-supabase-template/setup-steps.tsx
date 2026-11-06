@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { CodeBlock, InlineCode } from "@/components/docs/next-supabase-template/TemplateBlocks";
-import { NodeDownload, OsSwitch } from "@/components/docs/next-supabase-template/InstallLinks";
+import { NodeDownload, OsSwitch, VsCodeDownload } from "@/components/docs/next-supabase-template/InstallLinks";
 import {
   MockButton,
   MockDashboard,
@@ -134,12 +134,20 @@ export const SETUP_STEPS: SetupStep[] = [
         <Part title="You">
           <Ol>
             <li>Open your project at <a className={link} href="https://supabase.com/dashboard" target="_blank" rel="noreferrer">supabase.com/dashboard</a>. No project yet? Click <strong className={strong}>New project</strong>, pick a name, the region closest to your users and a strong database password. Save the password in a password manager (the app doesn't use it, but you'll want it later).</li>
-            <li>Open <InlineCode>.env.local</InlineCode> from your project folder in a plain text editor: <strong className={strong}>Notepad</strong> on Windows (right-click → Open with → Notepad), <strong className={strong}>TextEdit</strong> on a Mac.</li>
+            <li>
+              Open <InlineCode>.env.local</InlineCode> from your project folder in a text editor. <strong className={strong}>VS Code</strong> is the easiest: free, shows hidden files,
+              and lets you see the whole project. Open it, choose <strong className={strong}>File → Open Folder…</strong>, pick the project folder and click{" "}
+              <InlineCode>.env.local</InlineCode> in the file list on the left. It also works in <strong className={strong}>Notepad</strong> on Windows (right-click → Open with → Notepad) or{" "}
+              <strong className={strong}>TextEdit</strong> on a Mac.
+              <span className="mt-2 flex flex-wrap items-center gap-3">
+                <VsCodeDownload small />
+              </span>
+            </li>
             <li>Copy three values from Supabase into it, one per line, after the <InlineCode>=</InlineCode> with no spaces or quotes. The pictures below show where each one is.</li>
             <li>Save the file and tell the agent "done". <strong className={strong}>Don't paste the keys into the chat.</strong></li>
           </Ol>
           <Note tone="tip" title="Can't see .env.local?">
-            <p>Files starting with a dot are hidden by default. Mac Finder: press <strong className={strong}>Cmd + Shift + .</strong> to show them. Windows Explorer: <strong className={strong}>View → Show → Hidden items</strong>. Or ask the agent to open the folder for you.</p>
+            <p>VS Code always shows it. In Finder and Explorer, files starting with a dot are hidden by default. Mac Finder: press <strong className={strong}>Cmd + Shift + .</strong> to show them. Windows Explorer: <strong className={strong}>View → Show → Hidden items</strong>. Or ask the agent to open the folder for you.</p>
           </Note>
         </Part>
 

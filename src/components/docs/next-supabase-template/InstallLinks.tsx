@@ -186,6 +186,19 @@ export function GitHubDesktopDownload() {
   );
 }
 
+export function VsCodeDownload({ small }: { small?: boolean }) {
+  const { os } = useOs();
+  return os === "windows" ? (
+    <LinkButton small={small} icon="simple-icons:visualstudiocode" href="https://update.code.visualstudio.com/latest/win32-x64-user/stable">
+      VS Code for Windows
+    </LinkButton>
+  ) : (
+    <LinkButton small={small} icon="simple-icons:visualstudiocode" href="https://update.code.visualstudio.com/latest/darwin-universal-dmg/stable">
+      VS Code for Mac (.dmg)
+    </LinkButton>
+  );
+}
+
 /** Short OS-specific install notes. */
 export function ForOs({ windows, mac }: { windows: ReactNode; mac: ReactNode }) {
   const { os } = useOs();
@@ -213,6 +226,114 @@ export function UseTemplateButton({ owner, repo }: { owner: string; repo: string
       >
         or view the template on GitHub
       </a>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------------- */
+/* Open in Claude: Claude Desktop's documented claude://code/new link       */
+/* (support.claude.com/en/articles/14729294) starts a Code session with the */
+/* prompt filled in and, if given, the folder (Claude asks to confirm it).  */
+/* No link opens the browser pane, so the prompt asks the agent to open     */
+/* this guide there first; the project's SessionStart hook asks it too.     */
+/* ---------------------------------------------------------------------- */
+
+const FOLDER_KEY = "nst-guide-folder";
+
+/** The folder the reader cloned into, shared by every Open in Claude button and remembered in this browser. */
+let currentFolder: string | null = null;
+const folderListeners = new Set<() => void>();
+
+function getFolder() {
+  if (currentFolder === null) {
+    try {
+      currentFolder = window.localStorage.getItem(FOLDER_KEY) ?? "";
+    } catch {
+      currentFolder = "";
+    }
+  }
+  return currentFolder;
+}
+
+function setFolder(next: string) {
+  currentFolder = next;
+  try {
+    window.localStorage.setItem(FOLDER_KEY, next);
+  } catch {
+    /* not remembered; fine */
+  }
+  folderListeners.forEach((listener) => listener());
+}
+
+function subscribeFolder(listener: () => void) {
+  folderListeners.add(listener);
+  return () => folderListeners.delete(listener);
+}
+
+export function claudeCodeLink(prompt: string, folder?: string) {
+  const params = new URLSearchParams({ q: prompt });
+  const path = folder?.trim().replace(/^["']|["']$/g, "");
+  if (path) params.set("folder", path);
+  // URLSearchParams writes spaces as "+"; the documented examples use %20.
+  return `claude://code/new?${params.toString().replace(/\+/g, "%20")}`;
+}
+
+/**
+ * Where the reader cloned the project, and a button that opens a Claude Code
+ * session there with `prompt` ready to send.
+ */
+export function OpenInClaude({ prompt, compact }: { prompt: string; compact?: boolean }) {
+  const { os } = useOs();
+  const folder = useSyncExternalStore(subscribeFolder, getFolder, () => "");
+  const example = os === "mac" ? "/Users/you/Documents/GitHub/my-app" : "C:\\Users\\you\\Documents\\GitHub\\my-app";
+  if (compact) {
+    // Just the button, using the folder typed into step 4 (if any).
+    return (
+      <a
+        href={claudeCodeLink(prompt, folder)}
+        className="inline-flex items-center gap-2 rounded-lg bg-[#d97757] px-3 py-1.5 text-xs font-semibold text-white no-underline shadow-sm transition hover:opacity-90"
+      >
+        <Icon icon="simple-icons:claude" className="h-3.5 w-3.5" aria-hidden />
+        Open in Claude
+      </a>
+    );
+  }
+  return (
+    <div className="my-2 space-y-3 rounded-xl border border-border/70 bg-muted/20 p-3">
+      <label className="block space-y-1">
+        <span className="text-xs font-medium text-foreground">Where you cloned it (optional)</span>
+        <input
+          value={folder}
+          onChange={(event) => setFolder(event.target.value)}
+          placeholder={example}
+          spellCheck={false}
+          className="w-full rounded-md border border-border bg-background px-2 py-1.5 font-mono text-xs text-foreground outline-none focus:ring-2 focus:ring-primary/30"
+        />
+        <span className="block text-[11px] text-muted-foreground">
+          In GitHub Desktop, right-click your repository in the <strong className="text-foreground">Current Repository</strong> list →{" "}
+          <strong className="text-foreground">Copy Repo Path</strong>, and paste it here. Leave it empty to choose the folder in Claude instead.
+        </span>
+      </label>
+      <div className="flex flex-wrap items-center gap-3">
+        <a
+          href={claudeCodeLink(prompt, folder)}
+          className="inline-flex items-center gap-2 rounded-lg bg-[#d97757] px-4 py-2 text-sm font-semibold text-white no-underline shadow-sm transition hover:opacity-90"
+        >
+          <Icon icon="simple-icons:claude" className="h-4 w-4" aria-hidden />
+          Open in Claude
+        </a>
+        <span className="min-w-0 flex-1 text-[11px] leading-4 text-muted-foreground">
+          Opens a new Claude Code session with the setup prompt ready.{" "}
+          {folder.trim() ? "Claude asks you to confirm the folder, then " : "Choose the cloned folder when Claude asks, then "}press Enter.
+        </span>
+      </div>
+      <p className="text-[11px] text-muted-foreground">
+        Nothing happened? Install the{" "}
+        <a className="underline underline-offset-2" href="https://claude.com/download" target="_blank" rel="noreferrer">
+          Claude desktop app
+        </a>{" "}
+        and sign in, then click again. Or start a Code session yourself and paste the prompt from the next step.
+      </p>
     </div>
   );
 }
