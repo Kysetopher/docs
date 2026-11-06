@@ -244,7 +244,10 @@ const gettingStartedSections: DocRecord["sections"] = [
               tool: "VS Code",
               notes: (
                 <span className="space-y-2">
-                  <span className="block">Recommended: a free editor for typing your keys into <InlineCode>.env.local</InlineCode> and looking around the project. It shows hidden files, which Finder and Explorer don't.</span>
+                  <span className="block">
+                    Recommended. Microsoft's free code editor, the most widely used one and the industry standard, so most guides, tutorials and teammates assume it. Here
+                    you'll use it to type your keys into <InlineCode>.env.local</InlineCode> and to look around the project. It shows hidden files, which Finder and Explorer don't.
+                  </span>
                   <VsCodeDownload />
                 </span>
               ),

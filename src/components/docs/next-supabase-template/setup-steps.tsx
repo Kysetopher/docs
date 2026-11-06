@@ -135,8 +135,8 @@ export const SETUP_STEPS: SetupStep[] = [
           <Ol>
             <li>Open your project at <a className={link} href="https://supabase.com/dashboard" target="_blank" rel="noreferrer">supabase.com/dashboard</a>. No project yet? Click <strong className={strong}>New project</strong>, pick a name, the region closest to your users and a strong database password. Save the password in a password manager (the app doesn't use it, but you'll want it later).</li>
             <li>
-              Open <InlineCode>.env.local</InlineCode> from your project folder in a text editor. <strong className={strong}>VS Code</strong> is the easiest: free, shows hidden files,
-              and lets you see the whole project. Open it, choose <strong className={strong}>File → Open Folder…</strong>, pick the project folder and click{" "}
+              Open <InlineCode>.env.local</InlineCode> from your project folder in a text editor. <strong className={strong}>VS Code</strong> is the easiest: Microsoft's free,
+              industry-standard code editor. It shows hidden files and lets you see the whole project. Open it, choose <strong className={strong}>File → Open Folder…</strong>, pick the project folder and click{" "}
               <InlineCode>.env.local</InlineCode> in the file list on the left. It also works in <strong className={strong}>Notepad</strong> on Windows (right-click → Open with → Notepad) or{" "}
               <strong className={strong}>TextEdit</strong> on a Mac.
               <span className="mt-2 flex flex-wrap items-center gap-3">
