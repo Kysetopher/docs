@@ -63,6 +63,10 @@ const DOC_BANNERS: Record<string, DocBannerConfig> = {
   "linux-installation": { component: WaveformSilkSplash, color: "#10b981" },
   "hardware-optimization": { component: CubeMoireTextureSplash, color: "#f59e0b" },
   "remote-access-integration": { component: FloatstarSplash, color: "#06b6d4" },
+  "wm-current-state": { component: WaveformSilkSplash, color: "#f472b6" },
+  "wm-discoverability-playbook": { component: BathymetrySplash, color: "#f59e0b" },
+  "wm-release-platforms": { component: AtlasDriftSplash, color: "#22c55e" },
+  "wm-release-checklist": { component: TideglassSplash, color: "#a855f7" },
 };
 
 export function getDocBanner(docId: string | undefined): ReactNode {

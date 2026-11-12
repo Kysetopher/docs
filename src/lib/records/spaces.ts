@@ -8,9 +8,11 @@ import { salesSpace } from "@/lib/records/spaces/sales";
 import { harnessEngineeringSpace } from "@/lib/records/spaces/harness-engineering";
 import { localModelsSpace } from "@/lib/records/spaces/local-models";
 import { nextSupabaseTemplateSpace } from "@/lib/records/spaces/next-supabase-template";
+import { musicDiscoverabilityReleaseSpace } from "@/lib/records/spaces/music-discoverability-release";
 
 export const DOC_SPACES: DocSpace[] = [
   aiDiscoverabilitySpace,
+  musicDiscoverabilityReleaseSpace,
   autoBuildPipelineSpace,
   localModelsSpace,
   miningSpace,

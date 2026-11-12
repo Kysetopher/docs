@@ -12,6 +12,8 @@ export function getSpaceBanner(spaceId: string | undefined) {
   switch (spaceId) {
     case "ai-discoverability-optimization":
       return <HexMoireGridSplash color="#38bdf8" />;
+    case "music-discoverability-release":
+      return <WaveformSilkSplash color="#f472b6" />;
     case "auto-build-pipeline":
       return <WaveformSilkSplash color="#8b5cf6" />;
     case "talent-agency":
